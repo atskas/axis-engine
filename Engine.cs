@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
+using System;
 
 namespace UntitledEngine
 {
@@ -18,7 +19,18 @@ namespace UntitledEngine
         protected override void OnLoad()
         {
             // Set the background color (Temporary)
-            GL.ClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+            Console.WriteLine("Window loaded!");
+
+        }
+
+        protected override void OnUnload()
+        {
+            Console.WriteLine("Window unloaded!");
+
+            // Can add more cleanup as i start adding stuff
+            base.OnUnload();
         }
 
         // Called every frame
@@ -36,6 +48,5 @@ namespace UntitledEngine
             // Swap the buffers to display frame
             SwapBuffers();
         }
-
     }
 }
