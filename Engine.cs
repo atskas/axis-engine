@@ -33,10 +33,18 @@ namespace UntitledEngine
             base.OnUnload();
         }
 
+        protected void ProcessInput()
+        {
+            if (KeyboardState.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space))
+            {
+                Console.WriteLine("Space key pressed!");
+            }
+        }
+
         // Called every frame
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-
+            ProcessInput();
         }
 
         // Called every frame to render the content to the screen
