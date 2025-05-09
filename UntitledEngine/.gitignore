@@ -1,0 +1,41 @@
+# .NET Core
+bin/
+obj/
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer Logs
+*.cab
+*.log
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+
+# macOS specific
+.DS_Store
+
+# Linux specific
+*~
+
+# JetBrains Rider
+.idea/
+
+# User-specific files for Visual Studio for Mac
+.vscode/
+
+# Build directories
+*/bin/
+*/obj/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
