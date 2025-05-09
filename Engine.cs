@@ -3,11 +3,20 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
 using System;
+using System.Diagnostics;
 
 namespace UntitledEngine
 {
     public class Engine : GameWindow
     {
+
+        private float[] vertices = {
+            // X, Y, Z
+            0.0f, 0.5f, 0.0f, // Top
+            -0.5f, -0.5f, 0.0f, // Bottom Left
+            0.5f, -0.5f, 0.0f // Bottom right
+        };
+
         // Constructor to set up window size and title
         public Engine(int width, int height, string title)
             : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
@@ -23,6 +32,8 @@ namespace UntitledEngine
 
             Console.WriteLine("Window loaded!");
 
+            Resize += OnWindowResize;
+
         }
 
         protected override void OnUnload()
@@ -31,6 +42,13 @@ namespace UntitledEngine
 
             // Can add more cleanup as i start adding stuff
             base.OnUnload();
+        }
+
+        private void OnWindowResize(ResizeEventArgs e)
+        {
+            GL.Viewport(0, 0, e.Width, e.Height);
+
+            Console.WriteLine("Window resized!");
         }
 
         protected void ProcessInput()
@@ -44,6 +62,7 @@ namespace UntitledEngine
         // Called every frame
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
+            // Input
             ProcessInput();
         }
 
