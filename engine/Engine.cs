@@ -9,6 +9,8 @@ namespace UntitledEngine
 {
     public class Engine : GameWindow
     {
+        private Shader shader; // Shader class
+
         // Constructor to set up window size and title
         public Engine(int width, int height, string title)
             : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
@@ -24,6 +26,8 @@ namespace UntitledEngine
 
             Console.WriteLine("Window loaded!");
 
+            shader = new Shader();
+
             Resize += OnWindowResize;
 
         }
@@ -32,8 +36,9 @@ namespace UntitledEngine
         {
             Console.WriteLine("Window unloaded!");
 
-            // Can add more cleanup as i start adding stuff
             base.OnUnload();
+            shader.Cleanup();
+
         }
 
         private void OnWindowResize(ResizeEventArgs e)
@@ -63,6 +68,9 @@ namespace UntitledEngine
         {
             // Clear the screen with the background color
             GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            shader.Use();
+            shader.Draw();
 
             // Swap the buffers to display frame
             SwapBuffers();
