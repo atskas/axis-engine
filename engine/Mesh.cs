@@ -39,10 +39,8 @@ namespace UntitledEngine
             GL.BindVertexArray(0);
         }
 
-        public void Draw(float r, float g, float b, float a)
+        public void Draw()
         {
-            shader.SetShapeColor(r, g, b, a);
-
             shader.Use(); // Bind shader
 
             GL.BindVertexArray(VAO);

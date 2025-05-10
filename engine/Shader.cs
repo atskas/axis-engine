@@ -67,7 +67,7 @@ namespace UntitledEngine
 
         }
 
-        public void SetShapeColor(float r, float g, float b, float a)
+        public void SetShapeColor(Vector4 color)
         {
             int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
             if (colorLocation == -1)
@@ -75,7 +75,7 @@ namespace UntitledEngine
                 Console.WriteLine("Warning: 'shapeColor' uniform not found in shader.");
                 return;
             }
-            GL.Uniform4(colorLocation, r, g, b, a);
+            GL.Uniform4(colorLocation, color);
         }
 
         public void Cleanup()

@@ -10,9 +10,13 @@ namespace UntitledEngine
     public class Engine : GameWindow
     {
         private Shader shader; // Shader class
-        private Shader redShader;
+        private Shader shader2;
         private Mesh mesh1;
         private Mesh mesh2;
+
+        private Vector4 object1Color = Vector4.One;
+        private Vector4 object2Color = Vector4.One;
+
 
         // Constructor to set up window size and title
         public Engine(int width, int height, string title)
@@ -46,7 +50,7 @@ namespace UntitledEngine
 
             mesh2 = new Mesh(vertices2, indices, shader);
 
-            redShader = new Shader();
+            shader2 = new Shader();
 
             // Create second mesh
             float[] vertices1 = {
@@ -56,7 +60,7 @@ namespace UntitledEngine
                -0.05f,  0.05f, 0.0f  // top left
             };
 
-            mesh1 = new Mesh(vertices1, indices, redShader);
+            mesh1 = new Mesh(vertices1, indices, shader2);
 
             // Handle window resizing
             Resize += OnWindowResize;
@@ -82,11 +86,11 @@ namespace UntitledEngine
         {
             if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space))
             {
-                shader.SetShapeColor(1.0f, 0.0f, 0.0f, 1.0f);
+                object1Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
             }
             else
             {
-                shader.SetShapeColor(1.0f, 1.0f, 1.0f, 1.0f);
+                object1Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
 
@@ -103,11 +107,13 @@ namespace UntitledEngine
             // Clear the screen with the background color
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // Draw the white mesh
-            mesh1.Draw(1.0f, 1.0f, 1.0f, 1.0f);
+            // Draw the first mesh
+            shader.SetShapeColor(object1Color);
+            mesh1.Draw();
 
-            // Draw the red mesh 
-            mesh2.Draw(1.0f, 1.0f, 1.0f, 1.0f);
+            // Draw the second mesh 
+            shader2.SetShapeColor(object2Color);
+            mesh2.Draw();
 
             // Swap the buffers to display the frame
             SwapBuffers();
