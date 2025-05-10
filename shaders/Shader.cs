@@ -5,7 +5,8 @@ namespace UntitledEngine
 {
     public class Shader
     {
-        private int VBO, VAO;
+        private int VBO;
+        private int VAO;
         private int EBO;
         private int vertexShader, fragmentShader, shaderProgram;
 
@@ -24,6 +25,14 @@ namespace UntitledEngine
             void main()
             {
                 FragColor = shapeColor;
+            }";
+
+        private string fragmentShaderSrc2 = @"
+            #version 460 core
+            out vec4 FragColor;
+            void main()
+            {
+                FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
             }";
 
         private float[] vertices = {

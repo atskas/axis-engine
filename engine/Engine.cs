@@ -48,7 +48,6 @@ namespace UntitledEngine
         {
             GL.Viewport(0, 0, e.Width, e.Height);
 
-            Console.WriteLine("Window resized!");
         }
 
         protected void ProcessInput()
