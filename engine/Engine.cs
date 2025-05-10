@@ -86,11 +86,11 @@ namespace UntitledEngine
         {
             if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space))
             {
-                object1Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+                object2Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
             }
             else
             {
-                object1Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+                object2Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
 
