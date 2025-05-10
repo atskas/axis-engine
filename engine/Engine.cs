@@ -28,6 +28,8 @@ namespace UntitledEngine
 
             shader = new Shader();
 
+            shader.SetShapeColor(1.0f, 1.0f, 1.0f, 1.0f);
+
             Resize += OnWindowResize;
 
         }
@@ -37,6 +39,7 @@ namespace UntitledEngine
             Console.WriteLine("Window unloaded!");
 
             base.OnUnload();
+
             shader.Cleanup();
 
         }
@@ -50,9 +53,13 @@ namespace UntitledEngine
 
         protected void ProcessInput()
         {
-            if (KeyboardState.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space))
+            if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space))
             {
-                Console.WriteLine("Space key pressed!");
+                shader.SetShapeColor(1.0f, 0.0f, 0.0f, 1.0f);
+            }
+            else
+            {
+                shader.SetShapeColor(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
 

@@ -20,9 +20,10 @@ namespace UntitledEngine
         private string fragmentShaderSrc = @"
             #version 460 core
             out vec4 FragColor;
+            uniform vec4 shapeColor;
             void main()
             {
-                FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                FragColor = shapeColor;
             }";
 
         private float[] vertices = {
@@ -87,11 +88,13 @@ namespace UntitledEngine
         {
             GL.UseProgram(shaderProgram);
             // SwitchPolygonMode(PolygonMode.Line);
+
         }
 
         // Temporarily here, might move
         public void Draw()
         {
+
             GL.BindVertexArray(VAO);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -106,6 +109,19 @@ namespace UntitledEngine
             GL.PolygonMode(MaterialFace.FrontAndBack, mode);
 
         }
+
+        public void SetShapeColor(float r, float g, float b, float a)
+        {
+            int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
+            if (colorLocation == -1)
+            {
+                Console.WriteLine("Warning: 'shapeColor' uniform not found in shader.");
+                return;
+            }
+            GL.Uniform4(colorLocation, r, g, b, a);
+        }
+
+
 
         private void CheckShaderCompile(int shader)
         {
