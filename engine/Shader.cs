@@ -27,47 +27,8 @@ namespace UntitledEngine
                 FragColor = shapeColor;
             }";
 
-        private string fragmentShaderSrc2 = @"
-            #version 460 core
-            out vec4 FragColor;
-            void main()
-            {
-                FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);
-            }";
-
-        private float[] vertices = {
-            0.5f,  0.5f, 0.0f, // Top right
-            0.5f, -0.5f, 0.0f, // Bottom right
-            -0.5f, -0.5f, 0.0f, // Bottom left
-            -0.5f, 0.5f, 0.0f // Top left
-        };
-
-        private int[] indices = // Starts from 0
-        {
-            0, 1, 3, // First triangle
-            1, 2, 3 // second triangle
-        };
-        
         public Shader()
         {
-            // Generate and bind VAO
-            VAO = GL.GenVertexArray();
-            GL.BindVertexArray(VAO);
-
-            // Generate and bind VBO
-            VBO = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-            // Generate and bind EBO
-            EBO = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(int), indices, BufferUsageHint.StaticDraw);
-
-            // Set up vertex attribute pointers
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-
             // Create and compile the vertex shader
             vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vertexShaderSrc);
@@ -90,25 +51,12 @@ namespace UntitledEngine
             GL.DeleteShader(vertexShader);
             GL.DeleteShader(fragmentShader);
 
-            Console.WriteLine($"Generated VBO ID: {VBO}");
         }
 
         public void Use()
         {
             GL.UseProgram(shaderProgram);
             // SwitchPolygonMode(PolygonMode.Line);
-
-        }
-
-        // Temporarily here, might move
-        public void Draw()
-        {
-
-            GL.BindVertexArray(VAO);
-
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-
-            GL.BindVertexArray(0);
 
         }
 
@@ -156,16 +104,6 @@ namespace UntitledEngine
             {
                 Console.WriteLine("Program linked successfully!");
             }
-        }
-
-        public void Cleanup()
-        {
-            Console.WriteLine("Cleaning up..");
-            GL.BindVertexArray(0);
-            GL.DeleteBuffer(VBO);
-            GL.DeleteBuffer(EBO);
-            GL.DeleteVertexArray(VAO);
-            GL.DeleteProgram(shaderProgram);
         }
     }
 }
