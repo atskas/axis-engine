@@ -10,6 +10,9 @@ namespace UntitledEngine
     public class Engine : GameWindow
     {
         private Shader shader; // Shader class
+        private Shader redShader;
+        private Mesh mesh1;
+        private Mesh mesh2;
 
         // Constructor to set up window size and title
         public Engine(int width, int height, string title)
@@ -18,20 +21,45 @@ namespace UntitledEngine
             // Can do additional setup here
         }
 
-        // Called once the window is loaded, I believe that's self-explanatory
+        // Called once the window is loaded
         protected override void OnLoad()
         {
-            // Set the background color (Temporary)
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+            // Set the background clear color
+            GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             Console.WriteLine("Window loaded!");
 
+            // Set up shared index data
+            int[] indices = {
+                0, 1, 2,
+                2, 3, 0
+            };
+
+            // Create first mesh
             shader = new Shader();
 
-            shader.SetShapeColor(1.0f, 1.0f, 1.0f, 1.0f);
+            float[] vertices2 = {
+               -0.75f,  0.3f, 0.0f,
+               -0.75f, -0.3f, 0.0f,
+               -0.8f, -0.3f, 0.0f,
+               -0.8f,  0.3f, 0.0f
+            };
 
+            mesh2 = new Mesh(vertices2, indices, shader);
+
+            redShader = new Shader();
+
+            // Create second mesh
+            float[] vertices1 = {
+                0.05f,  0.05f, 0.0f, // top right
+                0.05f, -0.05f, 0.0f, // bottom right
+               -0.05f, -0.05f, 0.0f, // bottom left
+               -0.05f,  0.05f, 0.0f  // top left
+            };
+
+            mesh1 = new Mesh(vertices1, indices, redShader);
+
+            // Handle window resizing
             Resize += OnWindowResize;
-
         }
 
         protected override void OnUnload()
@@ -41,13 +69,13 @@ namespace UntitledEngine
             base.OnUnload();
 
             shader.Cleanup();
-
+            mesh1.Cleanup();
+            mesh2.Cleanup(); // Cleanup the second mesh
         }
 
         private void OnWindowResize(ResizeEventArgs e)
         {
             GL.Viewport(0, 0, e.Width, e.Height);
-
         }
 
         protected void ProcessInput()
@@ -75,10 +103,13 @@ namespace UntitledEngine
             // Clear the screen with the background color
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            shader.Use();
-            shader.Draw();
+            // Draw the white mesh
+            mesh1.Draw(1.0f, 1.0f, 1.0f, 1.0f);
 
-            // Swap the buffers to display frame
+            // Draw the red mesh 
+            mesh2.Draw(1.0f, 1.0f, 1.0f, 1.0f);
+
+            // Swap the buffers to display the frame
             SwapBuffers();
         }
     }

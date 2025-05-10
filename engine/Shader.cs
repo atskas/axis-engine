@@ -78,7 +78,10 @@ namespace UntitledEngine
             GL.Uniform4(colorLocation, r, g, b, a);
         }
 
-
+        public void Cleanup()
+        {
+            GL.DeleteProgram(shaderProgram);
+        }
 
         private void CheckShaderCompile(int shader)
         {
