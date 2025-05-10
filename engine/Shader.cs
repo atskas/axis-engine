@@ -22,7 +22,7 @@ namespace UntitledEngine
             out vec4 FragColor;
             void main()
             {
-                FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+                FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
             }";
 
         private float[] vertices = {
@@ -86,6 +86,7 @@ namespace UntitledEngine
         public void Use()
         {
             GL.UseProgram(shaderProgram);
+            // SwitchPolygonMode(PolygonMode.Line);
         }
 
         // Temporarily here, might move
@@ -96,6 +97,13 @@ namespace UntitledEngine
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
             GL.BindVertexArray(0);
+
+        }
+
+        // Just for testing
+        public void SwitchPolygonMode(PolygonMode mode)
+        {
+            GL.PolygonMode(MaterialFace.FrontAndBack, mode);
 
         }
 
