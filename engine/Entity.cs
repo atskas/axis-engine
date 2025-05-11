@@ -52,6 +52,19 @@ namespace UntitledEngine
             Mesh.Draw(model);
         }
 
+        public static bool IsCollidingWith(Entity a, Entity b)
+        {
+            Vector3 aMin = a.Position - a.Size * 0.5f;
+            Vector3 aMax = a.Position + a.Size * 0.5f;
+
+            Vector3 bMin = b.Position - b.Size * 0.5f;
+            Vector3 bMax = b.Position + b.Size * 0.5f;
+
+            return
+                aMin.X <= bMax.X && aMax.X >= bMin.X &&
+                aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
+        }
+
         public void Cleanup()
         {
             Mesh.Cleanup();

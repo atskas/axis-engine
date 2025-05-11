@@ -13,11 +13,12 @@ namespace UntitledEngine
         // Game Objects
         private Entity paddle1;
         private Entity paddle2;
-        private Entity ball;
 
-        // Testing a restriction
-        double maximumPaddleY = 0.65f;
-        double minimumPaddleY = -0.65f;
+        // Walls, for collision testing purposes / Collision testing scene
+        private Entity wallTop;
+        private Entity wallBottom;
+
+        private Entity ball;
 
         public Scene()
         {
@@ -25,45 +26,78 @@ namespace UntitledEngine
             shader = new Shader();
             shader2 = new Shader();
 
-            // Create paddle objects
-            paddle1 = new Entity(new Vector3(0.1f, 0.8f, 1f), new Vector3(-0.8f, 0.2f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity(new Vector3(0.1f, 0.8f, 1f), new Vector3(0.8f, 0.2f, 0.0f), Vector4.One, shader);
+            // Paddles
+            paddle1 = new Entity(new Vector3(0.1f, 1.1f, 1f), new Vector3(-0.45f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity(new Vector3(0.1f, 1.1f, 1f), new Vector3(0.45f, 0.0f, 0.0f), Vector4.One, shader);
+
+            // Horizontal walls / Collision testing scene
+            wallTop = new Entity(new Vector3(1.0f, 0.1f, 1f), new Vector3(0f, 0.55f, 0f), Vector4.One, shader);
+            wallBottom = new Entity(new Vector3(1.0f, 0.1f, 1f), new Vector3(0f, -0.55f, 0f), Vector4.One, shader);
+
+            // ^ These two form a box / Collision testing scene / Revert changes for PONG
+
+            // Ball (currently a player with 8-dir movement) / Collision testing scene
             ball = new Entity(new Vector3(0.1f, 0.1f, 0.1f), new Vector3(0.0f, 0.0f, 0.0f), Vector4.One, shader2);
         }
 
         // Input handling
         public void ProcessInput(KeyboardState keyboardState)
         {
-            // Handle paddle movement
+            // Vertical movement
             if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W))
             {
-                if (paddle1.Position.Y <= maximumPaddleY)
+                if (!Entity.IsCollidingWith(ball, paddle1) && !Entity.IsCollidingWith(ball, wallTop))
                 {
-                    paddle1.Move(new Vector3(0f, 0.0005f, 0f));
+                    ball.Move(new Vector3(0f, 0.00035f, 0f));
                 }
-            }
-            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
-            {
-                if (paddle1.Position.Y >= minimumPaddleY)
+                else
                 {
-                    paddle1.Move(new Vector3(0f, -0.0005f, 0f));
+                    ball.Move(new Vector3(0f, -0.03f, 0f));
+                    Console.WriteLine("Player and wall colliding!");
                 }
             }
 
-            // Handle paddle2 movement
-            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Up))
+            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
             {
-                if (paddle2.Position.Y <= maximumPaddleY)
+                if (!Entity.IsCollidingWith(ball, paddle1) && !Entity.IsCollidingWith(ball, wallBottom))
                 {
-                    paddle2.Move(new Vector3(0f, 0.0005f, 0f));
+                    ball.Move(new Vector3(0f, -0.00035f, 0f));
+                }
+                else
+                {
+                    ball.Move(new Vector3(0f, 0.03f, 0f));
+                    Console.WriteLine("Player and wall colliding!");
                 }
             }
-            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Down))
+
+            // Horizontal movement
+            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
             {
-                if (paddle2.Position.Y >= minimumPaddleY)
+
+                if (!Entity.IsCollidingWith(ball, paddle1) && !Entity.IsCollidingWith(ball, paddle2))
                 {
-                    paddle2.Move(new Vector3(0f, -0.0005f, 0f));
+                    ball.Move(new Vector3(-0.00035f, 0f, 0f));
                 }
+                else
+                {
+                    ball.Move(new Vector3(0.03f, 0f, 0f));
+                    Console.WriteLine("Player and wall colliding!");
+                }
+
+            }
+
+            if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D))
+            {
+                if (!Entity.IsCollidingWith(ball, paddle1) && !Entity.IsCollidingWith(ball, paddle2))
+                {
+                    ball.Move(new Vector3(0.00035f, 0f, 0f));
+                }
+                else
+                {
+                    ball.Move(new Vector3(-0.03f, 0f, 0f));
+                    Console.WriteLine("Player and wall colliding!");
+                }
+
             }
         }
 
@@ -75,6 +109,13 @@ namespace UntitledEngine
 
             shader.SetShapeColor(paddle2.Color);
             paddle2.Render(shader);
+
+            // Render walls (top and bottom) / Collision testing scene
+            shader.SetShapeColor(wallTop.Color);
+            wallTop.Render(shader);
+
+            shader.SetShapeColor(wallBottom.Color);
+            wallBottom.Render(shader);
 
             shader.SetShapeColor(ball.Color);
             ball.Render(shader);
@@ -90,6 +131,8 @@ namespace UntitledEngine
             // Mesh cleanup
             paddle1.Cleanup();
             paddle2.Cleanup();
+            wallTop.Cleanup(); // Collision testing scene
+            wallBottom.Cleanup(); // Collision testing scene
             ball.Cleanup();
 
             // Shader cleanup
