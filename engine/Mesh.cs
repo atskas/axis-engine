@@ -53,7 +53,6 @@ namespace UntitledEngine
 
         public void Cleanup()
         {
-            Console.WriteLine("Cleaning up..");
             GL.BindVertexArray(0);
             GL.DeleteBuffer(VBO);
             GL.DeleteBuffer(EBO);
