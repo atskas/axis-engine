@@ -10,12 +10,15 @@ namespace UntitledEngine
         private int EBO;
         private int vertexShader, fragmentShader, shaderProgram;
 
+        public int ID { get; private set; }
+
         private string vertexShaderSrc = @"
             #version 460 core
             layout (location = 0) in vec3 aPos;
+            uniform mat4 model;
             void main()
             {
-                gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+                gl_Position = model * vec4(aPos, 1.0);
             }";
 
         private string fragmentShaderSrc = @"
@@ -51,6 +54,7 @@ namespace UntitledEngine
             GL.DeleteShader(vertexShader);
             GL.DeleteShader(fragmentShader);
 
+            ID = shaderProgram;
         }
 
         public void Use()

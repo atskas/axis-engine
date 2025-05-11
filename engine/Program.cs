@@ -8,7 +8,7 @@ namespace UntitledEngine
         static async Task Main(string[] args)
         {
             // Create and run the engine
-            Engine engine = new Engine(800, 600, "Engine");
+            Engine engine = new Engine(450, 450, "Engine");
             engine.Run();
         }
     }
