@@ -24,6 +24,10 @@ namespace UntitledEngine
         Vector3 paddle2Pos = new Vector3(0.8f, 0.2f, 0.0f);
         Vector3 ballPos = new Vector3(0.0f, 0.0f, 0.0f);
 
+        // Testing a restriction
+        double maximumPaddleY = 0.65f;
+        double minimumPaddleY = -0.65f;
+
         public Scene()
         {
             // Set up scene objects
@@ -61,21 +65,33 @@ namespace UntitledEngine
             // Handle paddle movement
             if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W))
             {
-                paddle1Pos.Y += 0.0005f;
+                if (paddle1Pos.Y <= maximumPaddleY)
+                {
+                    paddle1Pos.Y += 0.0005f;
+                }
             }
             if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
             {
-                paddle1Pos.Y -= 0.0005f;
+                if (paddle1Pos.Y >= minimumPaddleY)
+                {
+                    paddle1Pos.Y -= 0.0005f;
+                }
             }
 
             // Handle paddle2 movement
             if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Up))
             {
-                paddle2Pos.Y += 0.0005f;
+                if (paddle2Pos.Y <= maximumPaddleY)
+                {
+                    paddle2Pos.Y += 0.0005f;
+                }
             }
             if (keyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Down))
             {
-                paddle2Pos.Y -= 0.0005f;
+                if (paddle2Pos.Y >= minimumPaddleY)
+                {
+                    paddle2Pos.Y -= 0.0005f;
+                }
             }
         }
 
