@@ -45,10 +45,12 @@ namespace UntitledEngine
         // Called every frame
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            scene.Update();
+            float deltaTime = (float)args.Time;
+
+            scene.Update(deltaTime);
 
             KeyboardState keyboardState = KeyboardState;
-            scene.ProcessInput(keyboardState);
+            scene.ProcessInput(keyboardState, deltaTime);
         }
 
         // Called every frame to render the content to the screen

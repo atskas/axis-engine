@@ -13,9 +13,9 @@ namespace UntitledEngine
 
         public Entity(Vector3 size, Vector3 position, Vector4 color, Shader shader)
         {
-            this.Size = size;
-            this.Position = position;
-            this.Color = color;
+            this.Size = new Vector3(size);
+            this.Position = new Vector3(position);
+            this.Color = new Vector4(color);
             this.shader = shader;
             this.Mesh = CreateMesh(shader);
         }
@@ -52,7 +52,20 @@ namespace UntitledEngine
             Mesh.Draw(model);
         }
 
-        public static bool IsCollidingWith(Entity a, Entity b)
+        public bool CollidesWith(Entity other)
+        {
+            Vector3 aMin = Position - Size * 0.5f;
+            Vector3 aMax = Position + Size * 0.5f;
+
+            Vector3 bMin = other.Position - other.Size * 0.5f;
+            Vector3 bMax = other.Position + other.Size * 0.5f;
+
+            return
+                aMin.X <= bMax.X && aMax.X >= bMin.X &&
+                aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
+        }
+
+        public static Vector3 CollisionResolve(Entity a, Entity b)
         {
             Vector3 aMin = a.Position - a.Size * 0.5f;
             Vector3 aMax = a.Position + a.Size * 0.5f;
@@ -60,9 +73,14 @@ namespace UntitledEngine
             Vector3 bMin = b.Position - b.Size * 0.5f;
             Vector3 bMax = b.Position + b.Size * 0.5f;
 
-            return
-                aMin.X <= bMax.X && aMax.X >= bMin.X &&
-                aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
+            float dx = MathF.Min(aMax.X - bMin.X, bMax.X - aMin.X);
+            float dy = MathF.Min(aMax.Y - bMin.Y, bMax.Y - aMin.Y);
+
+            // Choose smallest axis to resolve on
+            if (dx < dy)
+                return new Vector3(a.Position.X < b.Position.X ? -dx : dx, 0, 0);
+            else
+                return new Vector3(0, a.Position.Y < b.Position.Y ? -dy : dy, 0);
         }
 
         public void Cleanup()
