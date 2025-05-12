@@ -1,5 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+﻿using Silk.NET.OpenGL;
+using Silk.NET.Maths;
 using System;
 
 namespace UntitledEngine
@@ -7,56 +7,62 @@ namespace UntitledEngine
     public class Mesh
     {
 
-        private int VAO, VBO, EBO;
-        private int vertexCount;
+        private uint VAO, VBO, EBO;
+        private uint vertexCount;
 
         private Shader shader;
 
-        public Mesh(float[] vertices, int[] indices, Shader shader)
+        private GL gl;
+
+        public Mesh(float[] vertices, uint[] indices, Shader shader)
         {
+            gl = GLContext.Instance ?? throw new InvalidOperationException("GL context is not initialized.");
             this.shader = shader;
-            vertexCount = indices.Length;
+            vertexCount = (uint)indices.Length;
 
             // Generate and bind VAO
-            VAO = GL.GenVertexArray();
-            GL.BindVertexArray(VAO);
+            VAO = gl.GenVertexArray();
+            gl.BindVertexArray(VAO);
 
             // Generate and bind VBO
-            VBO = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            VBO = gl.GenBuffer();
+            gl.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
+            gl.BufferData(BufferTargetARB.ArrayBuffer, new ReadOnlySpan<float>(vertices), BufferUsageARB.StaticDraw);
 
             // Generate and bind EBO
-            EBO = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, EBO);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);
+            EBO = gl.GenBuffer();
+            gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
+            gl.BufferData(BufferTargetARB.ElementArrayBuffer, new ReadOnlySpan<uint>(indices), BufferUsageARB.StaticDraw);
 
             // Set up vertex attribute pointers (currently position only)
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
+            gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            gl.EnableVertexAttribArray(0);
 
             // Unbind VAO to prevent accidental modification
-            GL.BindVertexArray(0);
+            gl.BindVertexArray(0);
         }
 
-        public void Draw(Matrix4 model)
+        public void Draw(Matrix4X4<float> model)
         {
             shader.Use(); // Bind shader
-            int modelLocation = GL.GetUniformLocation(shader.ID, "model");
-            GL.UniformMatrix4(modelLocation, false, ref model);
+            int modelLocation = gl.GetUniformLocation(shader.ID, "model");
 
-            GL.BindVertexArray(VAO);
-            GL.DrawElements(PrimitiveType.Triangles, vertexCount, DrawElementsType.UnsignedInt, 0);
-            GL.BindVertexArray(0);
+            float[] modelArray = new float[16]; // Matrix4x4 is 4x4, so 16 floats in total
+
+            gl.UniformMatrix4(modelLocation, false, modelArray);
+
+            gl.BindVertexArray(VAO);
+            gl.DrawElements(PrimitiveType.Triangles, vertexCount, DrawElementsType.UnsignedInt, 0);
+            gl.BindVertexArray(0);
 
         }
 
         public void Cleanup()
         {
-            GL.BindVertexArray(0);
-            GL.DeleteBuffer(VBO);
-            GL.DeleteBuffer(EBO);
-            GL.DeleteVertexArray(VAO);
+            gl.BindVertexArray(0);
+            gl.DeleteBuffer(VBO);
+            gl.DeleteBuffer(EBO);
+            gl.DeleteVertexArray(VAO);
         }
 
         public Shader GetShader() => shader;

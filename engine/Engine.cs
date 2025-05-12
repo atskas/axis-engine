@@ -1,69 +1,106 @@
-﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Graphics.OpenGL4;
+﻿using Silk.NET.Maths;
+using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
+using Silk.NET.Input;
 using System;
-using System.Diagnostics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Silk.NET.Vulkan;
 
 namespace UntitledEngine
 {
-    public class Engine : GameWindow
+    internal static class GLContext
     {
+        public static GL Instance { get; private set; }
+
+        // Initialise GL context, called once during the setup
+        public static void Init(GL gl)
+        {
+            Instance = gl;
+        }
+    }
+
+    public class Engine
+    {
+        private IWindow window;
+        private GL gl;
+        private IInputContext input;
+        private IKeyboard keyboard;
 
         private Scene scene;
 
-        // Constructor to set up window size and title
-        public Engine(int width, int height, string title)
-            : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
+        public Engine(int  width, int height, string title)
         {
+            var options = WindowOptions.Default;
+            options.Size = new Vector2D<int>(width, height);
+            options.Title = title;
+            options.VSync = true;
+
+            window = Window.Create(options);
+
+            // Hook up event methods
+            window.Load += OnLoad;
+            window.Render += OnRender;
+            window.Update += OnUpdate;
+            window.FramebufferResize += OnResize;
+            window.Closing += OnUnload;
         }
 
-        // Called once the window is loaded
-        protected override void OnLoad()
+        public void Run()
         {
-            // Set the background clear color
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-            scene = new Scene(); // Initialise game scene
-            Resize += OnWindowResize;
+            window.Run();
         }
 
-        protected override void OnUnload()
+        private void OnLoad()
+        {
+            // Load OpenGL API
+            gl = GL.GetApi(window);
+            Console.WriteLine("GL gotten");
+
+            // Initialise GLContext with the OpenGL context
+            GLContext.Init(gl);
+
+            // Setup input
+            input = window.CreateInput();
+            if (input.Keyboards.Count > 0)
+                keyboard = input.Keyboards[0];
+
+            gl.ClearColor(0f, 0f, 0f, 1f);
+
+            scene = new Scene();
+        }
+
+        private void OnResize(Vector2D<int> size)
+        {
+            gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
+        }
+        
+
+        private void OnUnload()
         {
             Console.WriteLine("Window unloaded!");
-
-            base.OnUnload();
             scene.Cleanup();
         }
 
-        private void OnWindowResize(ResizeEventArgs e)
-        {
-            GL.Viewport(0, 0, e.Width, e.Height);
-        }
-
         // Called every frame
-        protected override void OnUpdateFrame(FrameEventArgs args)
+        private void OnUpdate(double deltaTime)
         {
-            float deltaTime = (float)args.Time;
+            scene.Update((float)deltaTime);
 
-            scene.Update(deltaTime);
+            if (keyboard != null)
+                scene.ProcessInput(keyboard, (float)deltaTime);
 
-            KeyboardState keyboardState = KeyboardState;
-            scene.ProcessInput(keyboardState, deltaTime);
         }
 
         // Called every frame to render the content to the screen
-        protected override void OnRenderFrame(FrameEventArgs args)
+        private void OnRender(double deltaTime)
         {
             // Clear the screen with the background color
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            gl.Clear((uint)ClearBufferMask.ColorBufferBit);
 
             // Render everything in scene
             scene.Render();
 
             // Swap the buffers to display the frame
-            SwapBuffers();
+            window.SwapBuffers();
         }
     }
 }

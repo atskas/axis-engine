@@ -1,16 +1,18 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+﻿using Silk.NET.OpenGL;
+using Silk.NET.Maths;
+using System;
 
 namespace UntitledEngine
 {
     public class Shader
     {
-        private int VBO;
-        private int VAO;
-        private int EBO;
-        private int vertexShader, fragmentShader, shaderProgram;
+        private uint VAO, VBO, EBO;
+        private uint vertexShader, fragmentShader;
+        private uint shaderProgram;
 
-        public int ID { get; private set; }
+        private GL gl;
+
+        public uint ID { get; private set; }
 
         private string vertexShaderSrc = @"
             #version 460 core
@@ -32,64 +34,60 @@ namespace UntitledEngine
 
         public Shader()
         {
+            gl = GLContext.Instance ?? throw new InvalidOperationException("GL context is not initialized.");
+
             // Create and compile the vertex shader
-            vertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShader, vertexShaderSrc);
-            GL.CompileShader(vertexShader);
+            vertexShader = gl.CreateShader(GLEnum.VertexShader);
+            gl.ShaderSource(vertexShader, vertexShaderSrc);
+            gl.CompileShader(vertexShader);
             CheckShaderCompile(vertexShader);
 
             // Create and compile the fragment shader
-            fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, fragmentShaderSrc);
-            GL.CompileShader(fragmentShader);
+            fragmentShader = gl.CreateShader(GLEnum.FragmentShader);
+            gl.ShaderSource(fragmentShader, fragmentShaderSrc);
+            gl.CompileShader(fragmentShader);
             CheckShaderCompile(fragmentShader);
 
             // Create the shader program and link shaders
-            shaderProgram = GL.CreateProgram();
-            GL.AttachShader(shaderProgram, vertexShader);
-            GL.AttachShader(shaderProgram, fragmentShader);
-            GL.LinkProgram(shaderProgram);
+            shaderProgram = gl.CreateProgram();
+            gl.AttachShader(shaderProgram, vertexShader);
+            gl.AttachShader(shaderProgram, fragmentShader);
+            gl.LinkProgram(shaderProgram);
             CheckProgramLink(shaderProgram);
 
-            GL.DeleteShader(vertexShader);
-            GL.DeleteShader(fragmentShader);
+            gl.DeleteShader(vertexShader);
+            gl.DeleteShader(fragmentShader);
 
             ID = shaderProgram;
         }
 
         public void Use()
         {
-            GL.UseProgram(shaderProgram);
-            // SwitchPolygonMode(PolygonMode.Line);
-
+            gl.UseProgram(shaderProgram);
         }
 
-        // Just for testing
-        public void SwitchPolygonMode(PolygonMode mode)
+        public void SetShapeColor(Vector4D<float> color)
         {
-            GL.PolygonMode(MaterialFace.FrontAndBack, mode);
-
-        }
-
-        public void SetShapeColor(Vector4 color)
-        {
-            int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
+            int colorLocation = gl.GetUniformLocation(shaderProgram, "shapeColor");
             if (colorLocation == -1)
             {
                 Console.WriteLine("Warning: 'shapeColor' uniform not found in shader.");
                 return;
             }
-            GL.Uniform4(colorLocation, color);
+
+            // Pass the color as an array
+            float[] colorArray = { color.X, color.Y, color.Z, color.W };
+            gl.Uniform4(colorLocation, colorArray);
         }
 
         public void Cleanup()
         {
-            GL.DeleteProgram(shaderProgram);
+            gl.DeleteProgram(shaderProgram);
         }
 
-        private void CheckShaderCompile(int shader)
+        private void CheckShaderCompile(uint shader)
         {
-            string infoLog = GL.GetShaderInfoLog(shader);
+            string infoLog = gl.GetShaderInfoLog(shader);
             if (!string.IsNullOrEmpty(infoLog))
             {
                 Console.WriteLine($"Shader compilation failed: {infoLog}");
@@ -100,9 +98,9 @@ namespace UntitledEngine
             }
         }
 
-        private void CheckProgramLink(int program)
+        private void CheckProgramLink(uint program)
         {
-            string infoLog = GL.GetProgramInfoLog(program);
+            string infoLog = gl.GetProgramInfoLog(program);
             if (!string.IsNullOrEmpty(infoLog))
             {
                 Console.WriteLine($"Program linking error: {infoLog}");
