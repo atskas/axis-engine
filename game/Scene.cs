@@ -31,8 +31,8 @@ namespace UntitledEngine
             shader = new Shader();
 
             // Paddles
-            paddle1 = new Entity((0.1f, 0.3f), (-0.85f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity((0.1f, 0.3f), (0.85f, 0.0f), Vector4.One, shader);
+            paddle1 = new Entity((0.1f, 0.5f), (-0.85f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity((0.1f, 0.5f), (0.85f, 0.0f), Vector4.One, shader);
 
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
@@ -44,7 +44,7 @@ namespace UntitledEngine
             sideCollider2 = new Entity((0.2f, 5f), (-1f, 0f), (0f, 0f, 0f, 0f), shader);
 
             // Ball
-            ball = new Entity((0.05f, 0.05f), (0.0f, 0.0f), Vector4.One, shader);
+            ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -61,7 +61,7 @@ namespace UntitledEngine
         // Input handling
         public void ProcessInput(KeyboardState keyboardState)
         {
-            float moveSpeed = 1.3f;
+            float moveSpeed = 1.5f;
 
             // p1
             if (keyboardState.IsKeyDown(Keys.W))
