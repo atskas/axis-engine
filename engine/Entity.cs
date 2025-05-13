@@ -6,16 +6,16 @@ namespace UntitledEngine
     internal class Entity
     {
         private Mesh Mesh;
-        public Vector3 Position {  get; set; }
-        public Vector3 Size { get; set; }
+        public Vector2 Position { get; set; }
+        public Vector2 Size { get; set; }
         public Vector4 Color { get; set; }
         private Shader shader;
 
-        public Entity(Vector3 size, Vector3 position, Vector4 color, Shader shader)
+        public Entity(Vector2 size, Vector2 position, Vector4 color, Shader shader)
         {
-            this.Size = new Vector3(size);
-            this.Position = new Vector3(position);
-            this.Color = new Vector4(color);
+            this.Size = size;
+            this.Position = position;
+            this.Color = color;
             this.shader = shader;
             this.Mesh = CreateMesh(shader);
         }
@@ -23,7 +23,7 @@ namespace UntitledEngine
         // Creates a rectangle
         private Mesh CreateMesh(Shader shader)
         {
-            float[] vertices = { 
+            float[] vertices = {
                -0.5f, 0.5f, 0.0f,
                 0.5f, 0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
@@ -35,56 +35,60 @@ namespace UntitledEngine
             return new Mesh(vertices, indices, shader);
         }
 
-        public void Move(Vector3 delta)
+        public void Move(Vector2 delta)
         {
-            Position += new Vector3(delta);
+            Position += delta; // Move the entity by the delta
         }
 
-        public void Resize(Vector3 newSize)
+        public void Resize(Vector2 newSize)
         {
-            Size = newSize;
+            Size = newSize; // Resize the entity
         }
 
         public void Render(Shader shader)
         {
             shader.Use();
 
-            Matrix4 model = Matrix4.CreateScale(Size) * Matrix4.CreateTranslation(Position);
+            // Create a 2D transformation matrix
+            Matrix4 model = Matrix4.CreateScale(new Vector3(Size.X, Size.Y, 1)) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
 
+            // Set the shader color
             shader.SetShaderColor(this.Color);
 
+            // Draw the mesh with the 2D transformation matrix
             Mesh.Draw(model);
         }
 
+
         public bool CollidesWith(Entity other)
         {
-            Vector3 aMin = Position - Size * 0.5f;
-            Vector3 aMax = Position + Size * 0.5f;
+            Vector2 aMin = Position - Size * 0.5f;
+            Vector2 aMax = Position + Size * 0.5f;
 
-            Vector3 bMin = other.Position - other.Size * 0.5f;
-            Vector3 bMax = other.Position + other.Size * 0.5f;
+            Vector2 bMin = other.Position - other.Size * 0.5f;
+            Vector2 bMax = other.Position + other.Size * 0.5f;
 
             return
                 aMin.X <= bMax.X && aMax.X >= bMin.X &&
                 aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
         }
 
-        public static Vector3 CollisionResolve(Entity a, Entity b)
+        public static Vector2 CollisionResolve(Entity a, Entity b)
         {
-            Vector3 aMin = a.Position - a.Size * 0.5f;
-            Vector3 aMax = a.Position + a.Size * 0.5f;
+            Vector2 aMin = a.Position - a.Size * 0.5f;
+            Vector2 aMax = a.Position + a.Size * 0.5f;
 
-            Vector3 bMin = b.Position - b.Size * 0.5f;
-            Vector3 bMax = b.Position + b.Size * 0.5f;
+            Vector2 bMin = b.Position - b.Size * 0.5f;
+            Vector2 bMax = b.Position + b.Size * 0.5f;
 
             float dx = MathF.Min(aMax.X - bMin.X, bMax.X - aMin.X);
             float dy = MathF.Min(aMax.Y - bMin.Y, bMax.Y - aMin.Y);
 
-            // Choose smallest axis to resolve on
+            // Choose smallest axis to resolve on (2D)
             if (dx < dy)
-                return new Vector3(a.Position.X < b.Position.X ? -dx : dx, 0, 0);
+                return new Vector2(a.Position.X < b.Position.X ? -dx : dx, 0);
             else
-                return new Vector3(0, a.Position.Y < b.Position.Y ? -dy : dy, 0);
+                return new Vector2(0, a.Position.Y < b.Position.Y ? -dy : dy);
         }
 
         public void Cleanup()

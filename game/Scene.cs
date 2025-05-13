@@ -28,17 +28,17 @@ namespace UntitledEngine
             shader = new Shader();
 
             // Paddles
-            paddle1 = new Entity((0.1f, 0.65f, 1f), (-0.85f, 0.0f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity((0.1f, 0.65f, 1f), (0.85f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle1 = new Entity((0.1f, 0.65f), (-0.85f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity((0.1f, 0.65f), (0.85f, 0.0f), Vector4.One, shader);
 
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
             // stopping movement once that restriction is met
-            blocker1 = new Entity((5f, 0.2f, 1f), (0.0f, 1.1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
-            blocker2 = new Entity((5f, 0.2f, 1f), (0.0f, -1.1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
+            blocker1 = new Entity((5f, 0.2f), (0.0f, 1.1f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
+            blocker2 = new Entity((5f, 0.2f), (0.0f, -1.1f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
 
             // Ball
-            ball = new Entity((0.1f, 0.1f, 0.1f), (0.0f, 0.0f, 0.0f), Vector4.One, shader);
+            ball = new Entity((0.1f, 0.1f), (0.0f, 0.0f), Vector4.One, shader);
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -55,14 +55,14 @@ namespace UntitledEngine
             float moveSpeed = 1.3f * deltaTime;
 
             if (keyboardState.IsKeyDown(Keys.W))
-                paddle1.Move((0f, moveSpeed, 0f));
+                paddle1.Move((0f, moveSpeed));
             if (keyboardState.IsKeyDown(Keys.S))
-                paddle1.Move((0f, -moveSpeed, 0f));
+                paddle1.Move((0f, -moveSpeed));
             // You would do this for 8-Directional movement.
            // if (keyboardState.IsKeyDown(Keys.A))
-               // player.Move(new Vector3(-moveSpeed, 0f, 0f));
+               // player.Move(new Vector3(-moveSpeed, 0f));
            // if (keyboardState.IsKeyDown(Keys.D))
-               // player.Move(new Vector3(moveSpeed, 0f, 0f));
+               // player.Move(new Vector3(moveSpeed, 0f));
 
             // Resolve collisions against everything
             foreach (var entity in collidables)
