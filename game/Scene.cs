@@ -12,7 +12,10 @@ namespace UntitledEngine
         private List<Entity> collidables;
 
         // Game-specific stuff
-        public Vector2 ballMoveSpeed = new Vector2(2f, 0.5f);
+        public Vector2 ballMoveSpeed = new Vector2(1f, 1f);
+        public float maxBallSpeed = 3f;
+        public float speedIncrease = 1.025f;
+
         // Game Objects
         private Entity paddle1;
         private Entity paddle2;
@@ -28,20 +31,20 @@ namespace UntitledEngine
             shader = new Shader();
 
             // Paddles
-            paddle1 = new Entity((0.1f, 0.65f), (-0.85f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity((0.1f, 0.65f), (0.85f, 0.0f), Vector4.One, shader);
+            paddle1 = new Entity((0.1f, 0.3f), (-0.85f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity((0.1f, 0.3f), (0.85f, 0.0f), Vector4.One, shader);
 
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
             // stopping movement once that restriction is met
-            blocker1 = new Entity((5f, 0.2f), (0.0f, 1.1f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
-            blocker2 = new Entity((5f, 0.2f), (0.0f, -1.1f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
+            blocker1 = new Entity((5f, 0.2f), (0f, 1.1f), (0f, 0f, 0f, 0f), shader);
+            blocker2 = new Entity((5f, 0.2f), (0f, -1.1f), (0f, 0f, 0f, 0f), shader);
 
-            sideCollider1 = new Entity((0.2f, 5f), (1.1f, 0.0f), (0.0f, 0.0f, 1.0f, 1.0f), shader);
-            sideCollider2 = new Entity((0.2f, 5f), (-1.1f, 0.0f), (0.0f, 0.0f, 1.0f, 1.0f), shader);
+            sideCollider1 = new Entity((0.2f, 5f), (1f, 0f), (0f, 0f, 0f, 0f), shader);
+            sideCollider2 = new Entity((0.2f, 5f), (-1f, 0f), (0f, 0f, 0f, 0f), shader);
 
             // Ball
-            ball = new Entity((0.1f, 0.1f), (0.0f, 0.0f), Vector4.One, shader);
+            ball = new Entity((0.05f, 0.05f), (0.0f, 0.0f), Vector4.One, shader);
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -60,31 +63,59 @@ namespace UntitledEngine
         {
             float moveSpeed = 1.3f;
 
-            paddle1.Velocity = Vector2.Zero;
-
             // p1
             if (keyboardState.IsKeyDown(Keys.W))
                 paddle1.Move(new Vector2(0f, moveSpeed));
             if (keyboardState.IsKeyDown(Keys.S))
                 paddle1.Move(new Vector2(0f, -moveSpeed));
 
-            //p2
+            // p2
             if (keyboardState.IsKeyDown(Keys.Up))
                 paddle2.Move(new Vector2(0f, moveSpeed));
             if (keyboardState.IsKeyDown(Keys.Down))
                 paddle2.Move(new Vector2(0f, -moveSpeed));
 
-            // Resolve collisions against everything
-            foreach (var entity in collidables)
+            // Handle collisions
+            foreach (var entity in collidables) // This goes through all the entities in collidables so it only applies to them
             {
-                if (entity != paddle1 && paddle1.CollidesWith(entity)) // Probably going to make the self-check automatic at some point
-                {
-                    Vector2 resolution = Entity.CollisionResolve(paddle1, entity);
-                    paddle1.Position += resolution;
-                }
+                if (entity != paddle1)
+                    paddle1.HandleCollisionWith(entity);
             }
 
+            foreach (var entity in collidables)
+            {
+                if (entity != paddle2)
+                    paddle2.HandleCollisionWith(entity);
+            }
         }
+
+
+        public void Update(float deltaTime)
+        {
+            // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
+            // scale any time-dependent calculations (e.g., movement) by deltaTime.
+
+            ball.Move(ballMoveSpeed);
+
+            // Handle collision
+            foreach (var entity in collidables)
+            {
+                if (entity == ball) continue;
+
+                Vector2 resolution = ball.HandleCollisionWith(entity);
+
+                if (Math.Abs(resolution.X) > 0)
+                    ballMoveSpeed.X *= -1 * speedIncrease;
+
+                if (Math.Abs(resolution.Y) > 0)
+                    ballMoveSpeed.Y *= -1 * speedIncrease;
+
+                // Clamp speed
+                if (ballMoveSpeed.Length > maxBallSpeed)
+                    ballMoveSpeed = Vector2.Normalize(ballMoveSpeed) * maxBallSpeed;
+            }
+        }
+
 
         public void Render()
         {
@@ -95,41 +126,7 @@ namespace UntitledEngine
             blocker1.Render(shader);
             blocker2.Render(shader);
             sideCollider1.Render(shader);
-
-        }
-
-        public void Update(float deltaTime)
-        {
-            // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
-            // scale any time-dependent calculations (e.g., movement) by deltaTime.
-
-            ball.Move(ballMoveSpeed);
-            Console.WriteLine(ball.Position);
-
-            // Resolve collisions against everything
-            foreach (var entity in collidables)
-            {
-                if (entity != ball && ball.CollidesWith(entity))
-                {
-                    // Get the direction of the collision
-                    Vector2 resolution = Entity.CollisionResolve(ball, entity);
-
-                    ball.Move(resolution); // Move out of overlap
-
-                    bool isVertical = Math.Abs(ball.Position.X - entity.Position.X) > Math.Abs(ball.Position.Y - entity.Position.Y);
-
-                    if (isVertical)
-                    {
-                        ballMoveSpeed.X *= -1; // Bounce horizontally
-                        ballMoveSpeed.Y *= -1;
-                    }
-                    else
-                    {
-                        ballMoveSpeed.Y *= -1; // Bounce vertically
-                        ballMoveSpeed.X *= -1;
-                    }
-                }
-            }
+            sideCollider2.Render(shader);
         }
 
         public void Cleanup()
@@ -144,6 +141,7 @@ namespace UntitledEngine
             blocker1.Cleanup();
             blocker2.Cleanup();
             sideCollider1.Cleanup();
+            sideCollider2.Cleanup();
 
             // Shader cleanup
             shader.Cleanup();

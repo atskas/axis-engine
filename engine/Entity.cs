@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using System.Runtime.Versioning;
 
 namespace UntitledEngine
 {
@@ -12,6 +13,7 @@ namespace UntitledEngine
         public Vector4 Color { get; set; }
 
         public Vector2 Velocity { get; set; }
+        private Vector2 prevPosition;
 
         private Shader shader;
 
@@ -22,6 +24,7 @@ namespace UntitledEngine
             this.Color = color;
             this.shader = shader;
             this.Mesh = CreateMesh(shader);
+            this.prevPosition = position; // Previous position
             this.Velocity = Vector2.Zero; // Init velocity
         }
 
@@ -42,7 +45,10 @@ namespace UntitledEngine
 
         public void Move(Vector2 velocity)
         {
+            prevPosition = Position;
             Position += velocity * Engine.deltaTime; // Move the entity by the delta
+            this.Velocity = (Position - prevPosition) / Engine.deltaTime;
+            Console.WriteLine(this.Velocity);
         }
 
         public void Resize(Vector2 newSize)
@@ -76,6 +82,16 @@ namespace UntitledEngine
             return
                 aMin.X <= bMax.X && aMax.X >= bMin.X &&
                 aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
+        }
+
+        public Vector2 HandleCollisionWith(Entity other)
+        {
+            if (!CollidesWith(other))
+                return Vector2.Zero;
+
+            Vector2 resolution = CollisionResolve(this, other);
+            Position += resolution;
+            return resolution;
         }
 
         public static Vector2 CollisionResolve(Entity a, Entity b)
