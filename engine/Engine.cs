@@ -47,9 +47,10 @@ namespace UntitledEngine
         {
             float deltaTime = (float)args.Time;
 
+            KeyboardState keyboardState = KeyboardState;
+
             scene.Update(deltaTime);
 
-            KeyboardState keyboardState = KeyboardState;
             scene.ProcessInput(keyboardState, deltaTime);
         }
 
