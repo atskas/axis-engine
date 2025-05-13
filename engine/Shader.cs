@@ -71,7 +71,7 @@ namespace UntitledEngine
 
         }
 
-        public void SetShapeColor(Vector4 color)
+        public void SetShaderColor(Vector4 color)
         {
             int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
             if (colorLocation == -1)

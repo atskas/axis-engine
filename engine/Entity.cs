@@ -37,7 +37,7 @@ namespace UntitledEngine
 
         public void Move(Vector3 delta)
         {
-            Position += delta;
+            Position += new Vector3(delta);
         }
 
         public void Resize(Vector3 newSize)
@@ -47,8 +47,12 @@ namespace UntitledEngine
 
         public void Render(Shader shader)
         {
-            shader.SetShapeColor(Color);
+            shader.Use();
+
             Matrix4 model = Matrix4.CreateScale(Size) * Matrix4.CreateTranslation(Position);
+
+            shader.SetShaderColor(this.Color);
+
             Mesh.Draw(model);
         }
 

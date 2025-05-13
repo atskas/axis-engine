@@ -7,8 +7,7 @@ namespace UntitledEngine
 {
     internal class Scene
     {
-        private Shader shader;
-        private Shader shader2; // Example shader to show that you can use separate shaders for meshes
+        private Shader shader; // You can also use separate shaders for objects
 
         // Game Objects
         private Entity paddle1;
@@ -27,21 +26,19 @@ namespace UntitledEngine
         {
             // Set up scene objects
             shader = new Shader();
-            shader2 = new Shader();
 
             // Paddles
-            paddle1 = new Entity((0.1f, 1.1f, 1f), (-0.85f, 0.0f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity((0.1f, 1.1f, 1f), (0.85f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle1 = new Entity((0.1f, 0.65f, 1f), (-0.85f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity((0.1f, 0.65f, 1f), (0.85f, 0.0f, 0.0f), Vector4.One, shader);
 
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
             // stopping movement once that restriction is met
-            blocker1 = new Entity((5f, 0.2f, 1f), (0.0f, 1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
-
-            blocker2 = new Entity((5f, 0.2f, 1f), (0.0f, -1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
+            blocker1 = new Entity((5f, 0.2f, 1f), (0.0f, 1.1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
+            blocker2 = new Entity((5f, 0.2f, 1f), (0.0f, -1.1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
 
             // Ball
-            ball = new Entity((0.1f, 0.1f, 0.1f), (0.0f, 0.0f, 0.0f), Vector4.One, shader2);
+            ball = new Entity((0.1f, 0.1f, 0.1f), (0.0f, 0.0f, 0.0f), Vector4.One, shader);
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -55,12 +52,12 @@ namespace UntitledEngine
         // Input handling
         public void ProcessInput(KeyboardState keyboardState, float deltaTime)
         {
-            float moveSpeed = 1.2f * deltaTime;
+            float moveSpeed = 1.3f * deltaTime;
 
             if (keyboardState.IsKeyDown(Keys.W))
-                paddle1.Move(new Vector3(0f, moveSpeed, 0f));
+                paddle1.Move((0f, moveSpeed, 0f));
             if (keyboardState.IsKeyDown(Keys.S))
-                paddle1.Move(new Vector3(0f, -moveSpeed, 0f));
+                paddle1.Move((0f, -moveSpeed, 0f));
             // You would do this for 8-Directional movement.
            // if (keyboardState.IsKeyDown(Keys.A))
                // player.Move(new Vector3(-moveSpeed, 0f, 0f));
@@ -80,14 +77,10 @@ namespace UntitledEngine
 
         public void Render()
         {
-            // Set colors and draw game objects onto the screen
-            shader.SetShapeColor(ball.Color);
+            // Render game objects onto the screen
             paddle1.Render(shader);
-
             paddle2.Render(shader);
-
             ball.Render(shader);
-
             blocker1.Render(shader);
             blocker2.Render(shader);
 
@@ -113,7 +106,6 @@ namespace UntitledEngine
 
             // Shader cleanup
             shader.Cleanup();
-            shader2.Cleanup();
         }
     }
 }
