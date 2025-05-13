@@ -14,11 +14,11 @@ namespace UntitledEngine
         private Entity paddle1;
         private Entity paddle2;
 
-        // Walls, for collision testing purposes / Collision testing scene
-        private Entity wallTop;
-        private Entity wallBottom;
-
         private Entity ball;
+
+        // Blockers
+        private Entity blocker1;
+        private Entity blocker2;
 
         // Collidable objects
         private List<Entity> collidables;
@@ -30,25 +30,25 @@ namespace UntitledEngine
             shader2 = new Shader();
 
             // Paddles
-            paddle1 = new Entity((0.1f, 1.1f, 1f), (-0.45f, 0.0f, 0.0f), Vector4.One, shader);
-            paddle2 = new Entity((0.1f, 1.1f, 1f), (0.45f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle1 = new Entity((0.1f, 1.1f, 1f), (-0.85f, 0.0f, 0.0f), Vector4.One, shader);
+            paddle2 = new Entity((0.1f, 1.1f, 1f), (0.85f, 0.0f, 0.0f), Vector4.One, shader);
 
-            // Horizontal walls / Collision testing scene
-            wallTop = new Entity((1.0f, 0.1f, 1f), (0f, 0.55f, 0f), Vector4.One, shader);
-            wallBottom = new Entity((1.0f, 0.1f, 1f), (0f, -0.55f, 0f), Vector4.One, shader);
+            // Walls (to avoid paddles from going out of screen)
+            // You could also do this by setting a restriction to the Y position and
+            // stopping movement once that restriction is met
+            blocker1 = new Entity((5f, 0.2f, 1f), (0.0f, 1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
 
-            // ^ These two form a box / Collision testing scene / Revert changes for PONG
+            blocker2 = new Entity((5f, 0.2f, 1f), (0.0f, -1f, 0.0f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
 
-            // Ball (currently a player with 8-dir movement) / Collision testing scene
+            // Ball
             ball = new Entity((0.1f, 0.1f, 0.1f), (0.0f, 0.0f, 0.0f), Vector4.One, shader2);
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
             {
-                paddle1,
                 paddle2,
-                wallTop,
-                wallBottom,
+                blocker1,
+                blocker2
             };
         }
 
@@ -58,20 +58,21 @@ namespace UntitledEngine
             float moveSpeed = 1.2f * deltaTime;
 
             if (keyboardState.IsKeyDown(Keys.W))
-                ball.Move(new Vector3(0f, moveSpeed, 0f));
+                paddle1.Move(new Vector3(0f, moveSpeed, 0f));
             if (keyboardState.IsKeyDown(Keys.S))
-                ball.Move(new Vector3(0f, -moveSpeed, 0f));
-            if (keyboardState.IsKeyDown(Keys.A))
-                ball.Move(new Vector3(-moveSpeed, 0f, 0f));
-            if (keyboardState.IsKeyDown(Keys.D))
-                ball.Move(new Vector3(moveSpeed, 0f, 0f));
+                paddle1.Move(new Vector3(0f, -moveSpeed, 0f));
+            // You would do this for 8-Directional movement.
+           // if (keyboardState.IsKeyDown(Keys.A))
+               // player.Move(new Vector3(-moveSpeed, 0f, 0f));
+           // if (keyboardState.IsKeyDown(Keys.D))
+               // player.Move(new Vector3(moveSpeed, 0f, 0f));
 
             // Resolve collisions against everything
             foreach (var entity in collidables)
             {
-                if (ball.CollidesWith(entity))
+                if (paddle1.CollidesWith(entity))
                 {
-                    ball.Move(Entity.CollisionResolve(ball, entity));
+                    paddle1.Move(Entity.CollisionResolve(paddle1, entity));
                 }
             }
 
@@ -80,21 +81,16 @@ namespace UntitledEngine
         public void Render()
         {
             // Set colors and draw game objects onto the screen
-            shader.SetShapeColor(paddle1.Color);
+            shader.SetShapeColor(ball.Color);
             paddle1.Render(shader);
 
-            shader.SetShapeColor(paddle2.Color);
             paddle2.Render(shader);
 
-            // Render walls (top and bottom) / Collision testing scene
-            shader.SetShapeColor(wallTop.Color);
-            wallTop.Render(shader);
-
-            shader.SetShapeColor(wallBottom.Color);
-            wallBottom.Render(shader);
-
-            shader.SetShapeColor(ball.Color);
             ball.Render(shader);
+
+            blocker1.Render(shader);
+            blocker2.Render(shader);
+
         }
 
         public void Update(float deltaTime)
@@ -108,9 +104,12 @@ namespace UntitledEngine
             // Mesh cleanup
             paddle1.Cleanup();
             paddle2.Cleanup();
-            wallTop.Cleanup(); // Collision testing scene
-            wallBottom.Cleanup(); // Collision testing scene
             ball.Cleanup();
+
+
+            // Blocker cleanup
+            blocker1.Cleanup();
+            blocker2.Cleanup();
 
             // Shader cleanup
             shader.Cleanup();
