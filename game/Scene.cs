@@ -90,14 +90,9 @@ namespace UntitledEngine
         }
 
 
-        public void Update(float deltaTime)
+        // [GAME-SPECIFIC METHOD] You can handle normal collisions using Entity.HandleCollisionWith(...);
+        private void HandleBallCollision()
         {
-            // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
-            // scale any time-dependent calculations (e.g., movement) by deltaTime.
-
-            ball.Move(ballMoveSpeed);
-
-            // Handle collision
             foreach (var entity in collidables)
             {
                 if (entity == ball) continue;
@@ -116,6 +111,19 @@ namespace UntitledEngine
             }
         }
 
+
+        public void Update(float deltaTime)
+        {
+            // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
+            // scale any time-dependent calculations (e.g., movement) by deltaTime.
+
+            ball.Move(ballMoveSpeed);
+
+            // Handle collision
+            HandleBallCollision();
+            // You can implement custom collision handling logic on top of the base HandleCollisionWith method.
+
+        }
 
         public void Render()
         {
