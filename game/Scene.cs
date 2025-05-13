@@ -1,34 +1,26 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
 
 namespace UntitledEngine
 {
     internal class Scene
     {
-        private Shader shader; // You can also use separate shaders for objects
-
-        // Game Objects
-        private Entity paddle1;
-        private Entity paddle2;
-
-        private Entity ball;
-
-        // Blockers (primarily used for making the ball bounce from the ceiling and limiting paddle Y)
-        private Entity blocker1;
-        private Entity blocker2;
-
-        // Side colliders (primarily used for detecting when a paddle misses the ball)
-        private Entity sideCollider1;
-        private Entity sideCollider2;
+        private Shader shader;
 
         // Collidable objects
         private List<Entity> collidables;
 
-        // Game stuff (Not Required)
-        public Vector2 ballMoveSpeed = new Vector2(1f, 0.5f);
+        // Game-specific stuff
+        public Vector2 ballMoveSpeed = new Vector2(2f, 0.5f);
+        // Game Objects
+        private Entity paddle1;
+        private Entity paddle2;
+        private Entity ball;
+        private Entity blocker1;    // Blockers (primarily used for making the ball bounce from the ceiling and limiting paddle Y)
+        private Entity blocker2;
+        private Entity sideCollider1;   // Side colliders (primarily used for detecting when a paddle misses the ball)
+        private Entity sideCollider2;
 
         public Scene()
         {
@@ -46,6 +38,7 @@ namespace UntitledEngine
             blocker2 = new Entity((5f, 0.2f), (0.0f, -1.1f), (0.0f, 0.0f, 0.0f, 0.0f), shader);
 
             sideCollider1 = new Entity((0.2f, 5f), (1.1f, 0.0f), (0.0f, 0.0f, 1.0f, 1.0f), shader);
+            sideCollider2 = new Entity((0.2f, 5f), (-1.1f, 0.0f), (0.0f, 0.0f, 1.0f, 1.0f), shader);
 
             // Ball
             ball = new Entity((0.1f, 0.1f), (0.0f, 0.0f), Vector4.One, shader);
@@ -58,37 +51,36 @@ namespace UntitledEngine
                 blocker1,
                 blocker2,
                 sideCollider1,
+                sideCollider2,
             };
         }
 
         // Input handling
-        public void ProcessInput(KeyboardState keyboardState, float deltaTime)
+        public void ProcessInput(KeyboardState keyboardState)
         {
-            float moveSpeed = 1.3f * deltaTime;
+            float moveSpeed = 1.3f;
+
+            paddle1.Velocity = Vector2.Zero;
 
             // p1
             if (keyboardState.IsKeyDown(Keys.W))
-                paddle1.Move((0f, moveSpeed));
+                paddle1.Move(new Vector2(0f, moveSpeed));
             if (keyboardState.IsKeyDown(Keys.S))
-                paddle1.Move((0f, -moveSpeed));
-            // You would do this for 8-Directional movement.
-            // if (keyboardState.IsKeyDown(Keys.A))
-            // player.Move(new Vector3(-moveSpeed, 0f));
-            // if (keyboardState.IsKeyDown(Keys.D))
-            // player.Move(new Vector3(moveSpeed, 0f));
+                paddle1.Move(new Vector2(0f, -moveSpeed));
 
             //p2
             if (keyboardState.IsKeyDown(Keys.Up))
-                paddle2.Move((0f, moveSpeed));
+                paddle2.Move(new Vector2(0f, moveSpeed));
             if (keyboardState.IsKeyDown(Keys.Down))
-                paddle2.Move((0f, -moveSpeed));
+                paddle2.Move(new Vector2(0f, -moveSpeed));
 
             // Resolve collisions against everything
             foreach (var entity in collidables)
             {
                 if (entity != paddle1 && paddle1.CollidesWith(entity)) // Probably going to make the self-check automatic at some point
                 {
-                    paddle1.Move(Entity.CollisionResolve(paddle1, entity));
+                    Vector2 resolution = Entity.CollisionResolve(paddle1, entity);
+                    paddle1.Position += resolution;
                 }
             }
 
@@ -111,7 +103,7 @@ namespace UntitledEngine
             // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
             // scale any time-dependent calculations (e.g., movement) by deltaTime.
 
-            ball.Move(ballMoveSpeed * deltaTime);
+            ball.Move(ballMoveSpeed);
             Console.WriteLine(ball.Position);
 
             // Resolve collisions against everything

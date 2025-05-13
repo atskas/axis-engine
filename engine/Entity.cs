@@ -6,9 +6,13 @@ namespace UntitledEngine
     internal class Entity
     {
         private Mesh Mesh;
+
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public Vector4 Color { get; set; }
+
+        public Vector2 Velocity { get; set; }
+
         private Shader shader;
 
         public Entity(Vector2 size, Vector2 position, Vector4 color, Shader shader)
@@ -18,6 +22,7 @@ namespace UntitledEngine
             this.Color = color;
             this.shader = shader;
             this.Mesh = CreateMesh(shader);
+            this.Velocity = Vector2.Zero; // Init velocity
         }
 
         // Creates a rectangle
@@ -35,9 +40,9 @@ namespace UntitledEngine
             return new Mesh(vertices, indices, shader);
         }
 
-        public void Move(Vector2 delta)
+        public void Move(Vector2 velocity)
         {
-            Position += delta; // Move the entity by the delta
+            Position += velocity * Engine.deltaTime; // Move the entity by the delta
         }
 
         public void Resize(Vector2 newSize)

@@ -11,6 +11,8 @@ namespace UntitledEngine
     public class Engine : GameWindow
     {
 
+        public static float deltaTime; // Make dt global
+
         private Scene scene;
 
         // Constructor to set up window size and title
@@ -45,13 +47,13 @@ namespace UntitledEngine
         // Called every frame
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            float deltaTime = (float)args.Time;
+            deltaTime = (float)args.Time;
 
             KeyboardState keyboardState = KeyboardState;
 
             scene.Update(deltaTime);
 
-            scene.ProcessInput(keyboardState, deltaTime);
+            scene.ProcessInput(keyboardState);
         }
 
         // Called every frame to render the content to the screen
