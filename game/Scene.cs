@@ -13,7 +13,8 @@ namespace UntitledEngine
 
         // Game-specific stuff
         public Vector2 ballMoveSpeed = new Vector2(1f, 1f);
-        public float maxBallSpeed = 3f;
+        public Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
+        public float maxBallSpeed = 1.5f;
         public float speedIncrease = 1.025f;
 
         // Game Objects
@@ -61,19 +62,17 @@ namespace UntitledEngine
         // Input handling
         public void ProcessInput(KeyboardState keyboardState)
         {
-            float moveSpeed = 1.5f;
-
             // p1
             if (keyboardState.IsKeyDown(Keys.W))
-                paddle1.Move(new Vector2(0f, moveSpeed));
+                paddle1.Move(playerMoveSpeed);
             if (keyboardState.IsKeyDown(Keys.S))
-                paddle1.Move(new Vector2(0f, -moveSpeed));
+                paddle1.Move(-playerMoveSpeed);
 
             // p2
             if (keyboardState.IsKeyDown(Keys.Up))
-                paddle2.Move(new Vector2(0f, moveSpeed));
+                paddle2.Move(playerMoveSpeed);
             if (keyboardState.IsKeyDown(Keys.Down))
-                paddle2.Move(new Vector2(0f, -moveSpeed));
+                paddle2.Move(-playerMoveSpeed);
 
             // Handle collisions
             foreach (var entity in collidables) // This goes through all the entities in collidables so it only applies to them
@@ -100,12 +99,16 @@ namespace UntitledEngine
                 Vector2 resolution = ball.HandleCollisionWith(entity);
 
                 if (Math.Abs(resolution.X) > 0)
+                {
                     ballMoveSpeed.X *= -1 * speedIncrease;
+                }
 
                 if (Math.Abs(resolution.Y) > 0)
+                {
                     ballMoveSpeed.Y *= -1 * speedIncrease;
+                }
 
-                // Clamp speed
+                // Clamp ball speed
                 if (ballMoveSpeed.Length > maxBallSpeed)
                     ballMoveSpeed = Vector2.Normalize(ballMoveSpeed) * maxBallSpeed;
             }
