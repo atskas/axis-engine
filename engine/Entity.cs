@@ -48,7 +48,6 @@ namespace UntitledEngine
             prevPosition = Position;
             Position += velocity * Engine.deltaTime; // Move the entity by the delta
             this.Velocity = (Position - prevPosition) / Engine.deltaTime;
-            Console.WriteLine(this.Velocity);
         }
 
         public void Resize(Vector2 newSize)

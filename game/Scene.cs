@@ -26,6 +26,7 @@ namespace UntitledEngine
         private Entity blocker2;
         private Entity sideCollider1;   // Side colliders (primarily used for detecting when a paddle misses the ball)
         private Entity sideCollider2;
+        private Entity middlePoint;
 
         public Scene()
         {
@@ -44,6 +45,9 @@ namespace UntitledEngine
 
             sideCollider1 = new Entity((0.2f, 5f), (1f, 0f), (0f, 0f, 0f, 0f), shader);
             sideCollider2 = new Entity((0.2f, 5f), (-1f, 0f), (0f, 0f, 0f, 0f), shader);
+
+            // Temporary
+            middlePoint = new Entity((0.5f, 0.5f), (0f, 0f), (0.05f, 0.05f, 0.05f, 0.05f), shader);
 
             // Ball
             ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
@@ -177,6 +181,8 @@ namespace UntitledEngine
         public void Render()
         {
             // Render game objects onto the screen
+            middlePoint.Render(shader);
+
             paddle1.Render(shader);
             paddle2.Render(shader);
             ball.Render(shader);
@@ -199,6 +205,7 @@ namespace UntitledEngine
             blocker2.Cleanup();
             sideCollider1.Cleanup();
             sideCollider2.Cleanup();
+            middlePoint.Cleanup();
 
             // Shader cleanup
             shader.Cleanup();
