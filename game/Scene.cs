@@ -78,12 +78,6 @@ namespace UntitledEngine
             if (keyboardState.IsKeyDown(Keys.S))
                 paddle1.Move(-playerMoveSpeed);
 
-            // p2
-            // if (keyboardState.IsKeyDown(Keys.Up))
-            // paddle2.Move(playerMoveSpeed);
-            // if (keyboardState.IsKeyDown(Keys.Down))
-            // paddle2.Move(-playerMoveSpeed);
-
             // Handle collisions
             foreach (var entity in collidables) // This goes through all the entities in collidables so it only applies to them
             {
