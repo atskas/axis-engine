@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using UntitledEngine.engine.entities;
 
 namespace UntitledEngine
 {
@@ -28,6 +29,8 @@ namespace UntitledEngine
         private Entity sideCollider2;
         private Entity middlePoint;
 
+        private BaseEntity BaseEntity;
+
         public Scene()
         {
             // Set up scene objects
@@ -51,6 +54,8 @@ namespace UntitledEngine
 
             // Ball
             ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
+
+            BaseEntity = new BaseEntity();
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -165,6 +170,8 @@ namespace UntitledEngine
 
             ball.Move(ballMoveSpeed);
             HandleBallCollision();
+
+            BaseEntity.Think(deltaTime);
 
             // Paddle 2 will try to follow the ball's Y position (Simple AI)
             if (ball.Velocity.X > 0) {
