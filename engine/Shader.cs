@@ -94,10 +94,6 @@ namespace UntitledEngine
             {
                 Console.WriteLine($"Shader compilation failed: {infoLog}");
             }
-            else
-            {
-                Console.WriteLine("Shader compiled successfully!");
-            }
         }
 
         private void CheckProgramLink(int program)
@@ -106,10 +102,6 @@ namespace UntitledEngine
             if (!string.IsNullOrEmpty(infoLog))
             {
                 Console.WriteLine($"Program linking error: {infoLog}");
-            }
-            else
-            {
-                Console.WriteLine("Program linked successfully!");
             }
         }
     }
