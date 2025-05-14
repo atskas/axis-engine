@@ -99,6 +99,13 @@ namespace UntitledEngine
 
                 Vector2 resolution = ball.HandleCollisionWith(entity);
 
+                if ((entity == sideCollider1 || entity == sideCollider2) &&
+                (Math.Abs(resolution.X) > 0 || Math.Abs(resolution.Y) > 0))
+                {
+                    Lose(entity);
+                    return;
+                }
+
                 if (Math.Abs(resolution.X) > 0)
                 {
                     ballMoveSpeed.X *= -1 * speedIncrease;
@@ -113,6 +120,24 @@ namespace UntitledEngine
                 if (ballMoveSpeed.Length > maxBallSpeed)
                     ballMoveSpeed = Vector2.Normalize(ballMoveSpeed) * maxBallSpeed;
             }
+        }
+
+        // [GAME-SPECIFIC METHOD] To handle loss
+        private void Lose(Entity side)
+        {
+            if (launchTimer >= 0f)
+                return;
+
+            // Determine who lost
+            string loser = side == sideCollider1 ? "Right Player (P2)" : "Left Player (P1)";
+            Console.WriteLine($"{loser} missed the ball!");
+
+            // Reset ball position and speed
+            ball.Position = Vector2.Zero;
+            ballMoveSpeed = new Vector2(1f, 1f); // reset to default
+
+            launchTimer = 2.0f;
+            // Will soon implement scores once I add text rendering
         }
 
         public void Update(float deltaTime)
