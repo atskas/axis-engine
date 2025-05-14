@@ -163,10 +163,12 @@ namespace UntitledEngine
             HandleBallCollision();
 
             // Paddle 2 will try to follow the ball's Y position (Simple AI)
-            if (ball.Position.Y > paddle2.Position.Y)
-                paddle2.Move(playerMoveSpeed);
-            else if (ball.Position.Y < paddle2.Position.Y)
-                paddle2.Move(-playerMoveSpeed);
+            if (ball.Velocity.X > 0) {
+                if (ball.Position.Y > paddle2.Position.Y)
+                    paddle2.Move(playerMoveSpeed);
+                else if (ball.Position.Y < paddle2.Position.Y)
+                    paddle2.Move(-playerMoveSpeed);
+            }
 
             // You can implement custom collision handling logic on top of the base HandleCollisionWith method.
 
