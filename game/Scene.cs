@@ -12,10 +12,11 @@ namespace UntitledEngine
         private List<Entity> collidables;
 
         // Game-specific stuff
-        public Vector2 ballMoveSpeed = new Vector2(1f, 1f);
-        public Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
-        public float maxBallSpeed = 1.5f;
-        public float speedIncrease = 1.025f;
+        private Vector2 ballMoveSpeed = new Vector2(0f, 0f);
+        private Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
+        private float maxBallSpeed = 1.5f;
+        private float speedIncrease = 1.025f;
+        private float launchTimer = 2.0f;
 
         // Game Objects
         private Entity paddle1;
@@ -69,10 +70,10 @@ namespace UntitledEngine
                 paddle1.Move(-playerMoveSpeed);
 
             // p2
-            if (keyboardState.IsKeyDown(Keys.Up))
-                paddle2.Move(playerMoveSpeed);
-            if (keyboardState.IsKeyDown(Keys.Down))
-                paddle2.Move(-playerMoveSpeed);
+            // if (keyboardState.IsKeyDown(Keys.Up))
+            // paddle2.Move(playerMoveSpeed);
+            // if (keyboardState.IsKeyDown(Keys.Down))
+            // paddle2.Move(-playerMoveSpeed);
 
             // Handle collisions
             foreach (var entity in collidables) // This goes through all the entities in collidables so it only applies to them
@@ -114,16 +115,34 @@ namespace UntitledEngine
             }
         }
 
-
         public void Update(float deltaTime)
         {
             // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
             // scale any time-dependent calculations (e.g., movement) by deltaTime.
 
-            ball.Move(ballMoveSpeed);
+            if (launchTimer >= 0f)
+            {
+                launchTimer -= deltaTime;
 
-            // Handle collision
+                if (launchTimer <= 0f)
+                {
+                    // Relaunch ball
+                    launchTimer = -1f;
+                    ballMoveSpeed = new Vector2(1f, 1f);
+                }
+
+                return; // Don't update ball movement or collisions while waiting
+            }
+
+            ball.Move(ballMoveSpeed);
             HandleBallCollision();
+
+            // Paddle 2 will try to follow the ball's Y position (Simple AI)
+            if (ball.Position.Y > paddle2.Position.Y)
+                paddle2.Move(playerMoveSpeed);
+            else if (ball.Position.Y < paddle2.Position.Y)
+                paddle2.Move(-playerMoveSpeed);
+
             // You can implement custom collision handling logic on top of the base HandleCollisionWith method.
 
         }
