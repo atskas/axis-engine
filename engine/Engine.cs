@@ -2,71 +2,80 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
-using System;
-using System.Diagnostics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System;
 
 namespace UntitledEngine
 {
     public class Engine : GameWindow
     {
-
-        public static float deltaTime; // Make dt global
+        // Global projection matrix and delta time accessible throughout the engine
+        public static Matrix4 Projection;
+        public static float deltaTime { get; private set; }
 
         private Scene scene;
 
-        // Constructor to set up window size and title
+        // Constructor: Initializes window with given width, height, and title
         public Engine(int width, int height, string title)
-            : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
+            : base(GameWindowSettings.Default,
+                   new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
         {
+            // Initialize the orthographic projection matrix with origin centered
+            Projection = Matrix4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
         }
 
-        // Called once the window is loaded
+        // Called once when the window finishes loading
         protected override void OnLoad()
         {
-            // Set the background clear color
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            GL.ClearColor(0f, 0f, 0f, 1f); // Set background color to black
 
-            scene = new Scene(); // Initialise game scene
-            Resize += OnWindowResize;
+            scene = new Scene();  // Initialize game scene
+            Resize += OnWindowResize; // Register resize event handler
         }
 
-        protected override void OnUnload()
-        {
-            Console.WriteLine("Window unloaded!");
-
-            base.OnUnload();
-            scene.Cleanup();
-        }
-
+        // Called when the window is resized
         private void OnWindowResize(ResizeEventArgs e)
         {
-            GL.Viewport(0, 0, e.Width, e.Height);
+            int size = Math.Min(e.Width, e.Height);
+            int vpX = (e.Width - size) / 2;
+            int vpY = (e.Height - size) / 2;
+
+            GL.Viewport(vpX, vpY, size, size);
+
+            Projection = Matrix4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
         }
 
-        // Called every frame
+
+
+        // Called every frame to update game logic and process input
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             deltaTime = (float)args.Time;
 
+            // Capture current keyboard state
             KeyboardState keyboardState = KeyboardState;
 
             scene.Update(deltaTime);
-
             scene.ProcessInput(keyboardState);
         }
 
-        // Called every frame to render the content to the screen
+        // Called every frame to render graphics
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            // Clear the screen with the background color
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit); // Clear screen
 
-            // Render everything in scene
-            scene.Render();
+            scene.Render(); // Render all scene objects
 
-            // Swap the buffers to display the frame
-            SwapBuffers();
+            SwapBuffers();  // Display rendered frame
+        }
+
+        // Called when window is closing/unloading resources
+        protected override void OnUnload()
+        {
+            Console.WriteLine("Window unloaded!");
+            scene.Cleanup();
+
+            base.OnUnload();
         }
     }
 }

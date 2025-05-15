@@ -60,15 +60,18 @@ namespace UntitledEngine
         {
             shader.Use();
 
-            // Create a 2D transformation matrix
-            Matrix4 model = Matrix4.CreateScale(new Vector3(Size.X, Size.Y, 1)) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+            shader.SetMatrix4("projection", Engine.Projection);
 
-            // Set the shader color
+            Matrix4 model = Matrix4.CreateScale(new Vector3(Size.X, Size.Y, 1)) *
+                            Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+
+            shader.SetMatrix4("model", model);
+
             shader.SetShaderColor(this.Color);
 
-            // Draw the mesh with the 2D transformation matrix
-            Mesh.Draw(model);
+            Mesh.Draw(); // just draw; model matrix is already sent
         }
+
 
 
         public bool CollidesWith(Entity other)

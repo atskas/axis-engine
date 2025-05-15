@@ -40,16 +40,11 @@ namespace UntitledEngine
             GL.BindVertexArray(0);
         }
 
-        public void Draw(Matrix4 model)
+        public void Draw()
         {
-            shader.Use(); // Bind shader
-            int modelLocation = GL.GetUniformLocation(shader.ID, "model");
-            GL.UniformMatrix4(modelLocation, false, ref model);
-
             GL.BindVertexArray(VAO);
             GL.DrawElements(PrimitiveType.Triangles, vertexCount, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
-
         }
 
         public void Cleanup()

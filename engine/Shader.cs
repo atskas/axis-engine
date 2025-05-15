@@ -64,6 +64,17 @@ namespace UntitledEngine.engine
             GL.Uniform4(colorLocation, color);
         }
 
+        public void SetMatrix4(string name, Matrix4 matrix)
+        {
+            int location = GL.GetUniformLocation(shaderProgram, name);
+            if (location == -1)
+            {
+                Console.WriteLine($"Warning: uniform {name} not found in shader.");
+                return;
+            }
+            GL.UniformMatrix4(location, false, ref matrix);
+        }
+
         public void Cleanup()
         {
             GL.DeleteProgram(shaderProgram);
