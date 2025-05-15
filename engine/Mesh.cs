@@ -40,6 +40,26 @@ namespace UntitledEngine
             GL.BindVertexArray(0);
         }
 
+        // Method to create a simple quad
+        public static Mesh CreateQuadMesh(Shader shader)
+        {
+            float[] vertices = new float[]
+{
+                -0.5f,  0.5f, 0f,
+                0.5f,  0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                -0.5f, -0.5f, 0f
+};
+
+            int[] indices = new int[]
+            {
+                0, 1, 2,
+                2, 3, 0
+            };
+
+            return new Mesh(vertices, indices, shader);
+        }
+
         public void Draw()
         {
             GL.BindVertexArray(VAO);

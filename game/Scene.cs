@@ -29,9 +29,6 @@ namespace UntitledEngine
         private Entity blocker2;
         private Entity sideCollider1;   // Side colliders (primarily used for detecting when a paddle misses the ball)
         private Entity sideCollider2;
-        private Entity middlePoint;
-
-        private BaseEntity BaseEntity;
 
         public Scene()
         {
@@ -55,8 +52,6 @@ namespace UntitledEngine
 
             // Ball
             ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
-
-            BaseEntity = new BaseEntity();
 
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
@@ -166,8 +161,6 @@ namespace UntitledEngine
             ball.Move(ballMoveSpeed);
             HandleBallCollision();
 
-            BaseEntity.Think(deltaTime);
-
             // Paddle 2 will try to follow the ball's Y position (Simple AI)
             if (ball.Velocity.X > 0) {
                 if (ball.Position.Y > paddle2.Position.Y)
@@ -190,6 +183,7 @@ namespace UntitledEngine
             blocker2.Render(shader);
             sideCollider1.Render(shader);
             sideCollider2.Render(shader);
+
         }
 
         public void Cleanup()
