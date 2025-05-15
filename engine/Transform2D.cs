@@ -17,7 +17,7 @@ namespace UntitledEngine.engine
         }
 
         // Compute model matrix combining position, rotation and scale
-        public Matrix4 GetModelMatrix()
+        public Matrix4 GetTransformMatrix()
         {
             return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1.0f)) *
                    Matrix4.CreateRotationZ(Rotation) *

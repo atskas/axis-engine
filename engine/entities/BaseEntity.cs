@@ -23,9 +23,7 @@ namespace UntitledEngine.engine.entities
 
             shader.SetMatrix4("projection", Engine.Projection);
 
-            Matrix4 model = Matrix4.CreateScale(new Vector3(Transform.Scale.X, Transform.Scale.Y, 1f)) *
-                            Matrix4.CreateRotationZ(Transform.Rotation) *
-                            Matrix4.CreateTranslation(new Vector3(Transform.Position.X, Transform.Position.Y, 0f));
+            Matrix4 model = Transform.GetTransformMatrix();
 
             shader.SetMatrix4("model", model);
 
