@@ -8,14 +8,16 @@ namespace UntitledEngine.engine.entities
             OnLoad();
         }
 
+        // Runs when a new entity instance is created
         public void OnLoad()
         {
-            Console.WriteLine("BaseEntity spawned");
+
         }
 
+        // Runs every frame
         public void Think(float deltaTime)
         {
-            Console.WriteLine("BaseEntity Thinking..");
+
         }
     }
 }

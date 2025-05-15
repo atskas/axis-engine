@@ -1,7 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using UntitledEngine.engine;
 using UntitledEngine.engine.entities;
+using System.IO;
 
 namespace UntitledEngine
 {
@@ -34,7 +36,9 @@ namespace UntitledEngine
         public Scene()
         {
             // Set up scene objects
-            shader = new Shader();
+            string vertexShaderSource = File.ReadAllText("shaders/vertex_shader.glsl");
+            string fragmentShaderSource = File.ReadAllText("shaders/fragment_shader.glsl");
+            shader = new Shader(vertexShaderSource, fragmentShaderSource);
 
             // Paddles
             paddle1 = new Entity((0.1f, 0.5f), (-0.85f, 0.0f), Vector4.One, shader);
@@ -48,9 +52,6 @@ namespace UntitledEngine
 
             sideCollider1 = new Entity((0.2f, 5f), (1f, 0f), (0f, 0f, 0f, 0f), shader);
             sideCollider2 = new Entity((0.2f, 5f), (-1f, 0f), (0f, 0f, 0f, 0f), shader);
-
-            // Temporary
-            middlePoint = new Entity((0.5f, 0.5f), (0f, 0f), (0.05f, 0.05f, 0.05f, 0.05f), shader);
 
             // Ball
             ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
@@ -182,8 +183,6 @@ namespace UntitledEngine
         public void Render()
         {
             // Render game objects onto the screen
-            middlePoint.Render(shader);
-
             paddle1.Render(shader);
             paddle2.Render(shader);
             ball.Render(shader);
@@ -206,7 +205,6 @@ namespace UntitledEngine
             blocker2.Cleanup();
             sideCollider1.Cleanup();
             sideCollider2.Cleanup();
-            middlePoint.Cleanup();
 
             // Shader cleanup
             shader.Cleanup();

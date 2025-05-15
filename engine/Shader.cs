@@ -1,36 +1,18 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace UntitledEngine
+namespace UntitledEngine.engine
 {
     public class Shader
     {
-        private int VBO;
-        private int VAO;
-        private int EBO;
         private int vertexShader, fragmentShader, shaderProgram;
 
         public int ID { get; private set; }
 
-        private string vertexShaderSrc = @"
-            #version 460 core
-            layout (location = 0) in vec3 aPos;
-            uniform mat4 model;
-            void main()
-            {
-                gl_Position = model * vec4(aPos, 1.0);
-            }";
+        private string vertexShaderSrc;
+        private string fragmentShaderSrc;
 
-        private string fragmentShaderSrc = @"
-            #version 460 core
-            out vec4 FragColor;
-            uniform vec4 shapeColor;
-            void main()
-            {
-                FragColor = shapeColor;
-            }";
-
-        public Shader()
+        public Shader(string vertexShaderSrc, string fragmentShaderSrc)
         {
             // Create and compile the vertex shader
             vertexShader = GL.CreateShader(ShaderType.VertexShader);
