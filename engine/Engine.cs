@@ -46,7 +46,6 @@ namespace UntitledEngine
         }
 
 
-
         // Called every frame to update game logic and process input
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
@@ -62,7 +61,7 @@ namespace UntitledEngine
         // Called every frame to render graphics
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit); // Clear screen
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             scene.Render(); // Render all scene objects
 
