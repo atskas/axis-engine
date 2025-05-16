@@ -17,12 +17,12 @@ namespace UntitledEngine
         // Game-specific stuff
         private Vector2 ballMoveSpeed = new Vector2(0f, 0f);
         private Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
-        private float maxBallSpeed = 1.5f;
-        private float speedIncrease = 1.025f;
+        private float maxBallSpeed = 2f;
+        private float speedIncrease = 1.050f;
         private float launchTimer = 2.0f;
 
         // Game Objects
-        private Entity paddle1;
+        private PaddleEntity paddle1;
         private Entity paddle2;
         private Entity ball;
         private Entity blocker1;    // Blockers (primarily used for making the ball bounce from the ceiling and limiting paddle Y)
@@ -38,7 +38,7 @@ namespace UntitledEngine
             shader = new Shader(vertexShaderSource, fragmentShaderSource);
 
             // Paddles
-            paddle1 = new Entity((0.1f, 0.5f), (-0.85f, 0.0f), Vector4.One, shader);
+            paddle1 = new PaddleEntity(shader, playerMoveSpeed);
             paddle2 = new Entity((0.1f, 0.5f), (0.85f, 0.0f), Vector4.One, shader);
 
             // Walls (to avoid paddles from going out of screen)
@@ -56,7 +56,6 @@ namespace UntitledEngine
             // Set up collidables (Add collidable objects to this list)
             collidables = new List<Entity>
             {
-                paddle1,
                 paddle2,
                 blocker1,
                 blocker2,
@@ -68,18 +67,7 @@ namespace UntitledEngine
         // Input handling
         public void ProcessInput(KeyboardState keyboardState)
         {
-            // p1
-            if (keyboardState.IsKeyDown(Keys.W))
-                paddle1.Move(playerMoveSpeed);
-            if (keyboardState.IsKeyDown(Keys.S))
-                paddle1.Move(-playerMoveSpeed);
-
-            // Handle collisions
-            foreach (var entity in collidables) // This goes through all the entities in collidables so it only applies to them
-            {
-                if (entity != paddle1)
-                    paddle1.HandleCollisionWith(entity);
-            }
+            paddle1.ProcessInput(keyboardState);
 
             foreach (var entity in collidables)
             {
