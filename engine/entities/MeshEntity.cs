@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System.Drawing;
 
 namespace UntitledEngine.engine.entities
 {
@@ -16,9 +15,6 @@ namespace UntitledEngine.engine.entities
         public override void OnLoad()
         {
             base.OnLoad();
-            base.Transform.Position = new Vector2(0, 0);
-            base.Transform.Scale = new Vector2(0.15f,0.15f);
-            base.Transform.Rotation = 45f;
         }
 
         public override void Think(float deltaTime)
@@ -26,13 +22,19 @@ namespace UntitledEngine.engine.entities
             base.Think(deltaTime);
         }
 
-        protected override void Draw(Shader shader)
+        public virtual void Render(Shader shader)
         {
+            shader.Use();
+            shader.SetMatrix4("projection", Engine.Projection);
+
+            Matrix4 model = Transform.GetTransformMatrix();
+            shader.SetMatrix4("model", model);
+
             shader.SetShaderColor(Color);
             Mesh.Draw();
         }
 
-        public override void Cleanup()
+        public virtual void Cleanup()
         {
             Mesh.Cleanup();
         }
