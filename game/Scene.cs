@@ -12,23 +12,16 @@ namespace UntitledEngine
         private Shader shader;
 
         // Collidable objects
-        private List<Entity> collidables;
-
-        // Game-specific stuff
-        private Vector2 ballMoveSpeed = new Vector2(0f, 0f);
-        private Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
-        private float maxBallSpeed = 2f;
-        private float speedIncrease = 1.050f;
-        private float launchTimer = 2.0f;
+        private List<BaseEntity> collidables;
 
         // Game Objects
         private PaddleEntity paddle1;
-        private Entity paddle2;
-        private Entity ball;
-        private Entity blocker1;    // Blockers (primarily used for making the ball bounce from the ceiling and limiting paddle Y)
-        private Entity blocker2;
-        private Entity sideCollider1;   // Side colliders (primarily used for detecting when a paddle misses the ball)
-        private Entity sideCollider2;
+        private PaddleEntity paddle2;
+        private BallEntity ball;
+        private WallEntity blocker1;    // Blockers (primarily used for making the ball bounce from the ceiling and limiting paddle Y)
+        private WallEntity blocker2;
+        private WallEntity sideCollider1;   // Side colliders (primarily used for detecting when a paddle misses the ball)
+        private WallEntity sideCollider2;
 
         public Scene()
         {
@@ -38,127 +31,58 @@ namespace UntitledEngine
             shader = new Shader(vertexShaderSource, fragmentShaderSource);
 
             // Paddles
-            paddle1 = new PaddleEntity(shader, playerMoveSpeed);
-            paddle2 = new Entity((0.1f, 0.5f), (0.85f, 0.0f), Vector4.One, shader);
+            paddle1 = new PaddleEntity(shader, new Vector2(-0.85f, 0f));
+            paddle2 = new PaddleEntity(shader, new Vector2(0.85f, 0f));
 
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
             // stopping movement once that restriction is met
-            blocker1 = new Entity((5f, 0.2f), (0f, 1.1f), (0f, 0f, 0f, 0f), shader);
-            blocker2 = new Entity((5f, 0.2f), (0f, -1.1f), (0f, 0f, 0f, 0f), shader);
+            blocker1 = new WallEntity(shader, (0f, 1f), (5f, 0.2f));
+            blocker2 = new WallEntity(shader, (0f, -1f), (5f, 0.2f));
 
-            sideCollider1 = new Entity((0.2f, 5f), (1f, 0f), (0f, 0f, 0f, 0f), shader);
-            sideCollider2 = new Entity((0.2f, 5f), (-1f, 0f), (0f, 0f, 0f, 0f), shader);
+            sideCollider1 = new WallEntity(shader, (1f, 0f), (0.2f, 5f));
+            sideCollider2 = new WallEntity(shader, (-1f, 0f), (0.2f, 5f));
 
             // Ball
-            ball = new Entity((0.065f, 0.065f), (0.0f, 0.0f), Vector4.One, shader);
+            ball = new BallEntity(shader);
 
             // Set up collidables (Add collidable objects to this list)
-            collidables = new List<Entity>
+            collidables = new List<BaseEntity>
             {
+                paddle1,
                 paddle2,
                 blocker1,
                 blocker2,
                 sideCollider1,
                 sideCollider2,
+                ball
             };
         }
 
         // Input handling
         public void ProcessInput(KeyboardState keyboardState)
         {
-            paddle1.ProcessInput(keyboardState);
-
-            foreach (var entity in collidables)
-            {
-                if (entity != paddle2)
-                    paddle2.HandleCollisionWith(entity);
-            }
-        }
-
-
-        // [GAME-SPECIFIC METHOD] You can handle normal collisions using Entity.HandleCollisionWith(...);
-        private void HandleBallCollision()
-        {
-            foreach (var entity in collidables)
-            {
-                if (entity == ball) continue;
-
-                Vector2 resolution = ball.HandleCollisionWith(entity);
-
-                if ((entity == sideCollider1 || entity == sideCollider2) &&
-                (Math.Abs(resolution.X) > 0 || Math.Abs(resolution.Y) > 0))
-                {
-                    Lose(entity);
-                    return;
-                }
-
-                if (Math.Abs(resolution.X) > 0)
-                {
-                    ballMoveSpeed.X *= -1 * speedIncrease;
-                }
-
-                if (Math.Abs(resolution.Y) > 0)
-                {
-                    ballMoveSpeed.Y *= -1 * speedIncrease;
-                }
-
-                // Clamp ball speed
-                if (ballMoveSpeed.Length > maxBallSpeed)
-                    ballMoveSpeed = Vector2.Normalize(ballMoveSpeed) * maxBallSpeed;
-            }
-        }
-
-        // [GAME-SPECIFIC METHOD] To handle loss
-        private void Lose(Entity side)
-        {
-            if (launchTimer >= 0f)
-                return;
-
-            // Determine who lost
-            string loser = side == sideCollider1 ? "Right Player (P2)" : "Left Player (P1)";
-            Console.WriteLine($"{loser} missed the ball!");
-
-            // Reset ball position and speed
-            ball.Position = Vector2.Zero;
-            ballMoveSpeed = new Vector2(1f, 1f); // reset to default
-
-            launchTimer = 2.0f;
-            // Will soon implement scores once I add text rendering
+            paddle1.ProcessInput(keyboardState, collidables, true);
+            paddle2.ProcessInput(keyboardState, collidables, false);
         }
 
         public void Update(float deltaTime)
         {
             // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
             // scale any time-dependent calculations (e.g., movement) by deltaTime.
-
-            if (launchTimer >= 0f)
+            
+            if (ball.ballPhysics.CollidesWith(sideCollider1))
             {
-                launchTimer -= deltaTime;
-
-                if (launchTimer <= 0f)
-                {
-                    // Relaunch ball
-                    launchTimer = -1f;
-                    ballMoveSpeed = new Vector2(1f, 1f);
-                }
-
-                return; // Don't update ball movement or collisions while waiting
+                Console.WriteLine("P1 lost!");
+                ball.Reset();
+            }
+            else if (ball.ballPhysics.CollidesWith(sideCollider2))
+            {
+                Console.WriteLine("P2 lost!");
+                ball.Reset();
             }
 
-            ball.Move(ballMoveSpeed);
-            HandleBallCollision();
-
-            // Paddle 2 will try to follow the ball's Y position (Simple AI)
-            if (ball.Velocity.X > 0) {
-                if (ball.Position.Y > paddle2.Position.Y)
-                    paddle2.Move(playerMoveSpeed);
-                else if (ball.Position.Y < paddle2.Position.Y)
-                    paddle2.Move(-playerMoveSpeed);
-            }
-
-            // You can implement custom collision handling logic on top of the base HandleCollisionWith method.
-
+            ball.BallLoop(deltaTime, collidables);
         }
 
         public void Render()
