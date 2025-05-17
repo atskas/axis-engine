@@ -4,14 +4,14 @@ using UntitledEngine.engine.entities;
 
 namespace UntitledEngine.engine.physics
 {
-    public class pPhysics
+    public class sPhysics
     {
         public Vector2 Velocity { get; set; }
         private BaseEntity entity;            // The entity this physics instance controls
         private Vector2 prevPosition;         // Stores the entity's previous position for velocity calculation
 
         // Constructor binds this physics instance to a specific entity
-        public pPhysics(BaseEntity entity)
+        public sPhysics(BaseEntity entity)
         {
             this.entity = entity;
         }

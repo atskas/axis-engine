@@ -12,12 +12,12 @@ namespace UntitledEngine.engine.entities
             Mesh = mesh;
         }
 
-        public override void OnLoad()
+        public virtual void OnLoad()
         {
             base.OnLoad();
         }
 
-        public override void Think(float deltaTime)
+        public virtual void Think(float deltaTime)
         {
             base.Think(deltaTime);
         }
