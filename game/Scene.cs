@@ -74,12 +74,12 @@ namespace UntitledEngine
             // Handle side collisions to trigger ball reset
             if (ball.ballPhysics.CollidesWith(sideCollider1))
             {
-                Console.WriteLine("P1 lost!");
+                Console.WriteLine("P2 lost!");
                 ball.Reset();
             }
             else if (ball.ballPhysics.CollidesWith(sideCollider2))
             {
-                Console.WriteLine("P2 lost!");
+                Console.WriteLine("P1 lost!");
                 ball.Reset();
             }
 
