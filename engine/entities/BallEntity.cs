@@ -6,7 +6,7 @@ using UntitledEngine;
 
 public class BallEntity : MeshEntity
 {
-    public sPhysics ballPhysics;
+    public Physics ballPhysics;
     public Vector2 ballMoveSpeed = new Vector2(1f, 1f);
     public float maxBallSpeed = 1.8f;
     public float launchTimer = 2.0f;
@@ -17,7 +17,7 @@ public class BallEntity : MeshEntity
     public BallEntity(Shader shader)
         : base(Mesh.CreateQuadMesh(shader))
     {
-        ballPhysics = new sPhysics(this);
+        ballPhysics = new Physics(this);
         this.Transform.Scale = new Vector2(0.065f, 0.065f);
         this.Transform.Position = Vector2.Zero;
         this.Color = Vector4.One;

@@ -1,17 +1,16 @@
 ﻿using OpenTK.Mathematics;
-using System.Drawing;
 using UntitledEngine.engine.entities;
 
 namespace UntitledEngine.engine.physics
 {
-    public class sPhysics
+    public class Physics
     {
         public Vector2 Velocity { get; set; }
         private BaseEntity entity;            // The entity this physics instance controls
         private Vector2 prevPosition;         // Stores the entity's previous position for velocity calculation
 
         // Constructor binds this physics instance to a specific entity
-        public sPhysics(BaseEntity entity)
+        public Physics(BaseEntity entity)
         {
             this.entity = entity;
         }

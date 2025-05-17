@@ -10,13 +10,13 @@ namespace UntitledEngine.engine.entities
     public class PaddleEntity : MeshEntity
     {
         public Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
-        public sPhysics paddlePhysics;
+        public Physics paddlePhysics;
 
         public PaddleEntity(Shader shader, Vector2 position)
             : base(Mesh.CreateQuadMesh(shader))
         {
             // Create new physics instance for the entity
-            paddlePhysics = new sPhysics(this);
+            paddlePhysics = new Physics(this);
 
             // Set all properties
             this.Transform.Scale = new Vector2(0.1f, 0.5f);
