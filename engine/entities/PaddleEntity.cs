@@ -10,7 +10,7 @@ namespace UntitledEngine.engine.entities
     public class PaddleEntity : MeshEntity
     {
         public Vector2 playerMoveSpeed = new Vector2(0f, 1.35f);
-        private sPhysics paddlePhysics;
+        public sPhysics paddlePhysics;
 
         public PaddleEntity(Shader shader, Vector2 position)
             : base(Mesh.CreateQuadMesh(shader))
@@ -32,10 +32,10 @@ namespace UntitledEngine.engine.entities
             {
                 // Paddle Vertical Movement
                 if (keyboardState.IsKeyDown(Keys.W))
-                    paddlePhysics.Move(this, playerMoveSpeed);
+                    paddlePhysics.Move(playerMoveSpeed);
 
                 if (keyboardState.IsKeyDown(Keys.S))
-                    paddlePhysics.Move(this, -playerMoveSpeed);
+                    paddlePhysics.Move(-playerMoveSpeed);
             }
 
             // Handle collisions

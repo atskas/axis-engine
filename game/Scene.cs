@@ -71,6 +71,7 @@ namespace UntitledEngine
             // This function runs every frame. To ensure smooth and consistent behavior across different frame rates, 
             // scale any time-dependent calculations (e.g., movement) by deltaTime.
             
+            // Handle side collisions to trigger ball reset
             if (ball.ballPhysics.CollidesWith(sideCollider1))
             {
                 Console.WriteLine("P1 lost!");
@@ -82,6 +83,16 @@ namespace UntitledEngine
                 ball.Reset();
             }
 
+
+            // Non-player paddle AI
+            if (ball.ballPhysics.Velocity.X > 0f)
+            {
+                if (ball.Transform.Position.Y > paddle2.Transform.Position.Y)
+                    paddle2.paddlePhysics.Move(paddle2.playerMoveSpeed);
+                else if (ball.Transform.Position.Y < paddle2.Transform.Position.Y)
+                    paddle2.paddlePhysics.Move(-paddle2.playerMoveSpeed);
+            }
+            // Run main ball loop
             ball.BallLoop(deltaTime, collidables);
         }
 

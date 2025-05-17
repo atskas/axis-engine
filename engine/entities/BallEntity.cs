@@ -30,7 +30,7 @@ public class BallEntity : MeshEntity
         // Only move if not frozen
         if (launchTimer <= 0)
         {
-            Transform.Position += ballMoveSpeed * deltaTime;
+            this.ballPhysics.Move(ballMoveSpeed);
             HandleBallCollision(collidables);
         }
     }

@@ -17,7 +17,7 @@ namespace UntitledEngine.engine.physics
         }
 
         // Moves the entity by a velocity vector scaled by deltaTime, updates Velocity property
-        public void Move(BaseEntity entity, Vector2 velocity)
+        public void Move(Vector2 velocity)
         {
             prevPosition = entity.Transform.Position;                          // Cache previous position
             entity.Transform.Position += velocity * Engine.deltaTime;
