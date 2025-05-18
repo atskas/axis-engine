@@ -3,7 +3,6 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.engine;
 using UntitledEngine.engine.entities;
-using System.IO;
 
 namespace UntitledEngine
 {
@@ -37,8 +36,8 @@ namespace UntitledEngine
             // Walls (to avoid paddles from going out of screen)
             // You could also do this by setting a restriction to the Y position and
             // stopping movement once that restriction is met
-            blocker1 = new WallEntity(shader, (0f, 1f), (5f, 0.2f));
-            blocker2 = new WallEntity(shader, (0f, -1f), (5f, 0.2f));
+            blocker1 = new WallEntity(shader, (0f, 1.1f), (5f, 0.2f));
+            blocker2 = new WallEntity(shader, (0f, -1.1f), (5f, 0.2f));
 
             sideCollider1 = new WallEntity(shader, (1f, 0f), (0.2f, 5f));
             sideCollider2 = new WallEntity(shader, (-1f, 0f), (0.2f, 5f));
