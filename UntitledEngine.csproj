@@ -12,4 +12,9 @@
     <None Update="shaders\*glsl" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="engine\audio\" />
+    <Folder Include="game\sounds\" />
+  </ItemGroup>
+
 </Project>
