@@ -130,9 +130,6 @@ namespace UntitledEngine
 
             // Shader cleanup
             shader.Cleanup();
-
-            // Audio Manager cleanup
-            audioManager.Cleanup();
         }
     }
 }
