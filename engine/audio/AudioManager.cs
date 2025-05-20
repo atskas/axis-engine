@@ -1,5 +1,4 @@
-﻿using NAudio;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 
 namespace UntitledEngine.engine.audio
 {
@@ -36,7 +35,7 @@ namespace UntitledEngine.engine.audio
         }
 
         // Clean up resources
-        public void Dispose()
+        public void Cleanup()
         {
             waveOut?.Stop();
             waveOut?.Dispose();

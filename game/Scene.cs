@@ -10,6 +10,7 @@ namespace UntitledEngine
     public class Scene
     {
         private Shader shader;
+        private AudioManager audioManager;
 
         // Collidable objects
         private List<BaseEntity> collidables;
@@ -29,6 +30,8 @@ namespace UntitledEngine
             string vertexShaderSource = File.ReadAllText("shaders/vertex_shader.glsl");
             string fragmentShaderSource = File.ReadAllText("shaders/fragment_shader.glsl");
             shader = new Shader(vertexShaderSource, fragmentShaderSource);
+
+            audioManager = new AudioManager();
 
             // Paddles
             paddle1 = new PaddleEntity(shader, new Vector2(-0.85f, 0f));
@@ -75,11 +78,13 @@ namespace UntitledEngine
             if (ball.ballPhysics.CollidesWith(sideCollider1))
             {
                 Console.WriteLine("P2 lost!");
+                audioManager.Play("sounds/lose.wav");
                 ball.Reset();
             }
             else if (ball.ballPhysics.CollidesWith(sideCollider2))
             {
                 Console.WriteLine("P1 lost!");
+                audioManager.Play("sounds/lose.wav");
                 ball.Reset();
             }
 
@@ -125,6 +130,9 @@ namespace UntitledEngine
 
             // Shader cleanup
             shader.Cleanup();
+
+            // Audio Manager cleanup
+            audioManager.Cleanup();
         }
     }
 }
