@@ -6,7 +6,7 @@ using UntitledEngine.engine.entities;
 
 namespace UntitledEngine
 {
-    internal class Scene
+    public class Scene
     {
         private Shader shader;
 
