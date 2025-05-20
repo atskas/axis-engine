@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.engine;
+using UntitledEngine.engine.audio;
 using UntitledEngine.engine.entities;
 
 namespace UntitledEngine
