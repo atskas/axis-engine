@@ -3,6 +3,7 @@ using UntitledEngine.engine.entities;
 using UntitledEngine.engine.physics;
 using UntitledEngine.engine;
 using UntitledEngine;
+using UntitledEngine.engine.audio;
 
 public class BallEntity : MeshEntity
 {
@@ -14,10 +15,13 @@ public class BallEntity : MeshEntity
     private BaseEntity leftWall;
     private BaseEntity rightWall;
 
+    private AudioManager audioManager;
+
     public BallEntity(Shader shader)
         : base(Mesh.CreateQuadMesh(shader))
     {
         ballPhysics = new Physics(this);
+        audioManager = new AudioManager();
         this.Transform.Scale = new Vector2(0.065f, 0.065f);
         this.Transform.Position = Vector2.Zero;
         this.Color = Vector4.One;
@@ -44,10 +48,16 @@ public class BallEntity : MeshEntity
             Vector2 resolution = ballPhysics.HandleCollisionWith(baseEntity);
 
             if (Math.Abs(resolution.X) > 0)
+            {
                 ballMoveSpeed.X *= -1.05f;
+                audioManager.Play("sounds/hit.wav");
+            }
 
             if (Math.Abs(resolution.Y) > 0)
+            {
                 ballMoveSpeed.Y *= -1.05f;
+                audioManager.Play("sounds/hit.wav");
+            }
 
             if (ballMoveSpeed.Length > maxBallSpeed)
                 ballMoveSpeed = Vector2.Normalize(ballMoveSpeed) * maxBallSpeed;
