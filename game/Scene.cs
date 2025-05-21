@@ -10,6 +10,7 @@ namespace UntitledEngine
     public class Scene
     {
         private Shader shader;
+        private Camera mainCamera;
         private AudioManager audioManager;
 
         // Collidable objects
@@ -31,6 +32,7 @@ namespace UntitledEngine
             string fragmentShaderSource = File.ReadAllText("shaders/fragment_shader.glsl");
             shader = new Shader(vertexShaderSource, fragmentShaderSource);
 
+            mainCamera = new Camera();
             audioManager = new AudioManager();
 
             // Paddles
@@ -104,13 +106,13 @@ namespace UntitledEngine
         public void Render()
         {
             // Render game objects onto the screen
-            paddle1.Render(shader);
-            paddle2.Render(shader);
-            ball.Render(shader);
-            blocker1.Render(shader);
-            blocker2.Render(shader);
-            sideCollider1.Render(shader);
-            sideCollider2.Render(shader);
+            paddle1.Render(shader, mainCamera);
+            paddle2.Render(shader, mainCamera);
+            ball.Render(shader, mainCamera);
+            blocker1.Render(shader, mainCamera);
+            blocker2.Render(shader, mainCamera);
+            sideCollider1.Render(shader, mainCamera);
+            sideCollider2.Render(shader, mainCamera);
 
         }
 
