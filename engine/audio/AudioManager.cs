@@ -19,13 +19,15 @@ namespace UntitledEngine.engine.audio
                     audioReader = new AudioFileReader(filePath);
                     waveOut = new WaveOutEvent();
                     waveOut.Init(audioReader);
-                    waveOut.Play();
 
+                    // Register the event handler before playing
                     waveOut.PlaybackStopped += (s, e) =>
                     {
                         waveOut.Dispose();
                         audioReader.Dispose();
                     };
+
+                    waveOut.Play();
                 }
                 catch (Exception ex)
                 {
