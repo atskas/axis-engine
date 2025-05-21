@@ -4,39 +4,40 @@ namespace UntitledEngine.engine.entities
 {
     public class CameraShaker
     {
-        // This is a helper class.
-        // It doesn't extend from camera since it just returns the needed values for camera shake.
-
         private Vector2 originalPosition;
-        private float shakeIntensity;
-        private float shakeDecay;
-        private bool shaking = false;
-        private Random random = new Random();
+        private float timer = 0f;
+        private float duration = 0f;
+        private float intensity = 0f;
+        private float decay = 0f;
 
-        public void StartShake(Vector2 camPos, float intensity, float decay)
+        private readonly Random random = new Random();
+
+        public void Shake(Vector2 camPos, float intensity, float duration, float deltaTime)
         {
-            originalPosition = camPos;
-            shakeIntensity = intensity;
-            shakeDecay = decay;
-            shaking = true;
-        }
-
-        public Vector2 Update(float deltaTime)
-        {
-            if (!shaking) return originalPosition;
-
-            if (shakeIntensity > 0f)
+            // Start shaking if not already
+            if (timer <= 0f)
             {
-                float offsetX = (float)(random.NextDouble() * 2 - 1) * shakeIntensity;
-                float offsetY = (float)(random.NextDouble() * 2 - 1) * shakeIntensity;
-                shakeIntensity -= shakeDecay * deltaTime;
+                originalPosition = camPos;
+                this.intensity = intensity;
+                this.duration = duration;
+                decay = intensity / duration;
+                timer = duration;
+            }
 
-                return originalPosition + new Vector2(offsetX, offsetY);
+            // Update if still shaking
+            if (timer > 0f)
+            {
+                float offsetX = (float)(random.NextDouble() * 2 - 1) * this.intensity;
+                float offsetY = (float)(random.NextDouble() * 2 - 1) * this.intensity;
+
+                this.intensity -= decay * deltaTime;
+                timer -= deltaTime;
+
+                camPos = originalPosition + new Vector2(offsetX, offsetY);
             }
             else
             {
-                shaking = false;
-                return originalPosition;
+                camPos = originalPosition;
             }
         }
     }
