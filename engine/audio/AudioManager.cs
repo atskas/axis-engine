@@ -1,26 +1,38 @@
-﻿using NAudio.Wave;
+﻿using System;
+using System.Threading.Tasks;
+using NAudio.Wave;
 
 namespace UntitledEngine.engine.audio
 {
     public class AudioManager
     {
-
-        // Play a one-shot sound
+        // Play a one-shot sound asynchronously
         public void Play(string filePath)
         {
             Task.Run(() =>
             {
-                var waveOut = new WaveOutEvent();
-                var audioReader = new AudioFileReader(filePath);
+                AudioFileReader audioReader = null;
+                WaveOutEvent waveOut = null;
 
-                waveOut.Init(audioReader);
-                waveOut.Play();
-
-                waveOut.PlaybackStopped += (s, e) =>
+                try
                 {
-                    audioReader.Dispose();
-                    waveOut.Dispose();
-                };
+                    audioReader = new AudioFileReader(filePath);
+                    waveOut = new WaveOutEvent();
+                    waveOut.Init(audioReader);
+                    waveOut.Play();
+
+                    waveOut.PlaybackStopped += (s, e) =>
+                    {
+                        waveOut.Dispose();
+                        audioReader.Dispose();
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[AudioManager] Error playing audio: {ex.Message}");
+                    waveOut?.Dispose();
+                    audioReader?.Dispose();
+                }
             });
         }
     }
