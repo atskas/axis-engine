@@ -6,6 +6,47 @@ namespace UntitledEngine.engine.entities
     {
         public float Zoom { get; set; } = 1f;
 
+        private Vector2 originalPosition;
+        private Vector2 shakeOffset = Vector2.Zero;
+        private float shakeDuration = 0f;
+        private float shakeIntensity = 0f;
+        private readonly Random random = new Random();
+
+        public Camera()
+        {
+            originalPosition = Transform.Position;
+        }
+
+        public void Shake(float duration, float intensity)
+        {
+            shakeDuration = duration;
+            shakeIntensity = intensity;
+            originalPosition = Transform.Position; // Save position when shake starts
+        }
+
+        /// Call this every frame with deltaTime (time elapsed since last frame).
+        public void UpdateShake(float deltaTime)
+        {
+            if (shakeDuration > 0f)
+            {
+                shakeDuration -= deltaTime;
+
+                float offsetX = (float)(random.NextDouble() * 2 - 1) * shakeIntensity;
+                float offsetY = (float)(random.NextDouble() * 2 - 1) * shakeIntensity;
+                shakeOffset = new Vector2(offsetX, offsetY);
+
+                Transform.Position = originalPosition + shakeOffset;
+
+                if (shakeDuration <= 0f)
+                {
+                    // Shake ended, reset position
+                    shakeDuration = 0f;
+                    shakeOffset = Vector2.Zero;
+                    Transform.Position = originalPosition;
+                }
+            }
+        }
+
         public Matrix4 GetViewMatrix()
         {
             return Matrix4.CreateTranslation(-Transform.Position.X, -Transform.Position.Y, 0);
@@ -17,6 +58,5 @@ namespace UntitledEngine.engine.entities
             float height = width / aspectRatio;
             return Matrix4.CreateOrthographic(width, height, -1, 1);
         }
-
     }
 }
