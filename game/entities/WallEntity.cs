@@ -1,7 +1,9 @@
 ﻿using OpenTK.Mathematics;
+using UntitledEngine.engine;
+using UntitledEngine.engine.entities;
 using UntitledEngine.engine.physics;
 
-namespace UntitledEngine.engine.entities
+namespace UntitledEngine.game.entities
 {
     public class WallEntity : MeshEntity
     {
@@ -10,9 +12,9 @@ namespace UntitledEngine.engine.entities
             : base(Mesh.CreateQuadMesh(shader))
         {
             // Set all properties
-            this.Transform.Scale = scale;
-            this.Transform.Position = position;
-            this.Color = new Vector4(0f, 0f, 0f, 0f);
+            Transform.Scale = scale;
+            Transform.Position = position;
+            Color = new Vector4(0f, 0f, 0f, 0f);
         }
 
         public Vector2 HandleCollisionWithBall(BallEntity ball, ref Vector2 ballVelocity, float speedIncrease, float maxBallSpeed)

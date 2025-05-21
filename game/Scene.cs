@@ -4,6 +4,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.engine;
 using UntitledEngine.engine.audio;
 using UntitledEngine.engine.entities;
+using UntitledEngine.game.entities;
 
 namespace UntitledEngine
 {

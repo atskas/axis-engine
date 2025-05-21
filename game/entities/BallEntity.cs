@@ -10,7 +10,7 @@ public class BallEntity : MeshEntity
     public Physics ballPhysics;
     public Vector2 ballMoveSpeed = new Vector2(1f, 1f);
     public float maxBallSpeed = 1.8f;
-    public float launchTimer = 2.0f;
+    public float launchTimer = 5.0f;
 
     private BaseEntity leftWall;
     private BaseEntity rightWall;

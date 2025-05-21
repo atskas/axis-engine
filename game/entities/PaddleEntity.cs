@@ -1,11 +1,13 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using UntitledEngine.engine;
+using UntitledEngine.engine.entities;
 using UntitledEngine.engine.physics;
 
 // ------ CUSTOM ENTITY ------
 // ---------------------------
 
-namespace UntitledEngine.engine.entities
+namespace UntitledEngine.game.entities
 {
     public class PaddleEntity : MeshEntity
     {
@@ -19,9 +21,9 @@ namespace UntitledEngine.engine.entities
             paddlePhysics = new Physics(this);
 
             // Set all properties
-            this.Transform.Scale = new Vector2(0.1f, 0.5f);
-            this.Transform.Position = position;
-            this.Color = Vector4.One;
+            Transform.Scale = new Vector2(0.1f, 0.5f);
+            Transform.Position = position;
+            Color = Vector4.One;
         }
 
         // For player movement, will not apply to p2
@@ -42,7 +44,7 @@ namespace UntitledEngine.engine.entities
             foreach (var BaseEntity in collidables)
             {
                 if (BaseEntity != this)
-                    this.paddlePhysics.HandleCollisionWith(BaseEntity);
+                    paddlePhysics.HandleCollisionWith(BaseEntity);
             }
 
         }
