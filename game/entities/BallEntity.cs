@@ -12,9 +12,6 @@ public class BallEntity : MeshEntity
     public float maxBallSpeed = 1.8f;
     public float launchTimer = 5.0f;
 
-    private BaseEntity leftWall;
-    private BaseEntity rightWall;
-
     private AudioManager audioManager;
 
     public BallEntity(Shader shader)
