@@ -36,11 +36,7 @@ namespace UntitledEngine
         // Called when the window is resized
         private void OnWindowResize(ResizeEventArgs e)
         {
-            int size = Math.Min(e.Width, e.Height);
-            int vpX = (e.Width - size) / 2;
-            int vpY = (e.Height - size) / 2;
-
-            GL.Viewport(vpX, vpY, size, size);
+            GL.Viewport(0, 0, e.Width, e.Height);
 
             Projection = Matrix4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
         }
