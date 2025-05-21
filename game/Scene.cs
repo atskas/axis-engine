@@ -101,11 +101,14 @@ namespace UntitledEngine
                 else if (ball.Transform.Position.Y < paddle2.Transform.Position.Y)
                     paddle2.paddlePhysics.Move(-paddle2.playerMoveSpeed);
             }
+
             // Run main ball loop
             ball.BallLoop(deltaTime, collidables, ref mainCamera);
 
-            // For camera shake to work // I absolutely despise having to keep this here, will simplify one day
-            mainCamera.UpdateShake(deltaTime);
+            // Entity Think() methods
+            // -->(The reason why special entities like the ball don't use think is because
+            // of custom parameters)<--
+            mainCamera.Think(deltaTime);
         }
 
         public void Render()

@@ -4,6 +4,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
+using UntitledEngine.engine.entities;
 
 namespace UntitledEngine
 {

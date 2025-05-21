@@ -17,6 +17,14 @@ namespace UntitledEngine.engine.entities
             originalPosition = Transform.Position;
         }
 
+        // Override Think() method so you don't have to specifically
+        // call it in scene, you can call this instead
+        public override void Think(float deltaTime)
+        {
+            base.Think(deltaTime);
+            UpdateShake(deltaTime);
+        }
+
         public void Shake(float duration, float intensity)
         {
             shakeDuration = duration;
@@ -24,8 +32,7 @@ namespace UntitledEngine.engine.entities
             originalPosition = Transform.Position; // Save position when shake starts
         }
 
-        /// Call this every frame with deltaTime (time elapsed since last frame).
-        public void UpdateShake(float deltaTime)
+        private void UpdateShake(float deltaTime)
         {
             if (shakeDuration > 0f)
             {
