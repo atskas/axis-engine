@@ -27,7 +27,7 @@ public class BallEntity : MeshEntity
         this.Color = Vector4.One;
     }
 
-    public void BallLoop(float deltaTime, List<BaseEntity> collidables) // Couldn't override think due to the custom arguments
+    public void BallLoop(float deltaTime, List<BaseEntity> collidables, ref Camera camera) // Couldn't override think due to the custom arguments
     {
         launchTimer -= deltaTime;
 
@@ -35,11 +35,11 @@ public class BallEntity : MeshEntity
         if (launchTimer <= 0)
         {
             this.ballPhysics.Move(ballMoveSpeed);
-            HandleBallCollision(collidables);
+            HandleBallStuff(collidables, ref camera);
         }
     }
 
-    private void HandleBallCollision(List<BaseEntity> collidables)
+    private void HandleBallStuff(List<BaseEntity> collidables, ref Camera camera)
     {
         foreach (var baseEntity in collidables)
         {
@@ -51,12 +51,14 @@ public class BallEntity : MeshEntity
             {
                 ballMoveSpeed.X *= -1.05f;
                 audioManager.Play("sounds/hit.wav");
+                camera.Shake(0.1f, 0.01f);
             }
 
             if (Math.Abs(resolution.Y) > 0)
             {
                 ballMoveSpeed.Y *= -1.05f;
                 audioManager.Play("sounds/hit.wav");
+                camera.Shake(0.1f, 0.01f);
             }
 
             if (ballMoveSpeed.Length > maxBallSpeed)

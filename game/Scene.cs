@@ -81,12 +81,14 @@ namespace UntitledEngine
             {
                 Console.WriteLine("P2 lost!");
                 audioManager.Play("sounds/lose.wav");
+                mainCamera.Shake(0.5f, 0.025f);
                 ball.Reset();
             }
             else if (ball.ballPhysics.CollidesWith(sideCollider2))
             {
                 Console.WriteLine("P1 lost!");
                 audioManager.Play("sounds/lose.wav");
+                mainCamera.Shake(0.5f, 0.025f);
                 ball.Reset();
             }
 
@@ -100,7 +102,10 @@ namespace UntitledEngine
                     paddle2.paddlePhysics.Move(-paddle2.playerMoveSpeed);
             }
             // Run main ball loop
-            ball.BallLoop(deltaTime, collidables);
+            ball.BallLoop(deltaTime, collidables, ref mainCamera);
+
+            // For camera shake to work // I absolutely despise having to keep this here, will simplify one day
+            mainCamera.UpdateShake(deltaTime);
         }
 
         public void Render()
