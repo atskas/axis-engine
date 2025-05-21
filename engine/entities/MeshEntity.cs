@@ -22,10 +22,11 @@ namespace UntitledEngine.engine.entities
             base.Think(deltaTime);
         }
 
-        public virtual void Render(Shader shader)
+        public virtual void Render(Shader shader, Camera camera)
         {
             shader.Use();
             shader.SetMatrix4("projection", Engine.Projection);
+            shader.SetMatrix4("view", camera.GetViewMatrix());
 
             Matrix4 model = Transform.GetTransformMatrix();
             shader.SetMatrix4("model", model);
@@ -33,6 +34,7 @@ namespace UntitledEngine.engine.entities
             shader.SetShaderColor(Color);
             Mesh.Draw();
         }
+
 
         public virtual void Cleanup()
         {
