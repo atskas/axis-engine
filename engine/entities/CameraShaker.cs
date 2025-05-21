@@ -12,7 +12,7 @@ namespace UntitledEngine.engine.entities
 
         private readonly Random random = new Random();
 
-        public void Shake(Vector2 camPos, float intensity, float duration, float deltaTime)
+        public void Shake(ref Vector2 camPos, float intensity, float duration, float deltaTime)
         {
             // Start shaking if not already
             if (timer <= 0f)
