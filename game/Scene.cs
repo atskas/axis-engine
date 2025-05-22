@@ -81,14 +81,14 @@ namespace UntitledEngine
             if (ball.ballPhysics.CollidesWith(sideCollider1))
             {
                 Console.WriteLine("P2 lost!");
-                audioManager.Play("sounds/lose.wav");
+                audioManager.Play("game/sounds/lose.wav");
                 mainCamera.Shake(0.5f, 0.025f);
                 ball.Reset();
             }
             else if (ball.ballPhysics.CollidesWith(sideCollider2))
             {
                 Console.WriteLine("P1 lost!");
-                audioManager.Play("sounds/lose.wav");
+                audioManager.Play("game/sounds/lose.wav");
                 mainCamera.Shake(0.5f, 0.025f);
                 ball.Reset();
             }

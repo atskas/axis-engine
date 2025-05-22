@@ -47,14 +47,14 @@ public class BallEntity : MeshEntity
             if (Math.Abs(resolution.X) > 0)
             {
                 ballMoveSpeed.X *= -1.05f;
-                audioManager.Play("sounds/hit.wav");
+                audioManager.Play("game/sounds/hit.wav");
                 camera.Shake(0.1f, 0.01f);
             }
 
             if (Math.Abs(resolution.Y) > 0)
             {
                 ballMoveSpeed.Y *= -1.05f;
-                audioManager.Play("sounds/hit.wav");
+                audioManager.Play("game/sounds/hit.wav");
                 camera.Shake(0.1f, 0.01f);
             }
 
