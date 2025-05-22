@@ -49,7 +49,7 @@ namespace UntitledEngine.engine
         // Just for testing
         public void SwitchPolygonMode(PolygonMode mode)
         {
-            GL.PolygonMode(MaterialFace.FrontAndBack, mode);
+            GL.PolygonMode(TriangleFace.FrontAndBack, mode);
 
         }
 
