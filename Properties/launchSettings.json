@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UntitledEngine": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}
