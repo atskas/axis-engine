@@ -67,14 +67,16 @@ namespace UntitledEngine.engine.audio
 
                     buffer = AL.GenBuffer();
                     source = AL.GenSource();
-
+                    
                     unsafe
                     {
                         fixed (byte* p = soundData)
                         {
-                            AL.BufferData(buffer, format, (IntPtr)p, soundData.Length, sampleRate);
+                            nint ptr = (nint)p;
+                            AL.BufferData(buffer, format, ptr, soundData.Length, sampleRate);
                         }
                     }
+
 
                     AL.Source(source, ALSourcei.Buffer, buffer);
                     AL.SourcePlay(source);
