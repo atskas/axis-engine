@@ -2,14 +2,14 @@
 
 namespace UntitledEngine.engine
 {
-    public struct Transform2D
+    public struct Transform
     {
         // Transform properties
         public Vector2 Position;
         public float Rotation; // Radians
         public Vector2 Scale;
 
-        public Transform2D(Vector2 position, float rotation, Vector2 scale)
+        public Transform(Vector2 position, float rotation, Vector2 scale)
         {
             Position = position;
             Rotation = rotation;

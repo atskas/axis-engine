@@ -4,7 +4,7 @@ namespace UntitledEngine.engine.entities
 {
     public class BaseEntity
     {
-        public Transform2D Transform = new Transform2D(); // Position, Scale, Rotation
+        public Transform Transform = new Transform(); // Position, Scale, Rotation
 
         public BaseEntity()
         {

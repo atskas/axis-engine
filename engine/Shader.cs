@@ -6,14 +6,14 @@ namespace UntitledEngine.engine
     public class Shader
     {
         private int vertexShader, fragmentShader, shaderProgram;
-
-        public int ID { get; private set; }
-
         private string vertexShaderSrc;
         private string fragmentShaderSrc;
 
-        public Shader(string vertexShaderSrc, string fragmentShaderSrc)
+        public Shader()
         {
+            vertexShaderSrc = File.ReadAllText("shaders/vertex_shader.glsl");
+            fragmentShaderSrc = File.ReadAllText("shaders/fragment_shader.glsl");
+
             // Create and compile the vertex shader
             vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vertexShaderSrc);
