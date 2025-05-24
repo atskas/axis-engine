@@ -83,7 +83,7 @@ public class Shader
         string infoLog = GL.GetShaderInfoLog(shader);
         if (!string.IsNullOrEmpty(infoLog))
         {
-            Console.WriteLine($"Shader compilation failed: {infoLog}");
+            throw new Exception($"Shader compilation failed: {infoLog}");
         }
     }
 
@@ -92,7 +92,7 @@ public class Shader
         string infoLog = GL.GetProgramInfoLog(program);
         if (!string.IsNullOrEmpty(infoLog))
         {
-            Console.WriteLine($"Program linking error: {infoLog}");
+            throw new Exception($"Program linking error: {infoLog}");
         }
     }
 }
