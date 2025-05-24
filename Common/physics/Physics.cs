@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
-using UntitledEngine.engine.entities;
+using UntitledEngine.Common.entities;
 
-namespace UntitledEngine.engine.physics
+namespace UntitledEngine.Common.physics
 {
     public class Physics
     {

@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\entities\" />
+    <Folder Include="game\entities\" />
     <Folder Include="game\sounds\" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
-using UntitledEngine.engine;
+using UntitledEngine.Common;
 
 namespace UntitledEngine
 {

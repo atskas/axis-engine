@@ -3,8 +3,6 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using UntitledEngine.engine.entities;
 
 namespace UntitledEngine
 {
@@ -56,16 +54,12 @@ namespace UntitledEngine
             KeyboardState keyboardState = KeyboardState;
 
             scene.Update(deltaTime);
-            scene.ProcessInput(keyboardState);
         }
 
         // Called every frame to render graphics
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            scene.Render(); // Render all scene objects
-
             SwapBuffers();  // Display rendered frame
         }
 
@@ -73,8 +67,6 @@ namespace UntitledEngine
         protected override void OnUnload()
         {
             Console.WriteLine("Window unloaded!");
-            scene.Cleanup();
-
             base.OnUnload();
         }
     }
