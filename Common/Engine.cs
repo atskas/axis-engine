@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.Common;
 using UntitledEngine.Common.Components;
 using UntitledEngine.Common.ECS;
@@ -9,6 +10,8 @@ using UntitledEngine.Common.Entities;
 
 public class Engine : GameWindow
 {
+    public float deltaTime { get; private set; } = 0f;
+
     private Shader shader;
     private Matrix4 projection;
     private GameObject cameraObject;
@@ -58,6 +61,8 @@ public class Engine : GameWindow
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
+        float deltaTime = (float)args.Time;
+
         foreach (var go in GameObjects)
             foreach (var comp in go.Components)
                 comp.Update();
