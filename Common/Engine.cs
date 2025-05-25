@@ -2,7 +2,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.Common;
 using UntitledEngine.Common.Components;
 using UntitledEngine.Common.ECS;
@@ -13,9 +12,10 @@ public class Engine : GameWindow
     public float deltaTime { get; private set; } = 0f;
 
     private Shader shader;
+    public Shader Shader => shader;
     private Matrix4 projection;
     private GameObject cameraObject;
-    private GameObject object1;
+    private GameObject tony;
 
     public static List<GameObject> GameObjects = new();
 
@@ -49,9 +49,8 @@ public class Engine : GameWindow
         cameraObject = new CameraObject();
 
         // Add test object
-        object1 = new Object1();
-        object1.Transform.Rotation = 15f;
-        GameObjects.Add(object1);
+        tony = new Tony();
+        GameObjects.Add(tony);
 
         // Call Start
         foreach (var go in GameObjects)
@@ -72,7 +71,7 @@ public class Engine : GameWindow
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         shader.Use();
-        shader.SetShaderColor(new Vector4(1f, 1f, 1f, 1f));
+        shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
 
         // Set global uniforms
         shader.SetMatrix4("projection", projection);

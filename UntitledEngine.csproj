@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.9.4" />
     <None Update="Shaders\*glsl" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
   </ItemGroup>
 
 </Project>

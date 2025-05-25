@@ -46,7 +46,7 @@ public class Shader
 
     }
 
-    public void SetShaderColor(Vector4 color)
+    public void SetColor(Vector4 color)
     {
         int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
         if (colorLocation == -1)
@@ -55,6 +55,16 @@ public class Shader
             return;
         }
         GL.Uniform4(colorLocation, color);
+    }
+
+    public void SetTexture(string name, int unit)
+    {
+        int location = GL.GetUniformLocation(shaderProgram, name);
+        if (location == -1)
+        {
+            Console.WriteLine($"Warning: uniform {name} not found in shader.");
+        }
+        GL.Uniform1(location, unit);
     }
 
     public void SetMatrix4(string name, Matrix4 matrix)

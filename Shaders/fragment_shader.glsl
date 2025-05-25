@@ -1,11 +1,13 @@
 #version 460 core
 
-in vec4 TexCoord;
+in vec2 TexCoord;
 out vec4 FragColor;
 
-uniform sampler2D spriteTexture;
+uniform sampler2D uTexture;
+uniform vec4 shapeColor;
 
 void main()
 {
-    FragColor = texture(spriteTexture, TexCoord);
+    vec4 texColor = texture(uTexture, TexCoord);
+    FragColor = texColor * shapeColor; // multiply texture by color tint
 }

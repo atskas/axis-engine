@@ -2,25 +2,12 @@
 using UntitledEngine.Common.Entities;
 using UntitledEngine.Common.Assets;
 
-public class Object1 : GameObject
+public class Tony : GameObject
 {
-    public Object1()
+    public Tony()
     {
-        float[] vertices = {
-            -0.5f,  0.5f,
-            0.5f,  0.5f,
-            0.5f, -0.5f,
-            -0.5f, -0.5f
-        };
-
-        uint[] indices = {
-            0, 1, 2,
-            2, 3, 0 
-        };
-
-
-        var mesh = new Mesh { Vertices = vertices, Indices = indices };
-        var renderer = new MeshRenderer { Mesh = mesh };
+        var texture = new Texture("Textures/texture.png");
+        var renderer = new MeshRenderer(texture);
 
         AddComponent(renderer);
     }
