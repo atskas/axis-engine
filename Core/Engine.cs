@@ -102,6 +102,11 @@ public class Engine : GameWindow
     protected override void OnResize(ResizeEventArgs e)
     {
         GL.Viewport(0, 0, Size.X, Size.Y);
-        projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, -1f, 1f);
+
+        float aspect = Size.X / (float)Size.Y;
+        projection = Matrix4.CreateOrthographicOffCenter(
+            -aspect, aspect, -1f, 1f, -1f, 1f
+        );
     }
+
 }
