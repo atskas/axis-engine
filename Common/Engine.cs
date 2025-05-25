@@ -33,8 +33,8 @@ public class Engine : GameWindow
 
         Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
 
-        string vertex = File.ReadAllText("shaders/vertex_shader.glsl");
-        string fragment = File.ReadAllText("shaders/fragment_shader.glsl");
+        string vertex = File.ReadAllText("Shaders/vertex_shader.glsl");
+        string fragment = File.ReadAllText("Shaders/fragment_shader.glsl");
 
         shader = new Shader(vertex, fragment);
 
@@ -49,6 +49,7 @@ public class Engine : GameWindow
 
         // Add test object
         object1 = new Object1();
+        object1.Transform.Rotation = 15f;
         GameObjects.Add(object1);
 
         // Call Start
