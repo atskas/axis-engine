@@ -18,7 +18,7 @@ public class Engine : GameWindow
     public Engine(int width, int height, string title)
         : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
-            Size = new Vector2i(width, height),
+            ClientSize = new Vector2i(width, height),
             Title = title
         })
     {
