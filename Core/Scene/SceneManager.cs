@@ -37,7 +37,7 @@ internal class SceneManager
         // Debug scene
         Scene debugScene = new Scene();
         Entity debugObject = new Entity(); // Debug object
-        MeshRenderer meshRenderer = new MeshRenderer(new Texture("Textures/texture.png")); // Assign debug texture to new mesh renderer
+        MeshRenderer meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.png")); // Assign debug texture to new mesh renderer
         
         debugObject.AddComponent(meshRenderer);
 

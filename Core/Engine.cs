@@ -37,8 +37,8 @@ public class Engine : GameWindow
 
         Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
 
-        string vertex = File.ReadAllText("Shaders/vertex_shader.glsl");
-        string fragment = File.ReadAllText("Shaders/fragment_shader.glsl");
+        string vertex = File.ReadAllText("Assets/Shaders/vertex_shader.glsl");
+        string fragment = File.ReadAllText("Assets/Shaders/fragment_shader.glsl");
 
         shader = new Shader(vertex, fragment);
 
