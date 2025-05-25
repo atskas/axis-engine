@@ -6,23 +6,18 @@ namespace UntitledEngine.Common.Entities;
 
 public class GameObject
 {
-
-    private readonly List<GameObject> gameObjects = new();
-    public ReadOnlyCollection<GameObject> GameObjects => gameObjects.AsReadOnly();
-
     public string Name { get; set; } = string.Empty;
 
     private readonly List<GameComponent> components = new();
 
     public ReadOnlyCollection<GameComponent> Components => components.AsReadOnly();
 
-    public Transform Transform => components.OfType<Transform>().FirstOrDefault();
+    public Transform? Transform => components.OfType<Transform>().FirstOrDefault();
 
     // Constructor to initialise the GameObject
     public GameObject()
     {
         AddComponent(new Transform());
-        gameObjects.Add(this);
     }
 
     // Add component to object

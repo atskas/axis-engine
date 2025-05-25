@@ -6,19 +6,19 @@ using UntitledEngine.Common;
 using UntitledEngine.Common.Components;
 using UntitledEngine.Common.ECS;
 using UntitledEngine.Common.Entities;
+using UntitledEngine.Common.Scenes;
 
 public class Engine : GameWindow
 {
     public float deltaTime { get; private set; } = 0f;
+    
+    // Creates the singleton SceneManager
+    SceneManager sceneManager = new SceneManager();
 
     private Shader shader;
     public Shader Shader => shader;
     private Matrix4 projection;
-    private GameObject cameraObject;
-    private GameObject tony;
-
-    public static List<GameObject> GameObjects = new();
-
+    
     public Engine(int width, int height, string title)
         : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
@@ -45,58 +45,34 @@ public class Engine : GameWindow
         // Projection (orthographic)
         projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
 
-        // Setup Camera
-        cameraObject = new CameraObject();
-
-        // Add test object
-        tony = new Tony();
-        GameObjects.Add(tony);
-
-        // Call Start
-        foreach (var go in GameObjects)
-            foreach (var comp in go.Components)
-                comp.Start();
+        // Call Scene Start
+        sceneManager.OnLoad();
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
         float deltaTime = (float)args.Time;
 
-        foreach (var go in GameObjects)
-            foreach (var comp in go.Components)
-                comp.Update();
-
-        // Input (currently here for testing)
-        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W))
-        {
-            tony.Transform.Position += new Vector2(0f, deltaTime * 0.5f);
-        }
-        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
-        {
-            tony.Transform.Position += new Vector2(0f, deltaTime * -0.5f);
-        }
-        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D))
-        {
-            tony.Transform.Position += new Vector2(deltaTime * 0.5f, 0f);
-        }
-        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
-        {
-            tony.Transform.Position += new Vector2(deltaTime * -0.5f, 0f);
-        }
+        sceneManager.OnUpdate(deltaTime);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL.ClearColor(Color4.Black);
         shader.Use();
         shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
 
         // Set global uniforms
         shader.SetMatrix4("projection", projection);
-        var camera = cameraObject.GetComponent<Camera>();
+        var cameraObject = sceneManager.CurrentScene.GameObjects
+            .FirstOrDefault(go => go.GetComponent<Camera>() != null);
+
+        var camera = cameraObject?.GetComponent<Camera>();
         shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
 
-        foreach (var go in GameObjects)
+
+        foreach (var go in sceneManager.CurrentScene.GameObjects)
         {
             var transform = go.Transform;
             var model = transform?.GetTransformMatrix() ?? Matrix4.Identity;
