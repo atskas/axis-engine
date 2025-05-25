@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using UntitledEngine.Common;
 using UntitledEngine.Common.Components;
+using UntitledEngine.Common.ECS;
 using UntitledEngine.Common.Entities;
 
 public class Engine : GameWindow
@@ -42,10 +43,7 @@ public class Engine : GameWindow
         projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
 
         // Setup Camera
-        cameraObject = new GameObject();
-        var camera = new Camera();
-        cameraObject.AddComponent(camera);
-        GameObjects.Add(cameraObject);
+        cameraObject = new CameraObject();
 
         // Add test object
         object1 = new Object1();

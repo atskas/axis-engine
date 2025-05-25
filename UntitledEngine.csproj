@@ -10,12 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.9.4" />
-    <None Update="shaders\*glsl" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="game\entities\" />
-    <Folder Include="game\sounds\" />
+    <None Update="Shaders\*glsl" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
