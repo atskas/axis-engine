@@ -51,6 +51,12 @@ public class Engine : GameWindow
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
+        if (sceneManager.CurrentScene == null)
+        {
+            // Skip updating if no scene assigned yet
+            return;
+        }
+        
         float deltaTime = (float)args.Time;
 
         sceneManager.OnUpdate(deltaTime);
@@ -58,6 +64,14 @@ public class Engine : GameWindow
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
+        if (sceneManager.CurrentScene == null)
+        {
+            // Clear screen and swap buffers to avoid freezing
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            SwapBuffers();
+            return;
+        }
+        
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         GL.ClearColor(Color4.Black);
         shader.Use();
@@ -65,14 +79,14 @@ public class Engine : GameWindow
 
         // Set global uniforms
         shader.SetMatrix4("projection", projection);
-        var cameraObject = sceneManager.CurrentScene.GameObjects
+        var cameraObject = sceneManager.CurrentScene.Entities
             .FirstOrDefault(go => go.GetComponent<Camera>() != null);
 
         var camera = cameraObject?.GetComponent<Camera>();
         shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
 
 
-        foreach (var go in sceneManager.CurrentScene.GameObjects)
+        foreach (var go in sceneManager.CurrentScene.Entities)
         {
             var transform = go.Transform;
             var model = transform?.GetTransformMatrix() ?? Matrix4.Identity;

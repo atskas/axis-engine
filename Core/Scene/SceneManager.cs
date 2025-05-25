@@ -1,3 +1,4 @@
+using UntitledEngine.Assets.Scenes;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -31,22 +32,12 @@ internal class SceneManager
         CurrentScene.StartScene();
     }
 
-    // Just for the debug scene
     public void OnLoad()
     {
-        // Debug scene
-        Scene debugScene = new Scene();
-        Entity debugObject = new Entity(); // Debug object
-        MeshRenderer meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.png")); // Assign debug texture to new mesh renderer
+        Console.WriteLine("Scene Manager Loaded");
         
-        debugObject.AddComponent(meshRenderer);
-
-        Entity cameraObject = new CameraObject();
-        
-        debugScene.GameObjects.Add(cameraObject);
-        debugScene.GameObjects.Add(debugObject);
-        
-        CurrentScene = debugScene;
+        // Load scenes
+        Scene1 scene1 = new();
     }
 
     public void OnUpdate(float deltaTime) => CurrentScene?.UpdateScene();
