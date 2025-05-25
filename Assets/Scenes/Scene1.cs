@@ -16,15 +16,15 @@ internal class Scene1 : Scene
     
     public Scene1()
     {
-        // Create entities and components
+        // Create entities and add components
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
         debugObject.AddComponent(meshRenderer);
 
-        Entity cameraObject = new CameraObject();
+        Entity cameraObject = new CameraEntity();
 
         // Add entities to the scene
-        this.Entities.Add(cameraObject);
-        this.Entities.Add(debugObject);
+        Entities.Add(cameraObject);
+        Entities.Add(debugObject);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)

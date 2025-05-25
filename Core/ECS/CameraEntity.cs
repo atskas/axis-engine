@@ -3,9 +3,9 @@ using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.ECS;
 
-public class CameraObject : Entity
+public class CameraEntity : Entity
 {
-    public CameraObject()
+    public CameraEntity()
     {
         // Add Camera component to the GameObject
         var camera = new Camera();
