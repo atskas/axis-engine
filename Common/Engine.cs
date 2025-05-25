@@ -50,7 +50,6 @@ public class Engine : GameWindow
 
         // Add test object
         tony = new Tony();
-        GameObjects.Add(tony);
 
         // Call Start
         foreach (var go in GameObjects)
@@ -65,6 +64,24 @@ public class Engine : GameWindow
         foreach (var go in GameObjects)
             foreach (var comp in go.Components)
                 comp.Update();
+
+        // Input (currently here for testing)
+        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.W))
+        {
+            tony.Transform.Position += new Vector2(0f, deltaTime * 0.5f);
+        }
+        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.S))
+        {
+            tony.Transform.Position += new Vector2(0f, deltaTime * -0.5f);
+        }
+        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D))
+        {
+            tony.Transform.Position += new Vector2(deltaTime * 0.5f, 0f);
+        }
+        if (KeyboardState.IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.A))
+        {
+            tony.Transform.Position += new Vector2(deltaTime * -0.5f, 0f);
+        }
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
