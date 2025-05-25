@@ -1,3 +1,4 @@
+using OpenTK.Mathematics;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -10,6 +11,8 @@ internal class Scene1 : Scene
 {
     private Entity debugObject = new Entity();
     private MeshRenderer meshRenderer;
+
+    private float time = 0f;
     
     public Scene1()
     {
@@ -32,6 +35,13 @@ internal class Scene1 : Scene
 
     public override void UpdateScene()
     {
+        time += 0.01f;
+        
+        float r = (float)(Math.Sin(time) * 0.5 + 0.5);
+        float g = (float)(Math.Sin(time + 2) * 0.5 + 0.5);
+        float b = (float)(Math.Sin(time + 4) * 0.5 + 0.5);
+        
         debugObject.Transform.Rotation += 0.0005f;
+        meshRenderer.Color = new Vector4(r, g, b, 1f);
     }
 }
