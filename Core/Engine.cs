@@ -57,7 +57,7 @@ public class Engine : GameWindow
             return;
         }
         
-        float deltaTime = (float)args.Time;
+        deltaTime = (float)args.Time;
 
         sceneManager.OnUpdate(deltaTime);
     }
