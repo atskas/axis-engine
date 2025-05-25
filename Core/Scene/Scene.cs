@@ -1,14 +1,14 @@
-using UntitledEngine.Common.Entities;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.Scenes;
+namespace UntitledEngine.Core.Scenes;
 
 internal class Scene
 {
-    public HashSet<GameObject> GameObjects { get; set; } = new HashSet<GameObject>();
+    public HashSet<Entity> GameObjects { get; set; } = new HashSet<Entity>();
 
     // So that you don't accidentally modify anything in the previous hashset
     // while iterating over it
-    private readonly List<GameObject> gameObjectBuffer = new();
+    private readonly List<Entity> gameObjectBuffer = new();
 
     public void StartScene()
     {

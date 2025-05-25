@@ -1,9 +1,9 @@
-﻿using UntitledEngine.Common.Components;
-using UntitledEngine.Common.Entities;
+﻿using UntitledEngine.Core.Components;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.ECS;
+namespace UntitledEngine.Core.ECS;
 
-public class CameraObject : GameObject
+public class CameraObject : Entity
 {
     public CameraObject()
     {

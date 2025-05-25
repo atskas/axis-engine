@@ -2,11 +2,11 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using UntitledEngine.Common;
-using UntitledEngine.Common.Components;
-using UntitledEngine.Common.ECS;
-using UntitledEngine.Common.Entities;
-using UntitledEngine.Common.Scenes;
+using UntitledEngine.Core;
+using UntitledEngine.Core.Components;
+using UntitledEngine.Core.ECS;
+using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.Scenes;
 
 public class Engine : GameWindow
 {

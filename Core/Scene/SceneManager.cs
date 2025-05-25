@@ -1,9 +1,9 @@
-using UntitledEngine.Common.Assets;
-using UntitledEngine.Common.Components;
-using UntitledEngine.Common.ECS;
-using UntitledEngine.Common.Entities;
+using UntitledEngine.Core.Assets;
+using UntitledEngine.Core.Components;
+using UntitledEngine.Core.ECS;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.Scenes;
+namespace UntitledEngine.Core.Scenes;
 
 internal class SceneManager
 {
@@ -36,12 +36,12 @@ internal class SceneManager
     {
         // Debug scene
         Scene debugScene = new Scene();
-        GameObject debugObject = new GameObject(); // Debug object
+        Entity debugObject = new Entity(); // Debug object
         MeshRenderer meshRenderer = new MeshRenderer(new Texture("Textures/texture.png")); // Assign debug texture to new mesh renderer
         
         debugObject.AddComponent(meshRenderer);
 
-        GameObject cameraObject = new CameraObject();
+        Entity cameraObject = new CameraObject();
         
         debugScene.GameObjects.Add(cameraObject);
         debugScene.GameObjects.Add(debugObject);

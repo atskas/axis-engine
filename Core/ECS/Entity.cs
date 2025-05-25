@@ -1,34 +1,34 @@
 ﻿using System.Collections.ObjectModel;
-using UntitledEngine.Common.Components;
-using UntitledEngine.Common;
+using UntitledEngine.Core.Components;
+using UntitledEngine.Core;
 
-namespace UntitledEngine.Common.Entities;
+namespace UntitledEngine.Core.Entities;
 
-public class GameObject
+public class Entity
 {
     public string Name { get; set; } = string.Empty;
 
-    private readonly List<GameComponent> components = new();
+    private readonly List<Component> components = new();
 
-    public ReadOnlyCollection<GameComponent> Components => components.AsReadOnly();
+    public ReadOnlyCollection<Component> Components => components.AsReadOnly();
 
     public Transform? Transform => components.OfType<Transform>().FirstOrDefault();
 
     // Constructor to initialise the GameObject
-    public GameObject()
+    public Entity()
     {
         AddComponent(new Transform());
     }
 
     // Add component to object
-    public void AddComponent(GameComponent component)
+    public void AddComponent(Component component)
     {
         components.Add(component);
         component.GameObject = this;
     }
 
     // Get component from object
-    public T GetComponent<T>() where T : GameComponent
+    public T GetComponent<T>() where T : Component
     {
         return components.OfType<T>().FirstOrDefault();
     }

@@ -1,9 +1,9 @@
 ﻿using OpenTK.Mathematics;
-using UntitledEngine.Common.Entities;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.Components;
+namespace UntitledEngine.Core.Components;
 
-public class Transform : GameComponent
+public class Transform : Component
 {
     // Object transforms
     public Vector2 Position { get; set; } = Vector2.Zero;

@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Processing;
 
-namespace UntitledEngine.Common.Assets
+namespace UntitledEngine.Core.Assets
 {
     public class Texture
     {

@@ -1,10 +1,10 @@
 ﻿using OpenTK.Mathematics;
-using UntitledEngine.Common.Entities;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.Components;
+namespace UntitledEngine.Core.Components;
 
 // Camera, for rendering a scene.
-internal class Camera : GameComponent
+internal class Camera : Component
 {
     internal Matrix4 GetViewMatrix()
     {

@@ -1,8 +1,8 @@
 ﻿using OpenTK.Graphics.ES11;
 using OpenTK.Mathematics;
-using UntitledEngine.Common;
+using UntitledEngine.Core;
 
-namespace UntitledEngine.Common.Assets;
+namespace UntitledEngine.Core.Assets;
 
 public class Mesh
 {

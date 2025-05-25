@@ -1,10 +1,10 @@
-﻿namespace UntitledEngine.Common.Entities;
+﻿namespace UntitledEngine.Core.Entities;
 
-public abstract class GameComponent
+public abstract class Component
 {
 
     // The parent GameObject
-    public GameObject? GameObject { get; internal set; }
+    public Entity? GameObject { get; internal set; }
 
     // Runs once on component start
     public virtual void Start() { }

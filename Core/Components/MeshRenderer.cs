@@ -1,11 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using UntitledEngine.Common.Assets;
-using UntitledEngine.Common.Entities;
+using UntitledEngine.Core.Assets;
+using UntitledEngine.Core.Entities;
 
-namespace UntitledEngine.Common.Components;
+namespace UntitledEngine.Core.Components;
 
-internal class MeshRenderer : GameComponent
+internal class MeshRenderer : Component
 {
     public Mesh Mesh
     {
