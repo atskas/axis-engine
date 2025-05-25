@@ -35,13 +35,13 @@ internal class Scene1 : Scene
 
     public override void UpdateScene()
     {
-        time += 0.01f;
-        
+        time += Program.Engine.deltaTime;
+
         float r = (float)(Math.Sin(time) * 0.5 + 0.5);
         float g = (float)(Math.Sin(time + 2) * 0.5 + 0.5);
         float b = (float)(Math.Sin(time + 4) * 0.5 + 0.5);
         
-        debugObject.Transform.Rotation += 0.0005f;
+        debugObject.Transform.Rotation += Program.Engine.deltaTime * 1.2f;
         meshRenderer.Color = new Vector4(r, g, b, 1f);
     }
 }
