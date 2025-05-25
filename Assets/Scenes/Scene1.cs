@@ -6,30 +6,32 @@ using UntitledEngine.Core.Scenes;
 
 namespace UntitledEngine.Assets.Scenes;
 
-internal class Scene1
+internal class Scene1 : Scene
 {
-    private readonly Scene scene;
-
+    private Entity debugObject = new Entity();
+    private MeshRenderer meshRenderer;
+    
     public Scene1()
     {
-        // Create new Scene
-        scene = new Scene();
-
         // Create entities and components
-        Entity debugObject = new Entity();
-        MeshRenderer meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.png"));
+        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
         debugObject.AddComponent(meshRenderer);
 
         Entity cameraObject = new CameraObject();
 
         // Add entities to the scene
-        scene.Entities.Add(cameraObject);
-        scene.Entities.Add(debugObject);
+        this.Entities.Add(cameraObject);
+        this.Entities.Add(debugObject);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
             throw new InvalidOperationException("SceneManager instance is not initialized.");
 
-        SceneManager.Instance.CurrentScene = scene;
+        SceneManager.Instance.CurrentScene = this;
+    }
+
+    public override void UpdateScene()
+    {
+        debugObject.Transform.Rotation += 0.0005f;
     }
 }

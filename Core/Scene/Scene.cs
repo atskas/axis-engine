@@ -26,7 +26,7 @@ internal class Scene
         }
     }
 
-    public void UpdateScene()
+    public virtual void UpdateScene()
     {
         entityBuffer.Clear();
         entityBuffer.AddRange(Entities);
