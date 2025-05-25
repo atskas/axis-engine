@@ -50,6 +50,7 @@ public class Engine : GameWindow
 
         // Add test object
         tony = new Tony();
+        GameObjects.Add(tony);
 
         // Call Start
         foreach (var go in GameObjects)
