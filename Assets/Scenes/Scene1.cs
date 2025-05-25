@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -16,7 +17,7 @@ internal class Scene1 : Scene
     
     public Scene1()
     {
-        // Create entities and add components
+        // Create entities and components
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
         debugObject.AddComponent(meshRenderer);
 
@@ -25,6 +26,9 @@ internal class Scene1 : Scene
         // Add entities to the scene
         Entities.Add(cameraObject);
         Entities.Add(debugObject);
+        
+        // Set object transforms
+        debugObject.Transform.Scale = new Vector2(0.5f, 0.5f);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
@@ -35,13 +39,21 @@ internal class Scene1 : Scene
 
     public override void UpdateScene()
     {
+        // Rgb Effect
         time += Program.Engine.deltaTime;
 
         float r = (float)(Math.Sin(time) * 0.5 + 0.5);
         float g = (float)(Math.Sin(time + 2) * 0.5 + 0.5);
         float b = (float)(Math.Sin(time + 4) * 0.5 + 0.5);
-        
-        debugObject.Transform.Rotation += Program.Engine.deltaTime * 1.2f;
         meshRenderer.Color = new Vector4(r, g, b, 1f);
+        
+        // Input
+        KeyboardState keyboardState = Program.Engine.KeyboardState;
+
+        if (keyboardState.IsKeyDown(Keys.D))
+            debugObject.Transform.Rotation += Program.Engine.deltaTime * -1.65f;
+        
+        if (keyboardState.IsKeyDown(Keys.A))
+            debugObject.Transform.Rotation += Program.Engine.deltaTime * 1.65f;
     }
 }
