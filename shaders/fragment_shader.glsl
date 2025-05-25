@@ -5,7 +5,5 @@ uniform vec4 shapeColor;
 
 void main()
 {
-
-	FragColor = shapeColor;
-
+    FragColor = shapeColor;
 }

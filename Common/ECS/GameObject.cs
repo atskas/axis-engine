@@ -7,6 +7,9 @@ namespace UntitledEngine.Common.Entities;
 public class GameObject
 {
 
+    private readonly List<GameObject> gameObjects = new();
+    public ReadOnlyCollection<GameObject> GameObjects => gameObjects.AsReadOnly();
+
     public string Name { get; set; } = string.Empty;
 
     private readonly List<GameComponent> components = new();
@@ -19,6 +22,7 @@ public class GameObject
     public GameObject()
     {
         AddComponent(new Transform());
+        gameObjects.Add(this);
     }
 
     // Add component to object

@@ -1,73 +1,96 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using UntitledEngine.Common;
+using UntitledEngine.Common.Components;
+using UntitledEngine.Common.Entities;
 
-namespace UntitledEngine
+public class Engine : GameWindow
 {
-    public class Engine : GameWindow
+    private Shader shader;
+    private Matrix4 projection;
+    private GameObject cameraObject;
+    private GameObject object1;
+
+    public static List<GameObject> GameObjects = new();
+
+    public Engine(int width, int height, string title)
+        : base(GameWindowSettings.Default, new NativeWindowSettings()
+        {
+            Size = new Vector2i(width, height),
+            Title = title
+        })
     {
-        // Global projection matrix and delta time accessible throughout the engine
-        public static Matrix4 Projection;
-        public static float deltaTime { get; private set; }
+    }
 
-        private Scene scene;
+    protected override void OnLoad()
+    {
+        base.OnLoad();
 
-        // Constructor: Initializes window with given width, height, and title
-        public Engine(int width, int height, string title)
-            : base(GameWindowSettings.Default,
-                   new NativeWindowSettings() { Size = new Vector2i(width, height), Title = title })
+        GL.ClearColor(Color4.CornflowerBlue);
+        GL.Enable(EnableCap.DepthTest);
+
+        Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
+
+        string vertex = File.ReadAllText("shaders/vertex_shader.glsl");
+        string fragment = File.ReadAllText("shaders/fragment_shader.glsl");
+
+        shader = new Shader(vertex, fragment);
+
+        // Projection (orthographic)
+        projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
+
+        // Setup Camera
+        cameraObject = new GameObject();
+        var camera = new Camera();
+        cameraObject.AddComponent(camera);
+        GameObjects.Add(cameraObject);
+
+        // Add test object
+        object1 = new Object1();
+        GameObjects.Add(object1);
+
+        // Call Start
+        foreach (var go in GameObjects)
+            foreach (var comp in go.Components)
+                comp.Start();
+    }
+
+    protected override void OnUpdateFrame(FrameEventArgs args)
+    {
+        foreach (var go in GameObjects)
+            foreach (var comp in go.Components)
+                comp.Update();
+    }
+
+    protected override void OnRenderFrame(FrameEventArgs args)
+    {
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        shader.Use();
+        shader.SetShaderColor(new Vector4(1f, 1f, 1f, 1f));
+
+        // Set global uniforms
+        shader.SetMatrix4("projection", projection);
+        var camera = cameraObject.GetComponent<Camera>();
+        shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
+
+        foreach (var go in GameObjects)
         {
-            // Initialize the orthographic projection matrix with origin centered
-            Projection = Matrix4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
+            var transform = go.Transform;
+            var model = transform?.GetTransformMatrix() ?? Matrix4.Identity;
+            shader.SetMatrix4("model", model);
+
+            foreach (var renderer in go.Components.OfType<MeshRenderer>())
+                renderer.Draw();
         }
 
-        // Called once when the window finishes loading
-        protected override void OnLoad()
-        {
-            GL.ClearColor(0f, 0f, 0f, 1f); // Set background color to black
+        SwapBuffers();
+    }
 
-            scene = new Scene();  // Initialize game scene
-            Resize += OnWindowResize; // Register resize event handler
-        }
-
-        // Called when the window is resized
-        private void OnWindowResize(ResizeEventArgs e)
-        {
-            int size = Math.Min(e.Width, e.Height);
-            int vpX = (e.Width - size) / 2;
-            int vpY = (e.Height - size) / 2;
-
-            GL.Viewport(vpX, vpY, size, size);
-
-            Projection = Matrix4.CreateOrthographicOffCenter(-1, 1, -1, 1, -1, 1);
-        }
-
-
-        // Called every frame to update game logic and process input
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
-            deltaTime = (float)args.Time;
-
-            // Capture current keyboard state
-            KeyboardState keyboardState = KeyboardState;
-
-            scene.Update(deltaTime);
-        }
-
-        // Called every frame to render graphics
-        protected override void OnRenderFrame(FrameEventArgs args)
-        {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            SwapBuffers();  // Display rendered frame
-        }
-
-        // Called when window is closing/unloading resources
-        protected override void OnUnload()
-        {
-            Console.WriteLine("Window unloaded!");
-            base.OnUnload();
-        }
+    protected override void OnResize(ResizeEventArgs e)
+    {
+        GL.Viewport(0, 0, Size.X, Size.Y);
+        projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, -1f, 1f);
     }
 }
