@@ -13,6 +13,9 @@ namespace UntitledEngine.Common.Assets
 
         public Texture(string path)
         {
+            if (!File.Exists(path))
+                throw new Exception($"File {path} does not exist");
+            
             using Image<Rgba32> image = Image.Load<Rgba32>(path);
             image.Mutate(x => x.Flip(FlipMode.Vertical)); // Flip vertically to match OpenGL's texture coordinate system
 
