@@ -37,7 +37,7 @@ internal class SceneManager
         Console.WriteLine("Scene Manager Loaded");
         
         // Load scenes
-        Scene1 scene1 = new();
+        DebugScene debugScene = new();
     }
 
     public void OnUpdate(float deltaTime) => CurrentScene?.UpdateScene();

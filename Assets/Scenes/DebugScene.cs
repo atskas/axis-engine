@@ -8,14 +8,14 @@ using UntitledEngine.Core.Scenes;
 
 namespace UntitledEngine.Assets.Scenes;
 
-internal class Scene1 : Scene
+internal class DebugScene : Scene
 {
     private Entity debugObject = new Entity();
     private MeshRenderer meshRenderer;
 
     private float time = 0f;
     
-    public Scene1()
+    public DebugScene()
     {
         // Create entities and components
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
