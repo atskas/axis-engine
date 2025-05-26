@@ -81,7 +81,7 @@ public class Engine : GameWindow
             physicsManager.UpdatePhysics();
             accumulator -= FixedDeltaTime;
             
-            // Set previous position for entities
+            // Set previous position for each entity
             foreach (var entity in sceneManager.CurrentScene.Entities)
             {
                 entity.Transform.PreviousPosition = entity.Transform.Position;

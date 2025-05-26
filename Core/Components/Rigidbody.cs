@@ -9,9 +9,24 @@ public class Rigidbody : Component
     public Vector2 Gravity = new Vector2(0f, -1f);
     
     public Vector2 Velocity;
-    public Vector2 Acceleration => Mass == 0f ? Vector2.Zero : Force / Mass;
+    public Vector2 Acceleration => IsStatic ? Vector2.Zero : Force * InverseMass;
     public Vector2 Force;
-    public float Mass { get; set; }
+
+    private float mass;
+    public float Mass
+    {
+        get => mass;
+        set
+        {
+            // Avoid Mass being set to negative
+            if (value < 0f)
+                mass = 0f;
+            else
+                mass = value;
+        }
+    }
+
+    public float InverseMass => Mass == 0 ? 0 : 1f / Mass;
     public bool IsStatic => Mass == 0f;
 
     public float TerminalVelocity = -5f; // Gotta hardcode this one, equation is too difficult.
