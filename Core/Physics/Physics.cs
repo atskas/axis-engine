@@ -7,7 +7,7 @@ public static class Physics
 {
     public static bool Collides(Entity a, Entity b)
     {
-        // Check if the two entities have Collider components
+        // Early-out if either entity lacks a Collider
         var aCollider = a.GetComponent<Collider>();
         var bCollider = b.GetComponent<Collider>();
         // Return if any do not
@@ -44,11 +44,32 @@ public static class Physics
         bool aStatic = rbA == null || rbA.IsStatic;
         bool bStatic = rbB == null || rbB.IsStatic;
 
+        // Determine the collision normal
+        Vector2 normal = resolution.Normalized();
+        
+        // Prioritize vertical resolution to minimize jitter
         if (!aStatic && !bStatic)
         {
-            float totalMass = rbA.Mass + rbB.Mass;
-            a.Transform.Position += resolution * (rbB.Mass / totalMass);
-            b.Transform.Position -= resolution * (rbA.Mass / totalMass);
+            if (MathF.Abs(normal.Y) > MathF.Abs(normal.X))
+            {
+                if (normal.Y < 0)
+                {
+                    // A is above B
+                    a.Transform.Position += resolution;
+                }
+                else
+                {
+                    // A is below B
+                    a.Transform.Position += resolution;
+                }
+            }
+            else
+            {
+                // For sideways collision resolve using mass ratio
+                float totalMass = rbA.Mass + rbB.Mass;
+                a.Transform.Position += resolution * (rbB.Mass / totalMass);
+                b.Transform.Position -= resolution * (rbA.Mass / totalMass);
+            }
         }
         else if (!aStatic)
         {
@@ -58,10 +79,8 @@ public static class Physics
         {
             b.Transform.Position -= resolution;
         }
+
         // if both are static, no movement
-        
-        // Velocity correction
-        Vector2 normal = resolution.Normalized();
 
         var threshold = PhysicsManager.Instance?.VelocityCorrectionThreshold ?? 0.01f;
         // Correct velocity of A if dynamic
