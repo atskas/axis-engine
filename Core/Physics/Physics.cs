@@ -40,7 +40,26 @@ public static class Physics
 
         Vector2 resolution = CollisionResolve(a, b);
         
-        a.Transform.Position += resolution * 0.5f;
+        // If a Rigidbody is missing, let's treat as static
+        bool aStatic = rbA == null || rbA.IsStatic;
+        bool bStatic = rbB == null || rbB.IsStatic;
+
+        if (!aStatic && !bStatic)
+        {
+            float totalMass = rbA.Mass + rbB.Mass;
+            a.Transform.Position += resolution * (rbB.Mass / totalMass);
+            b.Transform.Position -= resolution * (rbA.Mass / totalMass);
+        }
+        else if (!aStatic)
+        {
+            a.Transform.Position += resolution;
+        }
+        else if (!bStatic)
+        {
+            b.Transform.Position -= resolution;
+        }
+        // if both are static, no movement
+        
         return resolution;
     }
     

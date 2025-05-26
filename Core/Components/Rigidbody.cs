@@ -14,6 +14,8 @@ public class Rigidbody : Component
     public float Mass { get; set; }
     public bool IsStatic => Mass == 0f;
 
+    private const float TerminalVelocity = -50f; // Gotta hardcode this one, equation is too difficult..
+
     public void Integrate(Entity entity)
     {
         if (IsStatic) return;
@@ -45,7 +47,10 @@ public class Rigidbody : Component
     {
         if (IsStatic) return;
         
-        // Apply gravity force automatically
-        AddForce(Gravity * Mass);
+        // Apply gravity force automatically (to a point)
+        if (Velocity.Y < TerminalVelocity)
+            Velocity.Y = TerminalVelocity;
+        else
+            AddForce(Gravity * Mass);
     }
 }

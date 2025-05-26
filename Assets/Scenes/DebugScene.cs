@@ -48,12 +48,12 @@ internal class DebugScene : Scene
         
         // object 1
         rigidBody1.Mass = 1f;
-        collider1.Size = debugObject1.Transform.Scale;
+        collider1.Size = new Vector2(0.5f, 0.5f);
         
         // object 2
         rigidBody2.Mass = 0f;
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
-        debugFloor.Transform.Scale = new Vector2(1f, 0.25f);
+        debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
         collider2.Size = debugFloor.Transform.Scale;
 
         // Add entities to the scene
