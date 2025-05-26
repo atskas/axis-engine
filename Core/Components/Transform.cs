@@ -7,6 +7,7 @@ public class Transform : Component
 {
     // Object transforms
     public Vector2 Position { get; set; } = Vector2.Zero;
+    public Vector2 PreviousPosition { get; set; } = Vector2.Zero;
     public float Rotation { get; set; } = 0;
     public Vector2 Scale {  get; set; } = Vector2.One;
 
