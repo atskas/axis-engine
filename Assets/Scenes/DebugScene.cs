@@ -21,7 +21,6 @@ internal class DebugScene : Scene
     private Entity debugFloor = new Entity();
     private MeshRenderer debugFloorMeshRenderer;
     private Collider collider2;
-    private Rigidbody rigidBody2;
 
     private float time = 0f;
     
@@ -40,7 +39,6 @@ internal class DebugScene : Scene
         
         debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.jpg"));
         collider2 = new Collider();
-        rigidBody2 = new Rigidbody();
         debugFloor.AddComponent(debugFloorMeshRenderer);
         debugFloor.AddComponent(collider2);
         
@@ -48,26 +46,44 @@ internal class DebugScene : Scene
         
         // object 1
         rigidBody1.Mass = 1f;
+        rigidBody1.Gravity = new Vector2(0f, -30f); // Set gravity to an unrealistic value
+        rigidBody1.TerminalVelocity = -1f;
         collider1.Size = new Vector2(0.5f, 0.5f);
+        debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
+        debugObject1.Transform.Position = new Vector2(0f, 1f);
         
         // object 2
-        rigidBody2.Mass = 0f;
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
         debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
         collider2.Size = debugFloor.Transform.Scale;
-
+        
         // Add entities to the scene
         Entities.Add(cameraObject);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
-        
-        // Set object transforms
-        debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
             throw new InvalidOperationException("SceneManager instance is not initialized.");
 
         SceneManager.Instance.CurrentScene = this;
+    }
+
+    public override void UpdateScene()
+    {
+        base.UpdateScene();
+
+        KeyboardState KeyboardState = Program.Engine.KeyboardState;
+
+        if (KeyboardState.IsKeyDown(Keys.A))
+            rigidBody1.Move(new Vector2(-1f, 0));
+        if (KeyboardState.IsKeyDown(Keys.D))
+            rigidBody1.Move(new Vector2(1f, 0));
+        
+        // Jumping
+        if (KeyboardState.IsKeyDown(Keys.W))
+        {
+            rigidBody1.Move(new Vector2(0f, 5));
+        }
     }
 }

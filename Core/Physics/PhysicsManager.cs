@@ -8,7 +8,7 @@ public class PhysicsManager
     public static PhysicsManager? Instance { get; private set; }
     public PhysicsManager() => Instance = this;
     
-    public void UpdatePhysics()
+    public void UpdatePhysics() // Uses a fixedDeltaTime instead of normal deltaTime for stability
     {
         var entities = SceneManager.Instance?.CurrentScene.Entities;
         if (entities == null) return;

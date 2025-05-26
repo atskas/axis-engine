@@ -11,7 +11,10 @@ using UntitledEngine.Core.Scenes;
 
 public class Engine : GameWindow
 {
-    public float deltaTime { get; private set; } = 0f;
+    public float DeltaTime { get; private set; } = 0f;
+    public float FixedDeltaTime { get;  private set; } = 1f / 60f; // 144 updates per second
+    private float accumulator = 0f;
+    
     
     SceneManager sceneManager = new SceneManager();
     private PhysicsManager physicsManager;
@@ -61,10 +64,15 @@ public class Engine : GameWindow
             return;
         }
         
-        deltaTime = (float)args.Time;
+        DeltaTime = (float)args.Time;
+        accumulator += DeltaTime;
         
-        physicsManager.UpdatePhysics();
-        sceneManager.OnUpdate(deltaTime);
+        while (accumulator >= FixedDeltaTime)
+        {
+            physicsManager.UpdatePhysics();
+            accumulator -= FixedDeltaTime;
+        }
+        sceneManager.OnUpdate(DeltaTime);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)

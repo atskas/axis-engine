@@ -6,7 +6,7 @@ public class Rigidbody : Component
 {
     private Entity entity;
     
-    public static Vector2 Gravity = new Vector2(0f, -9.81f);
+    public Vector2 Gravity = new Vector2(0f, -1f);
     
     public Vector2 Velocity;
     public Vector2 Acceleration => Mass == 0f ? Vector2.Zero : Force / Mass;
@@ -14,7 +14,7 @@ public class Rigidbody : Component
     public float Mass { get; set; }
     public bool IsStatic => Mass == 0f;
 
-    private const float TerminalVelocity = -50f; // Gotta hardcode this one, equation is too difficult..
+    public float TerminalVelocity = -5f; // Gotta hardcode this one, equation is too difficult.
 
     public void Integrate(Entity entity)
     {
@@ -22,25 +22,38 @@ public class Rigidbody : Component
 
         this.entity = entity;
         
-        Velocity += Acceleration * Program.Engine.deltaTime; // Update velocity based on acceleration
-        entity.Transform.Position += Velocity * Program.Engine.deltaTime; // Update position based on velocity
+        // Will soon apply friction alongside this
+        if (Force == Vector2.Zero)
+            ClearMovement();
+        
+        Velocity += Acceleration * Program.Engine.FixedDeltaTime; // Update velocity based on acceleration
+        if (Velocity.Y < TerminalVelocity) // Clamp after update
+            Velocity.Y = TerminalVelocity;
+        
+        entity.Transform.Position += Velocity * Program.Engine.FixedDeltaTime; // Update position based on velocity
         
         // Reset force for the next frame
         Force = Vector2.Zero;
     }
 
-    // Adds velocity (predictable movement)
-    public void AddVelocity(Vector2 velocityDelta)
+    // Simple movement
+    public void Move(Vector2 velocity)
     {
         if (!IsStatic)
-            Velocity += velocityDelta;
+            entity.Transform.Position += velocity * Program.Engine.DeltaTime;
     }
     
-    // Adds force (realistic movement)
+    // Better Movement
     public void AddForce(Vector2 force)
     {
         if (!IsStatic)
             Force += force;
+    }
+
+    public void ClearMovement()
+    {
+        Force = Vector2.Zero;
+        Velocity = Vector2.Zero;
     }
 
     public override void Update()
@@ -48,9 +61,6 @@ public class Rigidbody : Component
         if (IsStatic) return;
         
         // Apply gravity force automatically (to a point)
-        if (Velocity.Y < TerminalVelocity)
-            Velocity.Y = TerminalVelocity;
-        else
-            AddForce(Gravity * Mass);
+        AddForce(Gravity * Mass);
     }
 }
