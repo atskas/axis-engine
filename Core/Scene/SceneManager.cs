@@ -26,12 +26,6 @@ internal class SceneManager
         }
     }
 
-    public void SwitchScene(Scene newScene)
-    {
-        CurrentScene = newScene;
-        CurrentScene.StartScene();
-    }
-
     public void OnLoad()
     {
         Console.WriteLine("Scene Manager Loaded");
