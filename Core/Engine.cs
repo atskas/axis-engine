@@ -52,6 +52,9 @@ public class Engine : GameWindow
         // Create physics manager instance
         physicsManager = new PhysicsManager();
         
+        // Call Scene Start
+        sceneManager.OnLoad();
+        
         // Call every component's start
         foreach (var entity in sceneManager.CurrentScene.Entities)
         {
@@ -60,9 +63,6 @@ public class Engine : GameWindow
                 component.Start();
             }
         }
-        
-        // Call Scene Start
-        sceneManager.OnLoad();
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
