@@ -47,7 +47,7 @@ internal class DebugScene : Scene
         // object 1
         rigidBody1.Mass = 1f;
         rigidBody1.Gravity = new Vector2(0f, -30f); // Set gravity to an unrealistic value
-        rigidBody1.TerminalVelocity = -1f;
+        rigidBody1.TerminalVelocity = -3f;
         collider1.Size = new Vector2(0.5f, 0.5f);
         debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
         debugObject1.Transform.Position = new Vector2(0f, 1f);
