@@ -12,7 +12,7 @@ using UntitledEngine.Core.Scenes;
 public class Engine : GameWindow
 {
     public float DeltaTime { get; private set; } = 0f;
-    public float FixedDeltaTime { get;  private set; } = 1f / 60f; // 144 updates per second
+    public float FixedDeltaTime { get;  private set; } = 1f / 60f; // 60 updates per second
     private float accumulator = 0f;
     
     
@@ -52,6 +52,15 @@ public class Engine : GameWindow
         // Create physics manager instance
         physicsManager = new PhysicsManager();
         
+        // Call every component's start
+        foreach (var entity in sceneManager.CurrentScene.Entities)
+        {
+            foreach (var component in entity.Components)
+            {
+                component.Start();
+            }
+        }
+        
         // Call Scene Start
         sceneManager.OnLoad();
     }
@@ -72,6 +81,16 @@ public class Engine : GameWindow
             physicsManager.UpdatePhysics();
             accumulator -= FixedDeltaTime;
         }
+        
+        // Call every component's update
+        foreach (var entity in sceneManager.CurrentScene.Entities)
+        {
+            foreach (var component in entity.Components)
+            {
+                component.Update();
+            }
+        }
+        
         sceneManager.OnUpdate(DeltaTime);
     }
 

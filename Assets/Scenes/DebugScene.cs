@@ -21,6 +21,19 @@ internal class DebugScene : Scene
     private Entity debugFloor = new Entity();
     private MeshRenderer debugFloorMeshRenderer;
     private Collider collider2;
+    
+    // test objects (many of them)
+    private Entity gold1 = new Entity();
+    private Entity gold2 = new Entity();
+    private Entity gold3 = new Entity();
+    
+    private MeshRenderer goldMeshRenderer;
+    private Rigidbody goldRigidBody;
+    private Rigidbody goldRigidBody2;
+    private Rigidbody goldRigidBody3;
+    private Collider goldCollider;
+    private Collider goldCollider2;
+    private Collider goldCollider3;
 
     private float time = 0f;
     
@@ -42,25 +55,67 @@ internal class DebugScene : Scene
         debugFloor.AddComponent(debugFloorMeshRenderer);
         debugFloor.AddComponent(collider2);
         
+        // gold pieces
+        goldMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/gold.jpg"));
+        goldRigidBody = new Rigidbody();
+        goldRigidBody2 = new Rigidbody();
+        goldRigidBody3 = new Rigidbody();
+        
+        goldCollider = new Collider();
+        goldCollider2 = new Collider();
+        goldCollider3 = new Collider();
+        
+        // add their components
+        gold1.AddComponent(goldRigidBody);
+        gold2.AddComponent(goldRigidBody2);
+        gold3.AddComponent(goldRigidBody3);
+        gold1.AddComponent(goldCollider);
+        gold2.AddComponent(goldCollider2);
+        gold3.AddComponent(goldCollider3);
+        gold1.AddComponent(goldMeshRenderer);
+        gold2.AddComponent(goldMeshRenderer);
+        gold3.AddComponent(goldMeshRenderer);
+        
         // --- Set properties ---
         
         // object 1
+        debugObject1.Name = "Test";
         rigidBody1.Mass = 1f;
         rigidBody1.Gravity = new Vector2(0f, -30f); // Set gravity to an unrealistic value
         rigidBody1.TerminalVelocity = -3f;
         collider1.Size = new Vector2(0.5f, 0.5f);
         debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
-        debugObject1.Transform.Position = new Vector2(0f, 1f);
+        debugObject1.Transform.Position = new Vector2(0.8f, 1f);
         
         // object 2
+        debugFloor.Name = "Floor";
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
         debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
         collider2.Size = debugFloor.Transform.Scale;
+        
+        // gold pieces (test objects)
+        goldRigidBody.Mass = 2f;
+        goldRigidBody2.Mass = 2f;
+        goldRigidBody3.Mass = 2f;
+        
+        goldCollider.Size = new Vector2(0.25f, 0.25f);
+        goldCollider2.Size = new Vector2(0.25f, 0.25f);
+        goldCollider3.Size = new Vector2(0.25f, 0.25f);
+        
+        gold1.Transform.Scale = new Vector2(0.25f, 0.25f);
+        gold2.Transform.Scale = new Vector2(0.25f, 0.25f);
+        gold3.Transform.Scale = new Vector2(0.25f, 0.25f);
+        
+        gold1.Transform.Position = new Vector2(0f, 0f);
+        gold2.Transform.Position = new Vector2(0f, 1f);
         
         // Add entities to the scene
         Entities.Add(cameraObject);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
+        Entities.Add(gold1);
+        Entities.Add(gold2);
+        Entities.Add(gold3);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)

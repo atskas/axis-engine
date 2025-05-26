@@ -60,6 +60,29 @@ public static class Physics
         }
         // if both are static, no movement
         
+        // Velocity correction
+        Vector2 normal = resolution.Normalized();
+        
+        // Correct velocity of A if dynamic
+        if (!aStatic)
+        {
+            float vnA = Vector2.Dot(rbA.Velocity, normal);
+            if (vnA < 0) // velocity pushing into collision
+            {
+                rbA.Velocity -= vnA * normal;
+            }
+        }
+        
+        // Correct velocity of B if dynamic (end my suffering)
+        if (!bStatic)
+        {
+            float vnB = Vector2.Dot(rbB.Velocity, normal);
+            if (vnB < 0)
+            {
+                rbB.Velocity -= vnB * normal;
+            }
+        }
+        
         return resolution;
     }
     
@@ -86,9 +109,10 @@ public static class Physics
         float dy = MathF.Min(aMax.Y - bMin.Y, bMax.Y - aMin.Y);
         
         // Resolve collision along the axis with the smallest overlap to avoid jitter
+        const float padding = 0.001f;
         if (dx < dy)
-            return new Vector2(aPos.X < bPos.X ? -dx : dx, 0);
+            return new Vector2(aPos.X < bPos.X ? -(dx + padding) : (dx + padding), 0);
         else
-            return new Vector2(0, aPos.Y < bPos.Y ? -dy : dy);
+            return new Vector2(0, aPos.Y < bPos.Y ? -(dy + padding) : (dy + padding));
     }
 }
