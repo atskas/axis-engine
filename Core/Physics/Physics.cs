@@ -62,22 +62,23 @@ public static class Physics
         
         // Velocity correction
         Vector2 normal = resolution.Normalized();
-        
+
+        var threshold = PhysicsManager.Instance?.VelocityCorrectionThreshold ?? 0.01f;
         // Correct velocity of A if dynamic
         if (!aStatic)
         {
             float vnA = Vector2.Dot(rbA.Velocity, normal);
-            if (vnA < 0) // velocity pushing into collision
+            if (vnA < -threshold)
             {
                 rbA.Velocity -= vnA * normal;
             }
         }
         
-        // Correct velocity of B if dynamic (end my suffering)
+        // Correct velocity of B if dynamic
         if (!bStatic)
         {
             float vnB = Vector2.Dot(rbB.Velocity, normal);
-            if (vnB < 0)
+            if (vnB < -threshold)
             {
                 rbB.Velocity -= vnB * normal;
             }

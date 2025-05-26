@@ -7,6 +7,7 @@ public class PhysicsManager
     // Singleton instance of the PhysicsManager class
     public static PhysicsManager? Instance { get; private set; }
     public PhysicsManager() => Instance = this;
+    public float VelocityCorrectionThreshold { get; set; } = 0.01f;
     
     public void UpdatePhysics() // Uses a fixedDeltaTime instead of normal deltaTime for stability
     {
