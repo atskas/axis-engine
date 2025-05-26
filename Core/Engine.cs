@@ -6,14 +6,15 @@ using UntitledEngine.Core;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
 using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 
 public class Engine : GameWindow
 {
     public float deltaTime { get; private set; } = 0f;
     
-    // Creates the singleton SceneManager
     SceneManager sceneManager = new SceneManager();
+    private PhysicsManager physicsManager;
 
     private Shader shader;
     public Shader Shader => shader;
@@ -44,7 +45,10 @@ public class Engine : GameWindow
 
         // Projection (orthographic)
         projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
-
+        
+        // Create physics manager instance
+        physicsManager = new PhysicsManager();
+        
         // Call Scene Start
         sceneManager.OnLoad();
     }
@@ -58,7 +62,8 @@ public class Engine : GameWindow
         }
         
         deltaTime = (float)args.Time;
-
+        
+        physicsManager.UpdatePhysics();
         sceneManager.OnUpdate(deltaTime);
     }
 
@@ -85,7 +90,7 @@ public class Engine : GameWindow
         var camera = cameraObject?.GetComponent<Camera>();
         shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
 
-
+        // Call draw method for each mesh renderer
         foreach (var go in sceneManager.CurrentScene.Entities)
         {
             var transform = go.Transform;

@@ -3,7 +3,7 @@ using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Physics;
 
-public class Physics
+public static class Physics
 {
     public static bool Collides(Entity a, Entity b)
     {
@@ -25,20 +25,22 @@ public class Physics
         Vector2 bMax = bPos + bCollider.Size * 0.5f;
         
         // Return true if the two AABBs overlap on both the X and Y axes, false otherwise
-        return aMin.X <= bMax.Y && aMax.X >= bMin.X &&
+        return aMin.X <= bMax.X && aMax.X >= bMin.X &&
                aMin.Y <= bMax.Y && aMax.Y >= bMin.Y;
     }
     
     // Resolve collision with another entity by adjusting position minimally to separate them
-    // I should remember to factor in Rigidbody's mass into this soon
-    public Vector2 HandleCollision(Entity a, Entity b)
+    public static Vector2 HandleCollision(Entity a, Entity b)
     {
         if (!Collides(a, b))
             return Vector2.Zero;
+        
+        var rbA = a.GetComponent<Rigidbody>();
+        var rbB = b.GetComponent<Rigidbody>();
 
         Vector2 resolution = CollisionResolve(a, b);
-        a.Transform.Position += resolution;
-        b.Transform.Position -= resolution * 0.5f;
+        
+        a.Transform.Position += resolution * 0.5f;
         return resolution;
     }
     

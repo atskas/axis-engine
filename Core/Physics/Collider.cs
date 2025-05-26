@@ -3,7 +3,6 @@ using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Physics;
 
-// Collider class only holds data
 public class Collider : Component
 {
     public Vector2 Offset = Vector2.Zero;
