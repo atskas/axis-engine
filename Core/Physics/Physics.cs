@@ -108,6 +108,11 @@ public static class Physics
         float dx = MathF.Min(aMax.X - bMin.X, bMax.X - aMin.X);
         float dy = MathF.Min(aMax.Y - bMin.Y, bMax.Y - aMin.Y);
         
+        // Epsilon threshold to skip resolution when overlaps are minimal
+        const float epsilon = 0.001f;
+        if (dx < epsilon || dy < epsilon)
+            return Vector2.Zero;
+        
         // Resolve collision along the axis with the smallest overlap to avoid jitter
         const float padding = 0.001f;
         if (dx < dy)
