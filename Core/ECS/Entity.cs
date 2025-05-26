@@ -9,6 +9,7 @@ public class Entity
     public string Name { get; set; } = string.Empty;
 
     private readonly List<Component> components = new();
+    private HashSet<string> tags = new();
 
     public ReadOnlyCollection<Component> Components => components.AsReadOnly();
 
@@ -20,16 +21,44 @@ public class Entity
         AddComponent(new Transform());
     }
 
-    // Add component to object
+    // --- COMPONENTS ---
+    
+    // Add component to entity
     public void AddComponent(Component component)
     {
         components.Add(component);
         component.GameObject = this;
     }
 
-    // Get component from object
+    // Get component from entity
     public T GetComponent<T>() where T : Component
     {
         return components.OfType<T>().FirstOrDefault();
+    }
+    
+    // --- TAGS ---
+    
+    // Add tag to entity
+    public void AddTag(string tag)
+    {
+        tags.Add(tag);
+    }
+    
+    // Remove tag from entity
+    public void RemoveTag(string tag)
+    {
+        tags.Remove(tag);
+    }
+    
+    // Check if entity has tag
+    public bool HasTag(string tag)
+    {
+        return tags.Contains(tag);
+    }
+    
+    // Get tags from entity
+    public IEnumerable<string> GetTags()
+    {
+        return tags;
     }
 }
