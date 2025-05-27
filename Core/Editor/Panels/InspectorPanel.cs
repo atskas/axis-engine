@@ -9,7 +9,7 @@ public class InspectorPanel
 {
     public void Draw()
     {
-        ImGui.Begin("Properties");
+        ImGui.Begin("Inspector");
 
         var selected = EngineEditor.SelectedEntity;
         if (selected == null)
