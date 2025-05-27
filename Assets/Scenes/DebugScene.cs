@@ -94,7 +94,7 @@ internal class DebugScene : Scene
 
         var keyboard = Program.Engine.KeyboardState;
         float moveSpeed = 2.5f;
-        float jumpVelocity = 2f;
+        float jumpVelocity = 3f;
 
         var body = debugBody.Body;
 
@@ -110,9 +110,41 @@ internal class DebugScene : Scene
             velocity.X = 0;
         
         if (keyboard.IsKeyDown(Keys.W))
-            velocity.Y = jumpVelocity;
+            if (keyboard.IsKeyDown(Keys.W) && IsGrounded(debugObject1))
+                velocity.Y = jumpVelocity;
 
         // Set updated velocity
         body.SetLinearVelocity(Engine.ToNumerics(velocity));
     }
+    
+    // Grounded check
+    public bool IsGrounded(Entity entity)
+    {
+        var body = entity.GetComponent<PhysicsBody>().Body;
+        var position = body.GetPosition(); // This is already System.Numerics.Vector2
+
+        bool isGrounded = false;
+        float offset = 0.15f;
+        float rayLength = 0.15f;
+
+        void CastRay(System.Numerics.Vector2 origin)
+        {
+            var start = origin;
+            var end = origin + new System.Numerics.Vector2(0, -rayLength);
+
+            PhysicsManager.Instance.Box2DWorld.RayCast((fixture, point, normal, fraction) =>
+            {
+                if (fixture.Body != body)
+                    isGrounded = true;
+
+            }, start, end);
+        }
+
+        CastRay(position);
+        CastRay(position + new System.Numerics.Vector2(-offset, 0));
+        CastRay(position + new System.Numerics.Vector2(+offset, 0));
+
+        return isGrounded;
+    }
+
 }
