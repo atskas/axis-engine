@@ -49,7 +49,7 @@ public class PhysicsBody : Component
 
     public PhysicsBody(BodyType bodyType)
     {
-        Initialise(Program.Engine.physicsManager.Box2DWorld, bodyType);
+        Initialise(Program.Engine.PhysicsManager.Box2DWorld, bodyType);
     }
     
 

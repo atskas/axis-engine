@@ -16,8 +16,8 @@ public class Engine : GameWindow
     private float accumulator = 0f;
     
     
-    SceneManager sceneManager = new SceneManager();
-    public PhysicsManager physicsManager;
+    SceneManager SceneManager = new SceneManager();
+    public PhysicsManager PhysicsManager;
 
     private Shader shader;
     public Shader Shader => shader;
@@ -50,13 +50,13 @@ public class Engine : GameWindow
         projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
         
         // Create physics manager instance
-        physicsManager = new PhysicsManager();
+        PhysicsManager = new PhysicsManager();
         
         // Call Scene Start
-        sceneManager.OnLoad();
+        SceneManager.OnLoad();
         
         // Call every component's start
-        foreach (var entity in sceneManager.CurrentScene.Entities)
+        foreach (var entity in SceneManager.CurrentScene.Entities)
         {
             foreach (var component in entity.Components)
             {
@@ -67,7 +67,7 @@ public class Engine : GameWindow
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        if (sceneManager.CurrentScene == null)
+        if (SceneManager.CurrentScene == null)
         {
             // Skip updating if no scene assigned yet
             return;
@@ -78,18 +78,18 @@ public class Engine : GameWindow
         
         while (accumulator >= FixedDeltaTime)
         {
-            physicsManager.UpdatePhysics();
+            PhysicsManager.UpdatePhysics();
             accumulator -= FixedDeltaTime;
             
             // Set previous position for each entity
-            foreach (var entity in sceneManager.CurrentScene.Entities)
+            foreach (var entity in SceneManager.CurrentScene.Entities)
             {
                 entity.Transform.PreviousPosition = entity.Transform.Position;
             }
         }
         
         // Call every component's update
-        foreach (var entity in sceneManager.CurrentScene.Entities)
+        foreach (var entity in SceneManager.CurrentScene.Entities)
         {
             foreach (var component in entity.Components)
             {
@@ -97,12 +97,12 @@ public class Engine : GameWindow
             }
         }
         
-        sceneManager.OnUpdate(DeltaTime);
+        SceneManager.OnUpdate(DeltaTime);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
-        if (sceneManager.CurrentScene == null)
+        if (SceneManager.CurrentScene == null)
         {
             // Clear screen and swap buffers to avoid freezing
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -117,14 +117,14 @@ public class Engine : GameWindow
 
         // Set global uniforms
         shader.SetMatrix4("projection", projection);
-        var cameraObject = sceneManager.CurrentScene.Entities
+        var cameraObject = SceneManager.CurrentScene.Entities
             .FirstOrDefault(go => go.GetComponent<Camera>() != null);
 
         var camera = cameraObject?.GetComponent<Camera>();
         shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
 
         // Call draw method for each mesh renderer
-        foreach (var go in sceneManager.CurrentScene.Entities)
+        foreach (var go in SceneManager.CurrentScene.Entities)
         {
             var transform = go.Transform;
             var model = transform?.GetTransformMatrix() ?? Matrix4.Identity;
