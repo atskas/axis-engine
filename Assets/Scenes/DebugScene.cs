@@ -99,10 +99,10 @@ internal class DebugScene : Scene
         float moveSpeed = 2.5f;
         float jumpVelocity = 3f;
 
-        var body = debugBody.Body;
+        var playerBody = debugBody.Body;
 
         // Get current linear velocity
-        Vector2 velocity = Engine.ToOpenTK(body.GetLinearVelocity());
+        Vector2 velocity = Engine.ToOpenTK(playerBody.GetLinearVelocity());
 
         // Horizontal movement
         if (keyboard.IsKeyDown(Keys.A))
@@ -117,7 +117,7 @@ internal class DebugScene : Scene
                 velocity.Y = jumpVelocity;
 
         // Set updated velocity
-        body.SetLinearVelocity(Engine.ToNumerics(velocity));
+        playerBody.SetLinearVelocity(Engine.ToNumerics(velocity));
     }
     
     // Grounded check
