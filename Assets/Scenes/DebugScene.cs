@@ -139,6 +139,8 @@ internal class DebugScene : Scene
             if (IsGrounded(debugObject1))
                 velocity.Y = jumpVelocity;
         }
+        
+        debugBody.Body.SetLinearVelocity(velocity);
     }
     
     // Grounded check
