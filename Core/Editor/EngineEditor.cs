@@ -15,10 +15,17 @@ public class EngineEditor
     {
         ImGui.Begin("Entity List");
         
-        _entityPanel.Draw();
-        _inspectorPanel.Draw();
+        // Draw all panels
+        DrawPanels();
 
         ImGui.End();
+    }
+    
+    
+    private void DrawPanels()
+    {
+        _entityPanel.Draw();
+        _inspectorPanel.Draw();
     }
 }
 
