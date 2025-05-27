@@ -5,13 +5,13 @@ namespace UntitledEngine
 {
     class Program
     {
-        public static Engine Engine { get; private set; }
-
+        private static Engine _engine;
+        
         static async Task Main(string[] args)
         {
             // Create and run the engine
-            Engine = new Engine(450, 450, "Engine");
-            Engine.Run();
+            _engine = new Engine(450, 450, "Engine");
+            _engine.Run();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
 using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Components;
@@ -13,10 +13,10 @@ public class Transform : Component
 
 
     // Compute model matrix combining transforms
-    public Matrix4 GetTransformMatrix()
+    public Matrix4x4 GetTransformMatrix()
     {
-        return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 0f)) *
-               Matrix4.CreateRotationZ(Rotation) *
-               Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0f));
+        return Matrix4x4.CreateScale(new Vector3(Scale.X, Scale.Y, 0f)) *
+               Matrix4x4.CreateRotationZ(Rotation) *
+               Matrix4x4.CreateTranslation(new Vector3(Position.X, Position.Y, 0f));
     }
 }

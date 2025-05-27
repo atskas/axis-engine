@@ -1,6 +1,6 @@
+using System.Numerics;
 using Box2D.NetStandard.Dynamics.Bodies;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using Silk.NET.Input;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -38,6 +38,10 @@ internal class DebugScene : Scene
     private MeshRenderer debugSphereMeshRenderer;
     
     private PhysicsBody debugSphereBody;
+    
+    // game stuff
+    public float moveSpeed = 2.5f;
+    public float jumpVelocity = 3f;
     
     public DebugScene()
     {
@@ -114,29 +118,29 @@ internal class DebugScene : Scene
     {
         base.UpdateScene();
 
-        var keyboard = Program.Engine.KeyboardState;
-        float moveSpeed = 2.5f;
-        float jumpVelocity = 3f;
-
-        var playerBody = debugBody.Body;
-
         // Get current linear velocity
-        Vector2 velocity = Engine.ToOpenTK(playerBody.GetLinearVelocity());
-
-        // Horizontal movement
-        if (keyboard.IsKeyDown(Keys.A))
-            velocity.X = -moveSpeed;
-        else if (keyboard.IsKeyDown(Keys.D))
-            velocity.X = moveSpeed;
-        else
-            velocity.X = 0;
+        var velocity = debugBody.Body.GetLinearVelocity();
         
-        if (keyboard.IsKeyDown(Keys.W))
-            if (keyboard.IsKeyDown(Keys.W) && IsGrounded(debugObject1))
-                velocity.Y = jumpVelocity;
+        if (Engine.Instance.InputManager.KeyDown(Key.A))
+        {
+            velocity.X = -moveSpeed;
+        }
+        else if (Engine.Instance.InputManager.KeyDown(Key.D))
+        {
+            velocity.X = moveSpeed;
+        }
+        else
+        {
+            velocity.X = 0;
+        }
 
-        // Set updated velocity
-        playerBody.SetLinearVelocity(Engine.ToNumerics(velocity));
+        if (Engine.Instance.InputManager.KeyDown(Key.W))
+        {
+            if (IsGrounded(debugObject1))
+                velocity.Y = jumpVelocity;
+        }
+        
+        debugBody.Body.SetLinearVelocity(velocity);
     }
     
     // Grounded check

@@ -1,164 +1,158 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
+﻿using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
+using Silk.NET.Maths;
+using System.Numerics;
 using UntitledEngine.Core;
 using UntitledEngine.Core.Components;
-using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.Input;
 using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
+using Shader = UntitledEngine.Core.Shader;
 
-public class Engine : GameWindow
+public class Engine
 {
-    public float DeltaTime { get; private set; } = 0f;
-    public float FixedDeltaTime { get;  private set; } = 1f / 60f; // 60 updates per second
-    private float accumulator = 0f;
+    // Private fields
+    private IWindow _window;
+    private Matrix4x4 _projection;
+    private float _accumulator = 0f;
     
-    
-    SceneManager SceneManager = new SceneManager();
-    public PhysicsManager PhysicsManager;
+    // Singleton Instance
+    public static Engine Instance { get; private set; }
 
-    private Shader shader;
-    public Shader Shader => shader;
-    private Matrix4 projection;
+    // Globals
+    public GL gl { get; private set; }
+    public float DeltaTime { get; private set; } = 0f;
+    public float FixedDeltaTime { get; private set; } = 1f / 60f;
     
+    public readonly SceneManager SceneManager = new SceneManager();
+    public readonly PhysicsManager PhysicsManager;
+    public InputManager InputManager;
+    
+    public Shader Shader { get; private set; }
+    
+
     public Engine(int width, int height, string title)
-        : base(GameWindowSettings.Default, new NativeWindowSettings()
-        {
-            ClientSize = new Vector2i(width, height),
-            Title = title
-        })
     {
+        // Set instance to this
+        if (Instance != null)
+            throw new InvalidOperationException("Only one Engine instance is allowed.");
+        Instance = this;
+        
+        // Create a window
+        var options = WindowOptions.Default;
+        options.Size = new Vector2D<int>(width, height);
+        options.Title = title;
+        options.API = new GraphicsAPI(ContextAPI.OpenGL, ContextProfile.Core, ContextFlags.Default, new APIVersion(4, 6));
+        
+        _window = Window.Create(options);
+
+        // Hook into lifecycle events
+        _window.Load += OnLoad;
+        _window.Update += OnUpdateFrame;
+        _window.Render += OnRenderFrame;
+        _window.Resize += OnResize;
+        
+        PhysicsManager = new PhysicsManager();
     }
 
-    protected override void OnLoad()
+    public void Run()
     {
-        base.OnLoad();
+        _window.Run();
+    }
 
-        GL.ClearColor(Color4.CornflowerBlue);
-        GL.Enable(EnableCap.DepthTest);
+    private void OnLoad()
+    {
+        gl = GL.GetApi(_window);
+        gl.Enable(GLEnum.DepthTest);
 
         Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
 
         string vertex = File.ReadAllText("Assets/Shaders/vertex_shader.glsl");
         string fragment = File.ReadAllText("Assets/Shaders/fragment_shader.glsl");
 
-        shader = new Shader(vertex, fragment);
+        Shader = new Shader(vertex, fragment);
+        InputManager = new InputManager(_window);
 
-        // Projection (orthographic)
-        projection = Matrix4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
-        
-        // Create physics manager instance
-        PhysicsManager = new PhysicsManager();
-        
-        // Call Scene Start
+        // Setup orthographic projection matrix
+        _projection = Matrix4x4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
+
         SceneManager.OnLoad();
-        
-        // Call every component's start
+
         foreach (var entity in SceneManager.CurrentScene.Entities)
-        {
             foreach (var component in entity.Components)
-            {
                 component.Start();
-            }
-        }
     }
 
-    protected override void OnUpdateFrame(FrameEventArgs args)
+    private void OnUpdateFrame(double deltaTime)
     {
         if (SceneManager.CurrentScene == null)
-        {
-            // Skip updating if no scene assigned yet
             return;
-        }
+
+        DeltaTime = (float)deltaTime;
+        _accumulator += DeltaTime;
         
-        DeltaTime = (float)args.Time;
-        accumulator += DeltaTime;
-        
-        while (accumulator >= FixedDeltaTime)
+        InputManager.Update(); // Update InputManager early
+
+        while (_accumulator >= FixedDeltaTime)
         {
             PhysicsManager.UpdatePhysics();
-            accumulator -= FixedDeltaTime;
-            
-            // Set previous position for each entity
+            _accumulator -= FixedDeltaTime;
+
             foreach (var entity in SceneManager.CurrentScene.Entities)
             {
                 entity.Transform.PreviousPosition = entity.Transform.Position;
             }
         }
-        
-        // Call every component's update
+
         foreach (var entity in SceneManager.CurrentScene.Entities)
         {
             foreach (var component in entity.Components)
-            {
                 component.Update();
-            }
         }
-        
+
         SceneManager.OnUpdate(DeltaTime);
     }
 
-    protected override void OnRenderFrame(FrameEventArgs args)
+    private void OnRenderFrame(double deltaTime)
     {
         if (SceneManager.CurrentScene == null)
         {
-            // Clear screen and swap buffers to avoid freezing
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            SwapBuffers();
+            gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             return;
         }
-        
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        GL.ClearColor(Color4.Black);
-        shader.Use();
-        shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
+
+        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        gl.ClearColor(0f, 0f, 0f, 1f);
+
+        Shader.Use();
+
+        Shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
 
         // Set global uniforms
-        shader.SetMatrix4("projection", projection);
-        var cameraObject = SceneManager.CurrentScene.Entities
-            .FirstOrDefault(go => go.GetComponent<Camera>() != null);
+        Shader.SetMatrix4("projection", _projection);
 
+        var cameraObject = SceneManager.CurrentScene.Entities.FirstOrDefault(go => go.GetComponent<Camera>() != null);
         var camera = cameraObject?.GetComponent<Camera>();
-        shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4.Identity);
+        Shader.SetMatrix4("view", camera?.GetViewMatrix() ?? Matrix4x4.Identity);
 
-        // Call draw method for each mesh renderer
         foreach (var go in SceneManager.CurrentScene.Entities)
         {
             var transform = go.Transform;
-            var model = transform?.GetTransformMatrix() ?? Matrix4.Identity;
-            shader.SetMatrix4("model", model);
+            var model = transform?.GetTransformMatrix() ?? Matrix4x4.Identity;
+            Shader.SetMatrix4("model", model);
 
             foreach (var renderer in go.Components.OfType<MeshRenderer>())
                 renderer.Draw();
         }
-
-        SwapBuffers();
     }
 
-    protected override void OnResize(ResizeEventArgs e)
+    private void OnResize(Vector2D<int> size)
     {
-        GL.Viewport(0, 0, Size.X, Size.Y);
+        gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
 
-        float aspect = Size.X / (float)Size.Y;
-        projection = Matrix4.CreateOrthographicOffCenter(
+        float aspect = size.X / (float)size.Y;
+        _projection = Matrix4x4.CreateOrthographicOffCenter(
             -aspect, aspect, -1f, 1f, -1f, 1f
         );
     }
-    
-    // ---Conversion---
-    
-    // Convert Numerics Vector2 to OpenTK Vector2
-    public static OpenTK.Mathematics.Vector2 ToOpenTK(System.Numerics.Vector2 v)
-    {
-        return new OpenTK.Mathematics.Vector2(v.X, v.Y);
-    }
-    
-    // Convert OpenTK Vector2 to Numerics Vector2
-    public static System.Numerics.Vector2 ToNumerics(OpenTK.Mathematics.Vector2 v)
-    {
-        return new System.Numerics.Vector2(v.X, v.Y);
-    }
-
 }

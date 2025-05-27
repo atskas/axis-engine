@@ -2,7 +2,7 @@ using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Scenes;
 
-internal class Scene
+public class Scene
 {
     public HashSet<Entity> Entities { get; set; } = new HashSet<Entity>();
 

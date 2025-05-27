@@ -11,13 +11,9 @@
   <ItemGroup>
     <PackageReference Include="Box2D.NetStandard" Version="2.4.7-alpha" />
     <PackageReference Include="ImGui.NET" Version="1.91.6.1" />
-    <PackageReference Include="OpenTK" Version="4.9.4" />
     <None Update="Shaders\*glsl" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="Silk.NET" Version="2.22.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Core\Systems\" />
   </ItemGroup>
 
 </Project>

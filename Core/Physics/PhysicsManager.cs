@@ -41,6 +41,6 @@ public class PhysicsManager
         const int velocityIterations = 8;
         const int positionIterations = 3;
 
-        Box2DWorld.Step(Program.Engine.FixedDeltaTime, velocityIterations, positionIterations);
+        Box2DWorld.Step(Engine.Instance.FixedDeltaTime, velocityIterations, positionIterations);
     }
 }
