@@ -37,14 +37,14 @@ internal class DebugScene : Scene
         Entity cameraObject = new CameraEntity();
         
         // Create components and add them
-        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
+        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/geometry.jpg"));
         debugObject1.AddComponent(meshRenderer);
         
-        debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.jpg"));
+        debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
         
         // gold pieces
-        goldMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/gold.jpg"));
+        goldMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/spike.png"));
         
         // add their components
         gold1.AddComponent(goldMeshRenderer);
