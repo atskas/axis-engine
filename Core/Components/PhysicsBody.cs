@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Numerics;
 using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
@@ -17,12 +17,64 @@ public enum PhysicsShape
 public class PhysicsBody : Component
 {
     public Body Body { get; private set; }
-    public PhysicsShape ShapeType { get; set; } = PhysicsShape.Box; // Default to Box
+    public BodyType BodyType
+    {
+        get => _bodyType;
+        set
+        {
+            _bodyType = value;
+            if (Body != null)
+            {
+                Body.SetType(_bodyType);
+                Body.ResetMassData(); // Just to make sure it doesnt cause any issues
+            }
+        }
+    }
+    public PhysicsShape ShapeType
+    {
+        get => _shapeType;
+        set
+        {
+            if (_shapeType == value) return;
+            _shapeType = value;
+            if (Body != null)
+                RebuildFixture();
+        }
+    }
+
+    public Vector2 BodyPosition
+    {
+        get => Body.Position;
+        set
+        {
+            if (Body != null)
+            {
+                Body.SetTransform(value, Body.GetAngle());
+                // Update entity's transform to keep in sync
+                Entity.Transform.Position = value;
+            }
+        }
+    }
+    
+    public float BodyRotation
+    {
+        get => Body.GetAngle();
+        set
+        {
+            if (Body != null)
+            {
+                Body.SetTransform(Body.Position, value);
+                // Update entity's rotation to keep in sync
+                Entity.Transform.Rotation = value;
+            }
+        }
+    }
+
     private World _world;
     private BodyType _bodyType;
+    private PhysicsShape _shapeType = PhysicsShape.Box; // Defaults to box
     private bool _isInitialized = false;
     
-    // Physics properties
     private float _density = 1f; // default density
 
     public float Density

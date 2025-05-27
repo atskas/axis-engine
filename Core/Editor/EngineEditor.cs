@@ -14,7 +14,7 @@ public class EngineEditor
 
     public void UpdateUI()
     {
-        ImGui.Begin("Engine Editor");
+        ImGui.Begin("Entity List");
 
         _entityPanel.Draw();
         _inspectorPanel.Draw();
