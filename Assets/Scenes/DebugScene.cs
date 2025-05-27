@@ -1,5 +1,6 @@
 using System.Numerics;
 using Box2D.NetStandard.Dynamics.Bodies;
+using Silk.NET.Input;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -37,6 +38,10 @@ internal class DebugScene : Scene
     private MeshRenderer debugSphereMeshRenderer;
     
     private PhysicsBody debugSphereBody;
+    
+    // game stuff
+    public float moveSpeed = 2.5f;
+    public float jumpVelocity = 3f;
     
     public DebugScene()
     {
@@ -112,7 +117,28 @@ internal class DebugScene : Scene
     public override void UpdateScene()
     {
         base.UpdateScene();
+
+        // Get current linear velocity
+        var velocity = debugBody.Body.GetLinearVelocity();
         
+        if (Engine.Instance.InputManager.KeyDown(Key.A))
+        {
+            velocity.X = -moveSpeed;
+        }
+        else if (Engine.Instance.InputManager.KeyDown(Key.D))
+        {
+            velocity.X = moveSpeed;
+        }
+        else
+        {
+            velocity.X = 0;
+        }
+
+        if (Engine.Instance.InputManager.KeyDown(Key.W))
+        {
+            if (IsGrounded(debugObject1))
+                velocity.Y = jumpVelocity;
+        }
     }
     
     // Grounded check
