@@ -52,6 +52,21 @@ public class PhysicsBody : Component
     public bool FixedRotation { get; set; } = false;
     
     private System.Numerics.Vector2 _entityPosition;
+    private System.Numerics.Vector2? _shapeScale = null;
+    public System.Numerics.Vector2 ShapeScale // Scale used by the shape
+    {
+        get => _shapeScale ?? Entity.Transform.Scale;
+        set
+        {
+            if (_shapeScale == value) return;
+            _shapeScale = value;
+            if (Body != null)
+            {
+                RebuildFixture();
+            }
+        }
+    }
+
 
     public PhysicsBody(BodyType bodyType)
     {
@@ -82,8 +97,9 @@ public class PhysicsBody : Component
         const float RenderToPhysicsScale = 1f;
 
         Shape shape;
-        float scaleX = Entity.Transform.Scale.X * RenderToPhysicsScale;
-        float scaleY = Entity.Transform.Scale.Y * RenderToPhysicsScale;
+        var physicsScale = ShapeScale * RenderToPhysicsScale;
+        float scaleX = physicsScale.X;
+        float scaleY = physicsScale.Y;
 
         switch (ShapeType)
         {
@@ -119,6 +135,55 @@ public class PhysicsBody : Component
             density = Density,
             friction = Friction
         };
+    }
+    
+    private void RebuildFixture()
+    {
+        if (Body == null)
+            return;
+
+        // Destroy all existing fixtures
+        var fixture = Body.GetFixtureList();
+        while (fixture != null)
+        {
+            var next = fixture.GetNext();
+            Body.DestroyFixture(fixture);
+            fixture = next;
+        }
+
+        const float RenderToPhysicsScale = 1f;
+        var physicsScale = ShapeScale * RenderToPhysicsScale;
+        float scaleX = physicsScale.X;
+        float scaleY = physicsScale.Y;
+
+        Shape shape;
+
+        switch (ShapeType)
+        {
+            case PhysicsShape.Circle:
+                var circleShape = new CircleShape();
+                circleShape.Radius = scaleX * 0.5f;  // radius from X scale
+                shape = circleShape;
+                break;
+
+            case PhysicsShape.Box:
+            default:
+                var boxShape = new PolygonShape();
+                boxShape.SetAsBox(scaleX * 0.5f, scaleY * 0.5f);
+                shape = boxShape;
+                break;
+        }
+
+        var fixtureDef = CreateFixtureDef(shape);
+        Body.CreateFixture(fixtureDef);
+
+        Body.ResetMassData();
+
+        // Reapply damping and rotation settings
+        Body.SetLinearDampling(LinearDamping);
+        Body.SetAngularDamping(AngularDamping);
+        Body.SetFixedRotation(FixedRotation);
+        Body.SetSleepingAllowed(true);
     }
     
 

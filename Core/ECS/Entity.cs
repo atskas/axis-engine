@@ -6,7 +6,7 @@ namespace UntitledEngine.Core.Entities;
 
 public class Entity
 {
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = "Entity";
 
     private readonly List<Component> components = new();
     private HashSet<string> tags = new();
