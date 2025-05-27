@@ -32,18 +32,35 @@ public class InspectorPanel
         ImGui.Separator();
         ImGui.Text("Transform");
 
-        var pos = entity.Transform.Position;
-        if (ImGui.DragFloat2("Position", ref pos))
-            entity.Transform.Position = pos;
+        var pb = entity.GetComponent<PhysicsBody>();
 
-        var rot = entity.Transform.Rotation;
-        if (ImGui.DragFloat("Rotation", ref rot))
-            entity.Transform.Rotation = rot;
+        if (pb != null)
+        {
+            // Use physics body position and rotation
+            var pos = pb.BodyPosition;
+            if (ImGui.DragFloat2("Position", ref pos))
+                pb.BodyPosition = pos;
+
+            float rot = pb.BodyRotation;
+            if (ImGui.DragFloat("Rotation", ref rot))
+                pb.BodyRotation = rot;
+        }
+        else
+        {
+            var pos = entity.Transform.Position;
+            if (ImGui.DragFloat2("Position", ref pos))
+                entity.Transform.Position = pos;
+
+            var rot = entity.Transform.Rotation;
+            if (ImGui.DragFloat("Rotation", ref rot))
+                entity.Transform.Rotation = rot;
+        }
 
         var scale = entity.Transform.Scale;
         if (ImGui.DragFloat2("Scale", ref scale))
             entity.Transform.Scale = scale;
     }
+
 
     private void DrawPhysicsBodySection(PhysicsBody pb)
     {
@@ -52,10 +69,9 @@ public class InspectorPanel
 
         ImGui.Separator();
         ImGui.Text("Physics");
-
-        // Update ShapeScale from entity scale if needed
+        
         var shapeScale = pb.ShapeScale;
-        if (ImGui.DragFloat2("Shape Scale", ref shapeScale))
+        if (ImGui.DragFloat2("Shape (Collider) Scale", ref shapeScale))
             pb.ShapeScale = shapeScale;
 
         float density = pb.Density;
