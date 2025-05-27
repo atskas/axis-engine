@@ -6,7 +6,7 @@ using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Scenes;
 
-internal class SceneManager
+public class SceneManager
 {
     // Singleton instance of the SceneManager class
     public static SceneManager? Instance { get; private set; }

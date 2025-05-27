@@ -3,7 +3,6 @@ using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
 using Box2D.NetStandard.Dynamics.World;
-using OpenTK.Mathematics;
 using UntitledEngine;
 using UntitledEngine.Core.Entities;
 
@@ -58,7 +57,7 @@ public class PhysicsBody : Component
 
     public PhysicsBody(BodyType bodyType)
     {
-        Initialise(Program.Engine.PhysicsManager.Box2DWorld, bodyType);
+        Initialise(Engine.Instance.PhysicsManager.Box2DWorld, bodyType);
     }
     
 
@@ -71,7 +70,7 @@ public class PhysicsBody : Component
             return; // Already initialized, skip
 
 
-        var position = Engine.ToNumerics(Entity.Transform.Position);
+        var position = Entity.Transform.Position;
 
         var bodyDef = new BodyDef
         {
@@ -137,7 +136,7 @@ public class PhysicsBody : Component
     {
         if (Body != null)
         {
-            Entity.Transform.Position = Engine.ToOpenTK(Body.Position);
+            Entity.Transform.Position = Body.Position;
             Entity.Transform.Rotation = Body.GetAngle();
         }
     }

@@ -1,6 +1,5 @@
+using System.Numerics;
 using Box2D.NetStandard.Dynamics.Bodies;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
@@ -113,30 +112,7 @@ internal class DebugScene : Scene
     public override void UpdateScene()
     {
         base.UpdateScene();
-
-        var keyboard = Program.Engine.KeyboardState;
-        float moveSpeed = 2.5f;
-        float jumpVelocity = 3f;
-
-        var playerBody = debugBody.Body;
-
-        // Get current linear velocity
-        Vector2 velocity = Engine.ToOpenTK(playerBody.GetLinearVelocity());
-
-        // Horizontal movement
-        if (keyboard.IsKeyDown(Keys.A))
-            velocity.X = -moveSpeed;
-        else if (keyboard.IsKeyDown(Keys.D))
-            velocity.X = moveSpeed;
-        else
-            velocity.X = 0;
         
-        if (keyboard.IsKeyDown(Keys.W))
-            if (keyboard.IsKeyDown(Keys.W) && IsGrounded(debugObject1))
-                velocity.Y = jumpVelocity;
-
-        // Set updated velocity
-        playerBody.SetLinearVelocity(Engine.ToNumerics(velocity));
     }
     
     // Grounded check

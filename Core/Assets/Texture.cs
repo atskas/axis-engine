@@ -1,58 +1,71 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Processing;
+using PixelFormat = Silk.NET.OpenGL.PixelFormat;
+using PixelType = Silk.NET.OpenGL.PixelType;
+using TextureMagFilter = Silk.NET.OpenGL.TextureMagFilter;
+using TextureMinFilter = Silk.NET.OpenGL.TextureMinFilter;
+using TextureParameterName = Silk.NET.OpenGL.TextureParameterName;
+using TextureTarget = Silk.NET.OpenGL.TextureTarget;
+using TextureUnit = Silk.NET.OpenGL.TextureUnit;
+using TextureWrapMode = Silk.NET.OpenGL.TextureWrapMode;
 
 namespace UntitledEngine.Core.Assets
 {
-    public class Texture
+    public class Texture : IDisposable
     {
-
-        public int Handle { get; private set; }
+        public uint Handle { get; private set; }
 
         public Texture(string path)
         {
             if (!File.Exists(path))
-                throw new Exception($"File {path} does not exist");
-            
-            using Image<Rgba32> image = Image.Load<Rgba32>(path);
-            image.Mutate(x => x.Flip(FlipMode.Vertical)); // Flip vertically to match OpenGL's texture coordinate system
+                throw new FileNotFoundException($"File {path} does not exist");
 
-            // Get pixel data
+            using Image<Rgba32> image = Image.Load<Rgba32>(path);
+            image.Mutate(x => x.Flip(FlipMode.Vertical));
+
             var pixels = new byte[image.Width * image.Height * 4];
             image.CopyPixelDataTo(pixels);
 
-            // Generate texture
-            Handle = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            Handle = Engine.Instance.gl.GenTexture();
+            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, Handle);
 
-            // Upload texture data
-            GL.TexImage2D(TextureTarget.Texture2D,
-                level: 0,
-                internalformat: PixelInternalFormat.Rgba,
-                width: image.Width,
-                height: image.Height,
-                border: 0,
-                format: PixelFormat.Rgba,
-                type: PixelType.UnsignedByte,
-                pixels: pixels
-                );
+            unsafe
+            {
+                fixed (byte* pixelPtr = pixels)
+                {
+                    Engine.Instance.gl.TexImage2D(TextureTarget.Texture2D,
+                        0,
+                        InternalFormat.Rgba,
+                        (uint)image.Width,
+                        (uint)image.Height,
+                        0,
+                        PixelFormat.Rgba,
+                        PixelType.UnsignedByte,
+                        pixelPtr);
+                }
+            }
 
-            // Set texture parameters
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            Engine.Instance.gl.GenerateMipmap(GLEnum.Texture2D);
         }
 
         public void Bind(TextureUnit unit = TextureUnit.Texture0)
         {
-            GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            Engine.Instance.gl.ActiveTexture(unit);
+            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, Handle);
         }
 
+        public void Dispose()
+        {
+            Engine.Instance.gl.DeleteTexture(Handle);
+        }
     }
+
 }

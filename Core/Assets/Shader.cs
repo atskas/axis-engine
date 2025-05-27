@@ -1,40 +1,42 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
+using Silk.NET.OpenGL;
+using Silk.NET.Maths;
 
 namespace UntitledEngine.Core;
 
 public class Shader
 {
-    private int vertexShader, fragmentShader, shaderProgram;
+    private uint vertexShader, fragmentShader, shaderProgram;
 
     public Shader(string vertex, string fragment)
     {
         // Create and compile the vertex shader
-        vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, vertex);
-        GL.CompileShader(vertexShader);
+        vertexShader = Engine.Instance.gl.CreateShader(ShaderType.VertexShader);
+        Engine.Instance.gl.ShaderSource(vertexShader, vertex);
+        Engine.Instance.gl.CompileShader(vertexShader);
         CheckShaderCompile(vertexShader);
 
         // Create and compile the fragment shader
-        fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, fragment);
-        GL.CompileShader(fragmentShader);
+        fragmentShader = Engine.Instance.gl.CreateShader(ShaderType.FragmentShader);
+        Engine.Instance.gl.ShaderSource(fragmentShader, fragment);
+        Engine.Instance.gl.CompileShader(fragmentShader);
         CheckShaderCompile(fragmentShader);
 
         // Create the shader program and link shaders
-        shaderProgram = GL.CreateProgram();
-        GL.AttachShader(shaderProgram, vertexShader);
-        GL.AttachShader(shaderProgram, fragmentShader);
-        GL.LinkProgram(shaderProgram);
+        shaderProgram = Engine.Instance.gl.CreateProgram();
+        Engine.Instance.gl.AttachShader(shaderProgram, vertexShader);
+        Engine.Instance.gl.AttachShader(shaderProgram, fragmentShader);
+        Engine.Instance.gl.LinkProgram(shaderProgram);
         CheckProgramLink(shaderProgram);
 
-        GL.DeleteShader(vertexShader);
-        GL.DeleteShader(fragmentShader);
+        Engine.Instance.gl.DeleteShader(vertexShader);
+        Engine.Instance.gl.DeleteShader(fragmentShader);
     }
 
     public void Use()
     {
-        GL.UseProgram(shaderProgram);
+        Engine.Instance.gl.UseProgram(shaderProgram);
         // SwitchPolygonMode(PolygonMode.Line);
 
     }
@@ -42,61 +44,70 @@ public class Shader
     // Just for testing
     public void SwitchPolygonMode(PolygonMode mode)
     {
-        GL.PolygonMode(TriangleFace.FrontAndBack, mode);
+        Engine.Instance.gl.PolygonMode(TriangleFace.FrontAndBack, mode);
 
     }
 
     public void SetColor(Vector4 color)
     {
-        int colorLocation = GL.GetUniformLocation(shaderProgram, "shapeColor");
+        int colorLocation = Engine.Instance.gl.GetUniformLocation(shaderProgram, "shapeColor");
         if (colorLocation == -1)
         {
             Console.WriteLine("Warning: 'shapeColor' uniform not found in shader.");
             return;
         }
-        GL.Uniform4(colorLocation, color);
+        Engine.Instance.gl.Uniform4(colorLocation, color);
     }
 
     public void SetTexture(string name, int unit)
     {
-        int location = GL.GetUniformLocation(shaderProgram, name);
+        int location = Engine.Instance.gl.GetUniformLocation(shaderProgram, name);
         if (location == -1)
         {
             Console.WriteLine($"Warning: uniform {name} not found in shader.");
         }
-        GL.Uniform1(location, unit);
+        Engine.Instance.gl.Uniform1(location, unit);
     }
 
-    public void SetMatrix4(string name, Matrix4 matrix)
+    public unsafe void SetMatrix4(string name, Matrix4x4 matrix)
     {
-        int location = GL.GetUniformLocation(shaderProgram, name);
+        int location = Engine.Instance.gl.GetUniformLocation(shaderProgram, name);
         if (location == -1)
         {
             Console.WriteLine($"Warning: uniform {name} not found in shader.");
             return;
         }
-        GL.UniformMatrix4(location, false, ref matrix);
+        
+        ReadOnlySpan<float> matrixSpan = MemoryMarshal.Cast<Matrix4x4, float>(MemoryMarshal.CreateReadOnlySpan(ref matrix, 1));
+        fixed (float* ptr = matrixSpan)
+        {
+            Engine.Instance.gl.UniformMatrix4(location, 1, false, ptr);
+        }
     }
 
     public void Cleanup()
     {
-        GL.DeleteProgram(shaderProgram);
+        Engine.Instance.gl.DeleteProgram(shaderProgram);
     }
 
-    private void CheckShaderCompile(int shader)
+    private void CheckShaderCompile(uint shader)
     {
-        string infoLog = GL.GetShaderInfoLog(shader);
-        if (!string.IsNullOrEmpty(infoLog))
+        int status;
+        Engine.Instance.gl.GetShader(shader, GLEnum.CompileStatus, out status);
+        if (status == 0)
         {
+            string infoLog = Engine.Instance.gl.GetShaderInfoLog(shader);
             throw new Exception($"Shader compilation failed: {infoLog}");
         }
     }
 
-    private void CheckProgramLink(int program)
+    private void CheckProgramLink(uint program)
     {
-        string infoLog = GL.GetProgramInfoLog(program);
-        if (!string.IsNullOrEmpty(infoLog))
+        int status;
+        Engine.Instance.gl.GetProgram(program, GLEnum.LinkStatus, out status);
+        if (status == 0)
         {
+            string infoLog = Engine.Instance.gl.GetProgramInfoLog(program);
             throw new Exception($"Program linking error: {infoLog}");
         }
     }

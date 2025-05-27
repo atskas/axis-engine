@@ -1,7 +1,10 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+﻿using System.Numerics;
+using Silk.NET.OpenGL;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Entities;
+using DrawElementsType = Silk.NET.OpenGL.DrawElementsType;
+using PrimitiveType = Silk.NET.OpenGL.PrimitiveType;
+using Texture = UntitledEngine.Core.Assets.Texture;
 
 namespace UntitledEngine.Core.Components;
 
@@ -21,13 +24,13 @@ internal class MeshRenderer : Component
     public Texture Texture { get; set; } = null!;
     public Vector4 Color { get; set; } = Vector4.One; // Defaults to white
 
-    private int vao, vbo, ebo;
+    private uint vao, vbo, ebo;
 
     public MeshRenderer(Texture texture)
     {
-        vao = GL.GenVertexArray();
-        vbo = GL.GenBuffer();
-        ebo = GL.GenBuffer();
+        vao = Engine.Instance.gl.GenVertexArray();
+        vbo = Engine.Instance.gl.GenBuffer();
+        ebo = Engine.Instance.gl.GenBuffer();
 
         Texture = texture;
         DrawQuad(); // Initialize quad mesh
@@ -55,45 +58,65 @@ internal class MeshRenderer : Component
         SetupMesh();
     }
 
-    private void SetupMesh()
+    private unsafe void SetupMesh()
     {
         if (Mesh == null) return;
 
-        GL.BindVertexArray(vao);
+        var gl = Engine.Instance.gl;
 
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, Mesh.Vertices.Length * sizeof(float), Mesh.Vertices, BufferUsageHint.StaticDraw);
+        gl.BindVertexArray(vao);
 
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, Mesh.Indices.Length * sizeof(uint), Mesh.Indices, BufferUsageHint.StaticDraw);
+        gl.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
 
-        GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, Mesh.VertexStride, 0);
-        GL.EnableVertexAttribArray(0);
+        unsafe
+        {
+            fixed (float* vertexPtr = mesh.Vertices)
+            {
+                gl.BufferData(BufferTargetARB.ArrayBuffer,
+                    (nuint)(mesh.Vertices.Length * sizeof(float)),
+                    vertexPtr,
+                    BufferUsageARB.StaticDraw);
+            }
+        }
 
-        // VertexAttribPointer layout
-        GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, Mesh.VertexStride, 2 * sizeof(float));
-        GL.EnableVertexAttribArray(1);
+        gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
 
-        GL.BindVertexArray(0);
+        unsafe
+        {
+            fixed (uint* indexPtr = mesh.Indices)
+            {
+                gl.BufferData(BufferTargetARB.ElementArrayBuffer,
+                    (nuint)(mesh.Indices.Length * sizeof(uint)),
+                    indexPtr,
+                    BufferUsageARB.StaticDraw);
+            }
+        }
+
+        gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, (uint)mesh.VertexStride, (void*)0);
+        gl.EnableVertexAttribArray(0);
+
+        gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, (uint)mesh.VertexStride, (void*)(2 * sizeof(float)));
+        gl.EnableVertexAttribArray(1);
+
+        gl.BindVertexArray(0);
     }
 
-    public void Draw()
+    public unsafe void Draw()
     {
         if (Mesh == null)
             return;
 
-        Program.Engine.Shader.Use();
-        Program.Engine.Shader.SetTexture("uTexture", 0);
+        Engine.Instance.Shader.Use();
+        Engine.Instance.Shader.SetTexture("uTexture", 0);
 
-        if (Texture != null)
-        {
-            Texture.Bind(TextureUnit.Texture0);
-        }
+        Texture?.Bind(TextureUnit.Texture0);
 
-        Program.Engine.Shader.SetColor(Color);
+        Engine.Instance.Shader.SetColor(Color);
 
-        GL.BindVertexArray(vao);
-        GL.DrawElements(PrimitiveType.Triangles, Mesh.Indices.Length, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0);
+        var gl = Engine.Instance.gl;
+        gl.BindVertexArray(vao);
+        gl.DrawElements(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
+        gl.BindVertexArray(0);
     }
+
 }

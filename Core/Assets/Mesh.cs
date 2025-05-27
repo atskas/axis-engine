@@ -1,6 +1,4 @@
-﻿using OpenTK.Graphics.ES11;
-using OpenTK.Mathematics;
-using UntitledEngine.Core;
+﻿using UntitledEngine.Core;
 
 namespace UntitledEngine.Core.Assets;
 
