@@ -25,11 +25,10 @@ internal class DebugScene : Scene
     private PhysicsBody debugFloorBody;
     
     // test objects (many of them)
-    private Entity gold1 = new Entity();
-    private Entity gold2 = new Entity();
-    private MeshRenderer goldMeshRenderer;
+    private Entity debugObject2 = new Entity();
+    private MeshRenderer meshRenderer2;
     
-    private PhysicsBody goldBody1;
+    private PhysicsBody debugBody2;
     
     public DebugScene()
     {
@@ -43,18 +42,15 @@ internal class DebugScene : Scene
         debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
         
-        // gold pieces
-        goldMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/spike.png"));
-        
-        // add their components
-        gold1.AddComponent(goldMeshRenderer);
+        meshRenderer2 = new MeshRenderer(new Texture("Assets/Textures/spike.png"));
+        debugObject2.AddComponent(meshRenderer2);
         
         // --- Add physics and initialise ---
         debugBody = new PhysicsBody(BodyType.Dynamic);
         debugObject1.AddComponent(debugBody);
         
-        goldBody1 = new PhysicsBody(BodyType.Dynamic);
-        gold1.AddComponent(goldBody1);
+        debugBody2 = new PhysicsBody(BodyType.Dynamic);
+        debugObject2.AddComponent(debugBody2);
         
         debugFloorBody = new PhysicsBody(BodyType.Static);
         debugFloor.AddComponent(debugFloorBody);
@@ -66,6 +62,7 @@ internal class DebugScene : Scene
         debugObject1.Transform.Scale = new Vector2(0.25f, 0.25f);
         debugObject1.Transform.Position = new Vector2(0.8f, 1f);
         debugBody.Density = 5f;
+        debugBody.FixedRotation = true;
         
         // object 2
         debugFloor.Name = "Floor";
@@ -73,15 +70,15 @@ internal class DebugScene : Scene
         debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
         
         // gold piece (test object)
-        gold1.Transform.Scale = new Vector2(0.25f, 0.25f);
-        gold1.Transform.Position = new Vector2(0f, 0f);
-        goldBody1.Density = 50f;
+        debugObject2.Transform.Scale = new Vector2(0.25f, 0.25f);
+        debugObject2.Transform.Position = new Vector2(0f, 0f);
+        debugBody2.Density = 50f;
         
         // Add entities to the scene
         Entities.Add(cameraObject);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
-        Entities.Add(gold1);
+        Entities.Add(debugObject2);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
@@ -96,7 +93,7 @@ internal class DebugScene : Scene
 
         var keyboard = Program.Engine.KeyboardState;
         float moveSpeed = 2.5f;
-        float jumpVelocity = 1f;
+        float jumpVelocity = 2f;
 
         var body = debugBody.Body;
 
