@@ -49,13 +49,13 @@ internal class DebugScene : Scene
         camera = new CameraEntity();
         
         // Create components and add them
-        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/geometry.jpg"));
+        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/red.png"));
         debugObject1.AddComponent(meshRenderer);
         
-        debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.png"));
+        debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/blue.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
         
-        meshRenderer2 = new MeshRenderer(new Texture("Assets/Textures/spike.png"));
+        meshRenderer2 = new MeshRenderer(new Texture("Assets/Textures/green.png"));
         debugObject2.AddComponent(meshRenderer2);
         
         debugSphereMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/sphere.png"));
