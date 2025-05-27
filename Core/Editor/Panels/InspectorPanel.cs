@@ -1,6 +1,7 @@
 using Box2D.NetStandard.Dynamics.Bodies;
 using ImGuiNET;
 using UntitledEngine.Core.Components;
+using UntitledEngine.Core.ECS;
 using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.UI;
@@ -42,10 +43,13 @@ public class InspectorPanel
         // Move the cursor to the right aligned position
         ImGui.SetCursorPosX(posX);
 
-        if (ImGui.Button("DEL"))
+        if (!selected.HasTag("Camera"))
         {
-            selected.Destroy();
-            EngineEditor.SelectedEntity = null;
+            if (ImGui.Button("DEL"))
+            {
+                selected.Destroy();
+                EngineEditor.SelectedEntity = null;
+            }
         }
     }
 
