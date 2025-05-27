@@ -12,6 +12,9 @@ namespace UntitledEngine.Assets.Scenes;
 
 internal class DebugScene : Scene
 {
+    // camera
+    private Entity camera;
+    
     // object 1
     private Entity debugObject1 = new Entity();
     private MeshRenderer meshRenderer;
@@ -33,7 +36,7 @@ internal class DebugScene : Scene
     public DebugScene()
     {
         // Camera
-        Entity cameraObject = new CameraEntity();
+        camera = new CameraEntity();
         
         // Create components and add them
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/geometry.jpg"));
@@ -76,7 +79,7 @@ internal class DebugScene : Scene
         debugBody2.Density = 50f;
         
         // Add entities to the scene
-        Entities.Add(cameraObject);
+        Entities.Add(camera);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
         Entities.Add(debugObject2);
@@ -115,6 +118,9 @@ internal class DebugScene : Scene
 
         // Set updated velocity
         body.SetLinearVelocity(Engine.ToNumerics(velocity));
+        
+        // 
+        camera.Transform.Position = debugObject1.Transform.Position + new Vector2(0.7f, 0.35f);
     }
     
     // Grounded check
