@@ -12,17 +12,17 @@ public class SceneManager
     public static SceneManager? Instance { get; private set; }
     public SceneManager() => Instance = this;
 
-    private Scene? currScene;
+    private Scene? _currScene;
     public Scene CurrentScene
     {
-        get => currScene!;
+        get => _currScene!;
         set
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value), "CurrentScene cannot be set to null.");
 
-            currScene = value;
-            currScene.StartScene();
+            _currScene = value;
+            _currScene.StartScene();
         }
     }
 

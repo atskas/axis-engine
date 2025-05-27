@@ -19,12 +19,34 @@ public class InspectorPanel
             return;
         }
 
-        ImGui.Text($"Name: {selected.Name}");
+        DrawEntity(selected);
 
         DrawTransformSection(selected);
         DrawPhysicsBodySection(selected.GetComponent<PhysicsBody>());
 
         ImGui.End();
+    }
+
+    private void DrawEntity(Entity selected)
+    {
+        ImGui.Text($"Name: {selected.Name}");
+    
+        ImGui.SameLine();
+
+        float availWidth = ImGui.GetContentRegionAvail().X;
+        float cursorPosX = ImGui.GetCursorPosX();
+
+        float buttonWidth = 25f; // approximate button width in pixels
+        float posX = cursorPosX + availWidth - buttonWidth;
+
+        // Move the cursor to the right aligned position
+        ImGui.SetCursorPosX(posX);
+
+        if (ImGui.Button("DEL"))
+        {
+            selected.Destroy();
+            EngineEditor.SelectedEntity = null;
+        }
     }
 
     private void DrawTransformSection(Entity entity)
@@ -47,6 +69,11 @@ public class InspectorPanel
         }
         else
         {
+            if (entity.Transform == null)
+            {
+                return;
+            }
+
             var pos = entity.Transform.Position;
             if (ImGui.DragFloat2("Position", ref pos))
                 entity.Transform.Position = pos;
@@ -55,10 +82,13 @@ public class InspectorPanel
             if (ImGui.DragFloat("Rotation", ref rot))
                 entity.Transform.Rotation = rot;
         }
-
-        var scale = entity.Transform.Scale;
-        if (ImGui.DragFloat2("Scale", ref scale))
-            entity.Transform.Scale = scale;
+        
+        if (entity.Transform != null)
+        {
+            var scale = entity.Transform.Scale;
+            if (ImGui.DragFloat2("Scale", ref scale))
+                entity.Transform.Scale = scale;
+        }
     }
 
 
