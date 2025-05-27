@@ -1,6 +1,6 @@
 using ImGuiNET;
 using System.Numerics;
-using UntitledEngine.Core.Entities; // Assumes your Entity class is in this namespace
+using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.UI;
 
