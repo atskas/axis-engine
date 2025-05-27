@@ -9,41 +9,55 @@ using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 using Shader = UntitledEngine.Core.Shader;
 
+// ImGUI
+using ImGuiNET;
+using Silk.NET.Input;
+using Silk.NET.OpenGL.Extensions.ImGui;
+using UntitledEngine.Core.UI;
+
 public class Engine
 {
-    // Private fields
-    private IWindow _window;
-    private Matrix4x4 _projection;
-    private float _accumulator = 0f;
-    
     // Singleton Instance
     public static Engine Instance { get; private set; }
 
-    // Globals
+    // Private Fields
+    private IWindow _window;
+    private Matrix4x4 _projection;
+    private float _accumulator = 0f;
+    private int _width;
+    private int _height;
+
+    // Globals and managers
     public GL gl { get; private set; }
     public float DeltaTime { get; private set; } = 0f;
     public float FixedDeltaTime { get; private set; } = 1f / 60f;
-    
+
     public readonly SceneManager SceneManager = new SceneManager();
     public readonly PhysicsManager PhysicsManager;
     public InputManager InputManager;
-    
+
     public Shader Shader { get; private set; }
-    
+
+    // ImGui & Editor
+    private ImGuiController _imguiController;
+    private EngineEditor _editor;
 
     public Engine(int width, int height, string title)
     {
-        // Set instance to this
+        _width = width;
+        _height = height;
+
+        // Singleton enforcement
         if (Instance != null)
             throw new InvalidOperationException("Only one Engine instance is allowed.");
         Instance = this;
-        
+
         // Create a window
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(width, height);
         options.Title = title;
         options.API = new GraphicsAPI(ContextAPI.OpenGL, ContextProfile.Core, ContextFlags.Default, new APIVersion(4, 6));
-        
+
         _window = Window.Create(options);
 
         // Hook into lifecycle events
@@ -51,7 +65,7 @@ public class Engine
         _window.Update += OnUpdateFrame;
         _window.Render += OnRenderFrame;
         _window.Resize += OnResize;
-        
+
         PhysicsManager = new PhysicsManager();
     }
 
@@ -72,6 +86,8 @@ public class Engine
 
         Shader = new Shader(vertex, fragment);
         InputManager = new InputManager(_window);
+        _editor = new EngineEditor();
+        _imguiController = new ImGuiController(gl, _window, InputManager.InputContext);
 
         // Setup orthographic projection matrix
         _projection = Matrix4x4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
@@ -90,7 +106,7 @@ public class Engine
 
         DeltaTime = (float)deltaTime;
         _accumulator += DeltaTime;
-        
+
         InputManager.Update(); // Update InputManager early
 
         while (_accumulator >= FixedDeltaTime)
@@ -111,6 +127,7 @@ public class Engine
         }
 
         SceneManager.OnUpdate(DeltaTime);
+        _imguiController.Update(DeltaTime);
     }
 
     private void OnRenderFrame(double deltaTime)
@@ -121,14 +138,12 @@ public class Engine
             return;
         }
 
-        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        gl.Viewport(0, 0, (uint)_width, (uint)_height);
         gl.ClearColor(0f, 0f, 0f, 1f);
+        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         Shader.Use();
-
         Shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
-
-        // Set global uniforms
         Shader.SetMatrix4("projection", _projection);
 
         var cameraObject = SceneManager.CurrentScene.Entities.FirstOrDefault(go => go.GetComponent<Camera>() != null);
@@ -144,15 +159,22 @@ public class Engine
             foreach (var renderer in go.Components.OfType<MeshRenderer>())
                 renderer.Draw();
         }
+
+        // ImGui UI
+        _editor.UpdateUI();
+        _imguiController.Render();
     }
 
     private void OnResize(Vector2D<int> size)
     {
-        gl.Viewport(0, 0, (uint)size.X, (uint)size.Y);
+        _width = size.X;
+        _height = size.Y;
 
-        float aspect = size.X / (float)size.Y;
+        gl.Viewport(0, 0, (uint)_width, (uint)_height);
+
+        float aspect = _width / (float)_height;
         _projection = Matrix4x4.CreateOrthographicOffCenter(
-            -aspect, aspect, -1f, 1f, -1f, 1f
+            -aspect, aspect, -1f, 1f, 0.1f, 100f
         );
     }
 }

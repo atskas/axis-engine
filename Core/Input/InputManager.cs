@@ -9,11 +9,10 @@ public class InputManager
     // Globals
     public bool KeyDown(Key key) => _keysDown.Contains(key);
     public bool KeyPressed(Key key) => _keysPressed.Contains(key);
+    public IInputContext InputContext;
     
     // Private fields
     private IWindow _window;
-    private IInputContext _inputContext;
-    
     private IKeyboard _keyboard;
     private IMouse _mouse;
 
@@ -23,13 +22,13 @@ public class InputManager
     public InputManager(IWindow window)
     {
         _window = window;
-        _inputContext = window.CreateInput();
+        InputContext = window.CreateInput();
         
         // Check if any keyboards exist before subscribing to events
-        if (_inputContext.Keyboards.Count > 0)
+        if (InputContext.Keyboards.Count > 0)
         {
-            _inputContext.Keyboards[0].KeyDown += OnKeyDown;
-            _inputContext.Keyboards[0].KeyUp += OnKeyUp;
+            InputContext.Keyboards[0].KeyDown += OnKeyDown;
+            InputContext.Keyboards[0].KeyUp += OnKeyUp;
         }
         else
         {
