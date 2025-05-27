@@ -46,9 +46,7 @@ public class PhysicsBody : Component
         }
     }
     
-    
-    
-    public float Friction { get; set; } = 0.3f;
+    public float Friction { get; set; } = 0.5f;
     public float LinearDamping { get; set; } = 2f;
     public float AngularDamping { get; set; } = 0f;
     public bool FixedRotation { get; set; } = false;
