@@ -4,6 +4,7 @@ using Silk.NET.Maths;
 using System.Numerics;
 using UntitledEngine.Core;
 using UntitledEngine.Core.Components;
+using UntitledEngine.Core.Input;
 using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 using Shader = UntitledEngine.Core.Shader;
@@ -25,6 +26,7 @@ public class Engine
     
     public readonly SceneManager SceneManager = new SceneManager();
     public readonly PhysicsManager PhysicsManager;
+    public InputManager InputManager;
     
     public Shader Shader { get; private set; }
     
@@ -49,7 +51,7 @@ public class Engine
         _window.Update += OnUpdateFrame;
         _window.Render += OnRenderFrame;
         _window.Resize += OnResize;
-
+        
         PhysicsManager = new PhysicsManager();
     }
 
@@ -69,6 +71,7 @@ public class Engine
         string fragment = File.ReadAllText("Assets/Shaders/fragment_shader.glsl");
 
         Shader = new Shader(vertex, fragment);
+        InputManager = new InputManager(_window);
 
         // Setup orthographic projection matrix
         _projection = Matrix4x4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
@@ -87,6 +90,8 @@ public class Engine
 
         DeltaTime = (float)deltaTime;
         _accumulator += DeltaTime;
+        
+        InputManager.Update(); // Update InputManager early
 
         while (_accumulator >= FixedDeltaTime)
         {
