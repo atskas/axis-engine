@@ -66,6 +66,7 @@ internal class DebugScene : Scene
         
         // object 2
         debugFloor.Name = "Floor";
+        debugFloor.AddTag("Ground");
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
         debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
         
