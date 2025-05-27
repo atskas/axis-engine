@@ -69,6 +69,7 @@ public class PhysicsBody : Component
             type = _bodyType,
             position = position,
         };
+        bodyDef.userData = Entity;
 
         Body = _world.CreateBody(bodyDef);
 
