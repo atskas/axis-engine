@@ -8,6 +8,7 @@ public class CameraEntity : Entity
     public CameraEntity()
     {
         // Add Camera component to the GameObject
+        Name = "Camera";
         var camera = new Camera();
         AddComponent(camera);
     }
