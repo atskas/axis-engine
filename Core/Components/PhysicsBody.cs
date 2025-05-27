@@ -1,3 +1,4 @@
+using System.Reflection;
 using Box2D.NetStandard.Collision.Shapes;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
@@ -14,7 +15,31 @@ public class PhysicsBody : Component
     private bool _isInitialized = false;
     
     // Physics properties
-    public float Density { get; set; } = 1f;
+    private float _density = 1f; // default density
+
+    public float Density
+    {
+        get => _density;
+        set
+        {
+            if (_density == value) return; // avoid unnecessary changes
+            _density = value;
+
+            if (Body != null)
+            {
+                var fixture = Body.GetFixtureList();
+                while (fixture != null)
+                {
+                    fixture.Density = _density;
+                    fixture = fixture.GetNext();
+                }
+                Body.ResetMassData();
+            }
+        }
+    }
+    
+    
+    
     public float Friction { get; set; } = 0.3f;
     public float LinearDamping { get; set; } = 2f;
     public float AngularDamping { get; set; } = 0f;
@@ -32,6 +57,10 @@ public class PhysicsBody : Component
     {
         if (!_isInitialized)
             throw new InvalidOperationException("PhysicsBody not initialized.");
+        
+        if (Body != null)
+            return; // Already initialized, skip
+
 
         var position = Engine.ToNumerics(Entity.Transform.Position);
 
@@ -43,20 +72,21 @@ public class PhysicsBody : Component
 
         Body = _world.CreateBody(bodyDef);
 
-        float halfWidth = Entity.Transform.Scale.X * 0.5f;
-        float halfHeight = Entity.Transform.Scale.Y * 0.5f;
+        const float RenderToPhysicsScale = 1f; // example scale factor
+        float halfWidth = (Entity.Transform.Scale.X * RenderToPhysicsScale) * 0.5f;
+        float halfHeight = (Entity.Transform.Scale.Y * RenderToPhysicsScale) * 0.5f;
 
         var boxShape = new PolygonShape();
         boxShape.SetAsBox(halfWidth, halfHeight);
 
         var fixtureDef = CreateFixtureDef(boxShape);
-
         Body.CreateFixture(fixtureDef);
+        Body.ResetMassData();
 
         Body.SetLinearDampling(LinearDamping);
         Body.SetAngularDamping(AngularDamping);
         Body.SetFixedRotation(FixedRotation);
-        Body.SetSleepingAllowed(false);
+        Body.SetSleepingAllowed(true);
     }
     
     private FixtureDef CreateFixtureDef(Shape shape)

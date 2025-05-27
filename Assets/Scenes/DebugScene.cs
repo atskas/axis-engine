@@ -63,8 +63,9 @@ internal class DebugScene : Scene
         
         // object 1
         debugObject1.Name = "Test";
-        debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
+        debugObject1.Transform.Scale = new Vector2(0.25f, 0.25f);
         debugObject1.Transform.Position = new Vector2(0.8f, 1f);
+        debugBody.Density = 5f;
         
         // object 2
         debugFloor.Name = "Floor";
@@ -74,6 +75,7 @@ internal class DebugScene : Scene
         // gold piece (test object)
         gold1.Transform.Scale = new Vector2(0.25f, 0.25f);
         gold1.Transform.Position = new Vector2(0f, 0f);
+        goldBody1.Density = 50f;
         
         // Add entities to the scene
         Entities.Add(cameraObject);

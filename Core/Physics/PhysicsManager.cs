@@ -11,8 +11,7 @@ public class PhysicsManager
     
     public World Box2DWorld { get; private set; }
 
-    private Vector2 gravity = new Vector2(0, -1);
-
+    public Vector2 gravity = new Vector2(0, -7f);
     public PhysicsManager()
     {
         Instance = this;
