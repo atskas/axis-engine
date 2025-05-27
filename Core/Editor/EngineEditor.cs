@@ -2,9 +2,8 @@ using ImGuiNET;
 using System.Numerics;
 using UntitledEngine.Core.Entities; // Assumes your Entity class is in this namespace
 
-namespace UntitledEngine.Core.UI
-{
-// EngineEditor.cs
+namespace UntitledEngine.Core.UI;
+
 public class EngineEditor
 {
     public static Entity SelectedEntity;
@@ -15,7 +14,7 @@ public class EngineEditor
     public void UpdateUI()
     {
         ImGui.Begin("Entity List");
-
+        
         _entityPanel.Draw();
         _inspectorPanel.Draw();
 
@@ -23,4 +22,3 @@ public class EngineEditor
     }
 }
 
-}
