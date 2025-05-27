@@ -151,7 +151,7 @@ internal class DebugScene : Scene
 
         bool isGrounded = false;
         float offset = 0.15f;
-        float rayLength = 0.15f;
+        float rayLength = debugObject1.Transform.Scale.Y / 1.18f;
 
         void CastRay(System.Numerics.Vector2 origin)
         {
