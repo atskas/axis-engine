@@ -7,9 +7,16 @@ using OpenTK.Mathematics;
 using UntitledEngine;
 using UntitledEngine.Core.Entities;
 
+public enum PhysicsShape
+{
+    Box,
+    Circle,
+    // Will add more later
+}
 public class PhysicsBody : Component
 {
     public Body Body { get; private set; }
+    public PhysicsShape ShapeType { get; set; } = PhysicsShape.Box; // Default to Box
     private World _world;
     private BodyType _bodyType;
     private bool _isInitialized = false;
@@ -73,14 +80,29 @@ public class PhysicsBody : Component
 
         Body = _world.CreateBody(bodyDef);
 
-        const float RenderToPhysicsScale = 1f; // example scale factor
-        float halfWidth = (Entity.Transform.Scale.X * RenderToPhysicsScale) * 0.5f;
-        float halfHeight = (Entity.Transform.Scale.Y * RenderToPhysicsScale) * 0.5f;
+        const float RenderToPhysicsScale = 1f;
 
-        var boxShape = new PolygonShape();
-        boxShape.SetAsBox(halfWidth, halfHeight);
+        Shape shape;
+        float scaleX = Entity.Transform.Scale.X * RenderToPhysicsScale;
+        float scaleY = Entity.Transform.Scale.Y * RenderToPhysicsScale;
 
-        var fixtureDef = CreateFixtureDef(boxShape);
+        switch (ShapeType)
+        {
+            case PhysicsShape.Circle:
+                var circleShape = new CircleShape();
+                circleShape.Radius = scaleX * 0.5f;  // radius from X scale
+                shape = circleShape;
+                break;
+
+            case PhysicsShape.Box:
+            default:
+                var boxShape = new PolygonShape();
+                boxShape.SetAsBox(scaleX * 0.5f, scaleY * 0.5f);
+                shape = boxShape;
+                break;
+        }
+        
+        var fixtureDef = CreateFixtureDef(shape);
         Body.CreateFixture(fixtureDef);
         Body.ResetMassData();
 

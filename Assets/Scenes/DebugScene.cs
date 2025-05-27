@@ -27,11 +27,17 @@ internal class DebugScene : Scene
     
     private PhysicsBody debugFloorBody;
     
-    // test objects (many of them)
+    // object 3
     private Entity debugObject2 = new Entity();
     private MeshRenderer meshRenderer2;
     
     private PhysicsBody debugBody2;
+    
+    // object 4
+    private Entity debugSphere = new Entity();
+    private MeshRenderer debugSphereMeshRenderer;
+    
+    private PhysicsBody debugSphereBody;
     
     public DebugScene()
     {
@@ -48,6 +54,9 @@ internal class DebugScene : Scene
         meshRenderer2 = new MeshRenderer(new Texture("Assets/Textures/spike.png"));
         debugObject2.AddComponent(meshRenderer2);
         
+        debugSphereMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/sphere.png"));
+        debugSphere.AddComponent(debugSphereMeshRenderer);
+        
         // --- Add physics and initialise ---
         debugBody = new PhysicsBody(BodyType.Dynamic);
         debugObject1.AddComponent(debugBody);
@@ -57,6 +66,9 @@ internal class DebugScene : Scene
         
         debugFloorBody = new PhysicsBody(BodyType.Static);
         debugFloor.AddComponent(debugFloorBody);
+
+        debugSphereBody = new PhysicsBody(BodyType.Dynamic);
+        debugSphere.AddComponent(debugSphereBody);
         
         // --- Set properties ---
         
@@ -73,16 +85,23 @@ internal class DebugScene : Scene
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
         debugFloor.Transform.Scale = new Vector2(5f, 1f);
         
-        // gold piece (test object)
+        // object 3
         debugObject2.Transform.Scale = new Vector2(0.25f, 0.25f);
         debugObject2.Transform.Position = new Vector2(0f, 0f);
         debugBody2.Density = 50f;
+        
+        // object 4
+        debugSphere.Transform.Scale = new Vector2(0.3f, 0.3f);
+        debugSphere.Transform.Position = new Vector2(0f, 0f);
+        debugSphereBody.Density = 20f;
+        debugSphereBody.ShapeType = PhysicsShape.Circle;
         
         // Add entities to the scene
         Entities.Add(camera);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
         Entities.Add(debugObject2);
+        Entities.Add(debugSphere);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
