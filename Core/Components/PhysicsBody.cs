@@ -17,6 +17,15 @@ public enum PhysicsShape
 public class PhysicsBody : Component
 {
     public Body Body { get; private set; }
+
+    private World _world;
+    private BodyType _bodyType;
+    private PhysicsShape _shapeType = PhysicsShape.Box; // Defaults to box
+    private bool _isInitialized = false;
+    
+    private float _density = 1f; // default density
+    private bool _fixedRotation;
+    
     public BodyType BodyType
     {
         get => _bodyType;
@@ -69,14 +78,7 @@ public class PhysicsBody : Component
             }
         }
     }
-
-    private World _world;
-    private BodyType _bodyType;
-    private PhysicsShape _shapeType = PhysicsShape.Box; // Defaults to box
-    private bool _isInitialized = false;
     
-    private float _density = 1f; // default density
-
     public float Density
     {
         get => _density;
@@ -97,11 +99,24 @@ public class PhysicsBody : Component
             }
         }
     }
-    
     public float Friction { get; set; } = 0.5f;
     public float LinearDamping { get; set; } = 2f;
     public float AngularDamping { get; set; } = 0f;
-    public bool FixedRotation { get; set; } = false;
+    public bool FixedRotation
+    {
+        get => _fixedRotation;
+        set
+        {
+            if (_fixedRotation != value)
+            {
+                _fixedRotation = value;
+                if (Body != null)
+                {
+                    Body.SetFixedRotation(value);
+                }
+            }
+        }
+    }
     
     private System.Numerics.Vector2 _entityPosition;
     private System.Numerics.Vector2? _shapeScale = null;
