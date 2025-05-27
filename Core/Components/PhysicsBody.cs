@@ -7,6 +7,8 @@ using OpenTK.Mathematics;
 using UntitledEngine;
 using UntitledEngine.Core.Entities;
 
+namespace UntitledEngine.Core.Components;
+
 public enum PhysicsShape
 {
     Box,
