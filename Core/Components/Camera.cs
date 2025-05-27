@@ -8,10 +8,10 @@ internal class Camera : Component
 {
     internal Matrix4 GetViewMatrix()
     {
-        if (GameObject?.Transform == null) // Cool check, if the object transform is null, gives identity matrix instead of crashing.
+        if (Entity?.Transform == null) // Cool check, if the object transform is null, gives identity matrix instead of crashing.
             return Matrix4.Identity;
 
-        var transform = GameObject.Transform;
+        var transform = Entity.Transform;
 
         // View matrix is inverse of camera transform, in 2D atleast
 

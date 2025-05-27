@@ -1,3 +1,4 @@
+using Box2D.NetStandard.Dynamics.Bodies;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using UntitledEngine.Core.Assets;
@@ -14,25 +15,21 @@ internal class DebugScene : Scene
     // object 1
     private Entity debugObject1 = new Entity();
     private MeshRenderer meshRenderer;
-    private Rigidbody rigidBody1;
-    private Collider collider1;
+
+    private PhysicsBody debugBody;
     
     // object 2
     private Entity debugFloor = new Entity();
     private MeshRenderer debugFloorMeshRenderer;
-    private Collider collider2;
+    
+    private PhysicsBody debugFloorBody;
     
     // test objects (many of them)
     private Entity gold1 = new Entity();
     private Entity gold2 = new Entity();
-    
     private MeshRenderer goldMeshRenderer;
-    private Rigidbody goldRigidBody;
-    private Rigidbody goldRigidBody2;
-    private Collider goldCollider;
-    private Collider goldCollider2;
-
-    private float time = 0f;
+    
+    private PhysicsBody goldBody1;
     
     public DebugScene()
     {
@@ -41,41 +38,31 @@ internal class DebugScene : Scene
         
         // Create components and add them
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/texture.jpg"));
-        rigidBody1 = new Rigidbody();
-        collider1 = new Collider();
-        debugObject1.AddComponent(collider1);
         debugObject1.AddComponent(meshRenderer);
-        debugObject1.AddComponent(rigidBody1);
         
         debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/floor.jpg"));
-        collider2 = new Collider();
         debugFloor.AddComponent(debugFloorMeshRenderer);
-        debugFloor.AddComponent(collider2);
         
         // gold pieces
         goldMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/gold.jpg"));
-        goldRigidBody = new Rigidbody();
-        goldRigidBody2 = new Rigidbody();
-        
-        goldCollider = new Collider();
-        goldCollider2 = new Collider();
         
         // add their components
-        gold1.AddComponent(goldRigidBody);
-        gold2.AddComponent(goldRigidBody2);
-        gold1.AddComponent(goldCollider);
-        gold2.AddComponent(goldCollider2);
         gold1.AddComponent(goldMeshRenderer);
-        gold2.AddComponent(goldMeshRenderer);
+        
+        // --- Add physics and initialise ---
+        debugBody = new PhysicsBody(BodyType.Dynamic);
+        debugObject1.AddComponent(debugBody);
+        
+        goldBody1 = new PhysicsBody(BodyType.Dynamic);
+        gold1.AddComponent(goldBody1);
+        
+        debugFloorBody = new PhysicsBody(BodyType.Static);
+        debugFloor.AddComponent(debugFloorBody);
         
         // --- Set properties ---
         
         // object 1
         debugObject1.Name = "Test";
-        rigidBody1.Mass = 1f;
-        rigidBody1.Gravity = new Vector2(0f, -30f); // Set gravity to an unrealistic value
-        rigidBody1.TerminalVelocity = -3f;
-        collider1.Size = new Vector2(0.52f, 0.52f);
         debugObject1.Transform.Scale = new Vector2(0.5f, 0.5f);
         debugObject1.Transform.Position = new Vector2(0.8f, 1f);
         
@@ -83,26 +70,16 @@ internal class DebugScene : Scene
         debugFloor.Name = "Floor";
         debugFloor.Transform.Position = new Vector2(0, -0.8f);
         debugFloor.Transform.Scale = new Vector2(5f, 0.45f);
-        collider2.Size = debugFloor.Transform.Scale;
         
-        // gold pieces (test objects)
-        goldRigidBody.Mass = 2f;
-        goldRigidBody2.Mass = 2f;
-        
-        goldCollider.Size = new Vector2(0.25f, 0.25f);
-        goldCollider2.Size = new Vector2(0.25f, 0.25f);
+        // gold piece (test object)
         gold1.Transform.Scale = new Vector2(0.25f, 0.25f);
-        gold2.Transform.Scale = new Vector2(0.25f, 0.25f);
-        
         gold1.Transform.Position = new Vector2(0f, 0f);
-        gold2.Transform.Position = new Vector2(0f, 1f);
         
         // Add entities to the scene
         Entities.Add(cameraObject);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
         Entities.Add(gold1);
-        Entities.Add(gold2);
 
         // Set this scene as the current active scene
         if (SceneManager.Instance == null)
@@ -115,17 +92,27 @@ internal class DebugScene : Scene
     {
         base.UpdateScene();
 
-        KeyboardState KeyboardState = Program.Engine.KeyboardState;
+        var keyboard = Program.Engine.KeyboardState;
+        float moveSpeed = 2.5f;
+        float jumpVelocity = 1f;
 
-        if (KeyboardState.IsKeyDown(Keys.A))
-            rigidBody1.Move(new Vector2(-1f, 0));
-        if (KeyboardState.IsKeyDown(Keys.D))
-            rigidBody1.Move(new Vector2(1f, 0));
+        var body = debugBody.Body;
+
+        // Get current linear velocity
+        Vector2 velocity = Engine.ToOpenTK(body.GetLinearVelocity());
+
+        // Horizontal movement
+        if (keyboard.IsKeyDown(Keys.A))
+            velocity.X = -moveSpeed;
+        else if (keyboard.IsKeyDown(Keys.D))
+            velocity.X = moveSpeed;
+        else
+            velocity.X = 0;
         
-        // Jumping
-        if (KeyboardState.IsKeyDown(Keys.W))
-        {
-            rigidBody1.Move(new Vector2(0f, 5));
-        }
+        if (keyboard.IsKeyDown(Keys.W))
+            velocity.Y = jumpVelocity;
+
+        // Set updated velocity
+        body.SetLinearVelocity(Engine.ToNumerics(velocity));
     }
 }

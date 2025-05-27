@@ -27,7 +27,7 @@ public class Entity
     public void AddComponent(Component component)
     {
         components.Add(component);
-        component.GameObject = this;
+        component.Entity = this;
     }
 
     // Get component from entity

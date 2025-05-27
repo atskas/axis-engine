@@ -3,8 +3,8 @@
 public abstract class Component
 {
 
-    // The parent GameObject
-    public Entity? GameObject { get; internal set; }
+    // The parent Entity
+    public Entity? Entity { get; internal set; }
 
     // Runs once on component start
     public virtual void Start() { }

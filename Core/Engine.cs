@@ -17,7 +17,7 @@ public class Engine : GameWindow
     
     
     SceneManager sceneManager = new SceneManager();
-    private PhysicsManager physicsManager;
+    public PhysicsManager physicsManager;
 
     private Shader shader;
     public Shader Shader => shader;
@@ -145,6 +145,20 @@ public class Engine : GameWindow
         projection = Matrix4.CreateOrthographicOffCenter(
             -aspect, aspect, -1f, 1f, -1f, 1f
         );
+    }
+    
+    // ---Conversion---
+    
+    // Convert Numerics Vector2 to OpenTK Vector2
+    public static OpenTK.Mathematics.Vector2 ToOpenTK(System.Numerics.Vector2 v)
+    {
+        return new OpenTK.Mathematics.Vector2(v.X, v.Y);
+    }
+    
+    // Convert OpenTK Vector2 to Numerics Vector2
+    public static System.Numerics.Vector2 ToNumerics(OpenTK.Mathematics.Vector2 v)
+    {
+        return new System.Numerics.Vector2(v.X, v.Y);
     }
 
 }
