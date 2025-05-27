@@ -118,9 +118,6 @@ internal class DebugScene : Scene
 
         // Set updated velocity
         body.SetLinearVelocity(Engine.ToNumerics(velocity));
-        
-        // 
-        camera.Transform.Position = debugObject1.Transform.Position;
     }
     
     // Grounded check
