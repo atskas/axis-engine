@@ -1,7 +1,7 @@
 using Box2D.NetStandard.Dynamics.World;
 using System.Numerics;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 using UntitledEngine.Core.Scenes;
 
 namespace UntitledEngine.Core.Physics;

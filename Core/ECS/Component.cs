@@ -1,4 +1,4 @@
-﻿namespace UntitledEngine.Core.Entities;
+﻿namespace UntitledEngine.Core.ECS;
 
 public abstract class Component
 {

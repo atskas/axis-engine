@@ -1,8 +1,8 @@
+using System.Numerics;
 using Box2D.NetStandard.Dynamics.Bodies;
 using ImGuiNET;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.UI;
 
@@ -24,6 +24,7 @@ public class InspectorPanel
 
         DrawTransformSection(selected);
         DrawPhysicsBodySection(selected.GetComponent<PhysicsBody>());
+        DrawPlayerControllerSection(selected.GetComponent<PlayerController>(), selected.GetComponent<PhysicsBody>());
 
         ImGui.End();
     }
@@ -42,14 +43,11 @@ public class InspectorPanel
 
         // Move the cursor to the right aligned position
         ImGui.SetCursorPosX(posX);
-
-        if (!selected.HasTag("Camera"))
+        
+        if (ImGui.Button("DEL"))
         {
-            if (ImGui.Button("DEL"))
-            {
-                selected.Destroy();
-                EngineEditor.SelectedEntity = null;
-            }
+            selected.Destroy();
+            EngineEditor.SelectedEntity = null;
         }
     }
 
@@ -62,36 +60,33 @@ public class InspectorPanel
 
         if (pb != null)
         {
-            // Use physics body position and rotation
             var pos = pb.BodyPosition;
-            if (ImGui.DragFloat2("Position", ref pos))
-                pb.BodyPosition = pos;
+            DrawWithReset("Position", ref pos, Vector2.Zero);
+            pb.BodyPosition = pos;
 
             float rot = pb.BodyRotation;
-            if (ImGui.DragFloat("Rotation", ref rot))
-                pb.BodyRotation = rot;
+            DrawWithReset("Rotation", ref rot, 0f);
+            pb.BodyRotation = rot;
         }
         else
         {
             if (entity.Transform == null)
-            {
                 return;
-            }
 
             var pos = entity.Transform.Position;
-            if (ImGui.DragFloat2("Position", ref pos))
-                entity.Transform.Position = pos;
+            DrawWithReset("Position", ref pos, Vector2.Zero);
+            entity.Transform.Position = pos;
 
             var rot = entity.Transform.Rotation;
-            if (ImGui.DragFloat("Rotation", ref rot))
-                entity.Transform.Rotation = rot;
+            DrawWithReset("Rotation", ref rot, 0f);
+            entity.Transform.Rotation = rot;
         }
-        
+
         if (entity.Transform != null)
         {
             var scale = entity.Transform.Scale;
-            if (ImGui.DragFloat2("Scale", ref scale))
-                entity.Transform.Scale = scale;
+            DrawWithReset("Scale", ref scale, Vector2.Zero);
+            entity.Transform.Scale = scale;
         }
     }
 
@@ -105,7 +100,7 @@ public class InspectorPanel
         ImGui.Text("Physics");
         
         var shapeScale = pb.ShapeScale;
-        if (ImGui.DragFloat2("Shape (Collider) Scale", ref shapeScale))
+        if (ImGui.DragFloat2("Shape Scale", ref shapeScale))
             pb.ShapeScale = shapeScale;
 
         float density = pb.Density;
@@ -123,5 +118,69 @@ public class InspectorPanel
         bool rotFixed = pb.FixedRotation;
         if (ImGui.Checkbox("Fixed Rotation", ref rotFixed))
             pb.FixedRotation = rotFixed;
+    }
+
+    private void DrawPlayerControllerSection(PlayerController controller, PhysicsBody pb)
+    {
+        if (controller == null)
+            return;
+        
+        if (pb == null)
+        {
+            ImGui.Separator();
+            ImGui.Text("PlayerController requires a PhysicsBody");
+            return;
+        }
+        
+        ImGui.Separator();
+        ImGui.Text("Player Controller");
+
+        var moveSpeed = controller.moveSpeed;
+        if (ImGui.DragFloat("MoveSpeed", ref moveSpeed))
+            controller.moveSpeed = moveSpeed;
+        
+        var jumpPower = controller.jumpPower;
+        if (ImGui.DragFloat("JumpPower", ref jumpPower))
+            controller.jumpPower = jumpPower;
+    }
+    
+    // Draw a Vector2 or a float with a reset button next to it
+    private void DrawWithReset<T>(string label, ref T value, T zeroValue)
+    {
+        ImGui.PushID(label);
+
+        ImGui.Text(label);
+        ImGui.SameLine();
+
+        float dragWidth = ImGui.GetContentRegionAvail().X - 30;
+        ImGui.SetNextItemWidth(dragWidth);
+
+        bool changed = false;
+
+        if (typeof(T) == typeof(float))
+        {
+            float v = Convert.ToSingle(value)!;
+            changed = ImGui.DragFloat("##drag", ref v);
+            if (changed) value = (T)(object)v!;
+        }
+        else if (typeof(T) == typeof(Vector2))
+        {
+            Vector2 v = (Vector2)(object)value!;
+            changed = ImGui.DragFloat2("##drag", ref v);
+            if (changed) value = (T)(object)v!;
+        }
+        else
+        {
+            ImGui.Text("Unsupported type");
+        }
+
+        ImGui.SameLine();
+
+        if (ImGui.Button("0"))
+        {
+            value = zeroValue;
+        }
+
+        ImGui.PopID();
     }
 }

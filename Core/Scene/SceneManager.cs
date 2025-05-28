@@ -2,7 +2,6 @@ using UntitledEngine.Assets.Scenes;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Scenes;
 
@@ -12,17 +11,17 @@ public class SceneManager
     public static SceneManager? Instance { get; private set; }
     public SceneManager() => Instance = this;
 
-    private Scene? _currScene;
+    private Scene? currScene;
     public Scene CurrentScene
     {
-        get => _currScene!;
+        get => currScene!;
         set
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value), "CurrentScene cannot be set to null.");
 
-            _currScene = value;
-            _currScene.StartScene();
+            currScene = value;
+            currScene.StartScene();
         }
     }
 
@@ -33,6 +32,8 @@ public class SceneManager
         // Load scenes
         DebugScene debugScene = new();
     }
+
+    public void LoadScene(Scene scene) => CurrentScene = scene;
 
     public void OnUpdate(float deltaTime) => CurrentScene?.UpdateScene();
 }

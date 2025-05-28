@@ -4,7 +4,7 @@ using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
 using Box2D.NetStandard.Dynamics.World;
 using UntitledEngine;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 
 namespace UntitledEngine.Core.Components;
 
@@ -118,9 +118,8 @@ public class PhysicsBody : Component
         }
     }
     
-    private System.Numerics.Vector2 _entityPosition;
-    private System.Numerics.Vector2? _shapeScale = null;
-    public System.Numerics.Vector2 ShapeScale // Scale used by the shape
+    private Vector2? _shapeScale = null;
+    public Vector2 ShapeScale // Scale used by the shape
     {
         get => _shapeScale ?? Entity.Transform.Scale;
         set
