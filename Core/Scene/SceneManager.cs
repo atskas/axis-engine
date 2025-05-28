@@ -2,7 +2,6 @@ using UntitledEngine.Assets.Scenes;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.Scenes;
 
@@ -33,6 +32,8 @@ public class SceneManager
         // Load scenes
         DebugScene debugScene = new();
     }
+
+    public void LoadScene(Scene scene) => CurrentScene = scene;
 
     public void OnUpdate(float deltaTime) => CurrentScene?.UpdateScene();
 }

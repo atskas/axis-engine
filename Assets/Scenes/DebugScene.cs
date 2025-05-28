@@ -4,7 +4,6 @@ using Silk.NET.Input;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 
@@ -13,11 +12,13 @@ namespace UntitledEngine.Assets.Scenes;
 internal class DebugScene : Scene
 {
     // camera
-    private Entity camera;
+    private Entity cameraEntity;
+    private Camera camera;
     
     // object 1
     private Entity debugObject1 = new Entity();
     private MeshRenderer meshRenderer;
+    private PlayerController playerController;
 
     private PhysicsBody debugBody;
     
@@ -46,11 +47,17 @@ internal class DebugScene : Scene
     public DebugScene()
     {
         // Camera
-        camera = new CameraEntity();
+        camera = new Camera();
+        cameraEntity =  new Entity();
+        cameraEntity.Name = "Camera";
+        cameraEntity.AddTag("Camera");
+        cameraEntity.AddComponent(camera);
         
         // Create components and add them
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/red.png"));
+        playerController = new PlayerController();
         debugObject1.AddComponent(meshRenderer);
+        debugObject1.AddComponent(playerController);
         
         debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/blue.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
@@ -77,7 +84,7 @@ internal class DebugScene : Scene
         // --- Set properties ---
         
         // object 1
-        debugObject1.Name = "Test";
+        debugObject1.Name = "Player";
         debugObject1.Transform.Scale = new Vector2(0.25f, 0.25f);
         debugObject1.Transform.Position = new Vector2(0.8f, 1f);
         debugBody.Density = 5f;
@@ -101,7 +108,7 @@ internal class DebugScene : Scene
         debugSphereBody.ShapeType = PhysicsShape.Circle;
         
         // Add entities to the scene
-        Entities.Add(camera);
+        Entities.Add(cameraEntity);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
         Entities.Add(debugObject2);
@@ -113,64 +120,4 @@ internal class DebugScene : Scene
 
         SceneManager.Instance.CurrentScene = this;
     }
-
-    public override void UpdateScene()
-    {
-        base.UpdateScene();
-
-        // Get current linear velocity
-        var velocity = debugBody.Body.GetLinearVelocity();
-        
-        if (Engine.Instance.InputManager.KeyDown(Key.A))
-        {
-            velocity.X = -moveSpeed;
-        }
-        else if (Engine.Instance.InputManager.KeyDown(Key.D))
-        {
-            velocity.X = moveSpeed;
-        }
-        else
-        {
-            velocity.X = 0;
-        }
-
-        if (Engine.Instance.InputManager.KeyDown(Key.W))
-        {
-            if (IsGrounded(debugObject1))
-                velocity.Y = jumpVelocity;
-        }
-        
-        debugBody.Body.SetLinearVelocity(velocity);
-    }
-    
-    // Grounded check
-    public bool IsGrounded(Entity entity)
-    {
-        var body = entity.GetComponent<PhysicsBody>().Body;
-        var position = body.GetPosition(); // This is already System.Numerics.Vector2
-
-        bool isGrounded = false;
-        float offset = 0.15f;
-        float rayLength = 0.15f;
-
-        void CastRay(System.Numerics.Vector2 origin)
-        {
-            var start = origin;
-            var end = origin + new System.Numerics.Vector2(0, -rayLength);
-
-            PhysicsManager.Instance.Box2DWorld.RayCast((fixture, point, normal, fraction) =>
-            {
-                if (fixture.Body != body)
-                    isGrounded = true;
-
-            }, start, end);
-        }
-
-        CastRay(position);
-        CastRay(position + new System.Numerics.Vector2(-offset, 0));
-        CastRay(position + new System.Numerics.Vector2(+offset, 0));
-
-        return isGrounded;
-    }
-
 }
