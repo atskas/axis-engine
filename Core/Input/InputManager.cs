@@ -5,7 +5,7 @@ using Silk.NET.Windowing;
 
 namespace UntitledEngine.Core.Input;
 
-internal class InputManager
+public class InputManager
 {
     // Public input context (could be readonly if not modified outside)
     public IInputContext InputContext { get; }

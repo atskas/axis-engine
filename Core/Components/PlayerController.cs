@@ -10,7 +10,7 @@ using UntitledEngine.Core.Physics;
 
 namespace UntitledEngine.Core.Components;
 
-internal class PlayerController : Component
+public class PlayerController : Component
 {
     public float moveSpeed = 2f;
     public float jumpPower = 2.5f;

@@ -1,22 +1,16 @@
-﻿using Silk.NET.OpenGL;
-using Silk.NET.Windowing;
+﻿using Silk.NET.Windowing;
 using Silk.NET.Maths;
-using System.Numerics;
-using UntitledEngine.Core;
-using UntitledEngine.Core.Components;
 using UntitledEngine.Core.Input;
 using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 using Shader = UntitledEngine.Core.Shader;
 
 // ImGUI
-using ImGuiNET;
-using Silk.NET.Input;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using UntitledEngine.Core.UI;
 using UntitledEngine.Core.Rendering;
 
-internal class Engine
+namespace UntitledEngine.Core;
+
+public class Engine
 {
     // Singleton Instance
     public static Engine? Instance { get; private set; }

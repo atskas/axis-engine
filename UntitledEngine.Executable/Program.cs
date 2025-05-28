@@ -1,15 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using UntitledEngine.Core;
 
-namespace UntitledEngine
+namespace UntitledEngine.Executable
 {
     class Program
     {
         private static Engine _engine;
-        
-        static async Task Main(string[] args)
+
+        static void Main(string[] args)
         {
-            // Create and run the engine
             _engine = new Engine(450, 450, "Engine");
             _engine.Run();
         }
