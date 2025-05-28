@@ -32,8 +32,8 @@ internal class Renderer
         Gl.Enable(GLEnum.DepthTest);
 
         // Could also handle this part in scene
-        string vertex = File.ReadAllText("Assets/Shaders/vertex_shader.glsl");
-        string fragment = File.ReadAllText("Assets/Shaders/fragment_shader.glsl");
+        string vertex = File.ReadAllText("UntitledEngine.Main/Assets/Shaders/vertex_shader.glsl");
+        string fragment = File.ReadAllText("UntitledEngine.Main/Assets/Shaders/fragment_shader.glsl");
         shader = new Shader(vertex, fragment);
         Engine.Instance.Shader = shader;
         

@@ -54,18 +54,18 @@ internal class DebugScene : Scene
         cameraEntity.AddComponent(camera);
         
         // Create components and add them
-        meshRenderer = new MeshRenderer(new Texture("Assets/Textures/red.png"));
+        meshRenderer = new MeshRenderer(new Texture("UntitledEngine.Main/Assets/Textures/red.png"));
         playerController = new PlayerController();
         debugObject1.AddComponent(meshRenderer);
         debugObject1.AddComponent(playerController);
         
-        debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/blue.png"));
+        debugFloorMeshRenderer = new MeshRenderer(new Texture("UntitledEngine.Main/Assets/Textures/blue.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
         
-        meshRenderer2 = new MeshRenderer(new Texture("Assets/Textures/green.png"));
+        meshRenderer2 = new MeshRenderer(new Texture("UntitledEngine.Main/Assets/Textures/green.png"));
         debugObject2.AddComponent(meshRenderer2);
         
-        debugSphereMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/sphere.png"));
+        debugSphereMeshRenderer = new MeshRenderer(new Texture("UntitledEngine.Main/Assets/Textures/sphere.png"));
         debugSphere.AddComponent(debugSphereMeshRenderer);
         
         // --- Add physics and initialise ---
