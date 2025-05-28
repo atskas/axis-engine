@@ -21,15 +21,15 @@ public class Engine
     // Singleton Instance
     public static Engine? Instance { get; private set; }
 
-    // Private Fields
-    private IWindow _window;
-    private Matrix4x4 _projection;
-    private float _accumulator = 0f;
-    private int _width;
-    private int _height;
+    // Privates
+    private IWindow window;
+    private Matrix4x4 projection;
+    private float accumulator = 0f;
+    private int width;
+    private int height;
 
-    // Globals and managers
-    public GL gl { get; private set; }
+    // Publics
+    public GL Gl { get; private set; }
     public float DeltaTime { get; private set; } = 0f;
     public float FixedDeltaTime { get; private set; } = 1f / 60f;
 
@@ -40,13 +40,13 @@ public class Engine
     public Shader Shader { get; private set; }
 
     // ImGui & Editor
-    private ImGuiController _imguiController;
-    private EngineEditor _editor;
+    private ImGuiController imguiController;
+    private EngineEditor editor;
 
     public Engine(int width, int height, string title)
     {
-        _width = width;
-        _height = height;
+        this.width = width;
+        this.height = height;
 
         Instance = this;
 
@@ -56,29 +56,29 @@ public class Engine
         options.Title = title;
         options.API = new GraphicsAPI(ContextAPI.OpenGL, ContextProfile.Core, ContextFlags.Default, new APIVersion(4, 6));
 
-        _window = Window.Create(options);
+        window = Window.Create(options);
 
         // Hook into lifecycle events
-        _window.Load += OnLoad;
-        _window.Update += OnUpdateFrame;
-        _window.Render += OnRenderFrame;
-        _window.Resize += OnResize;
+        window.Load += OnLoad;
+        window.Update += OnUpdateFrame;
+        window.Render += OnRenderFrame;
+        window.Resize += OnResize;
 
-        _window.Load += Renderer.OnLoad;
-        _window.Render += Renderer.OnRender;
+        window.Load += Renderer.OnLoad;
+        window.Render += Renderer.OnRender;
 
         PhysicsManager = new PhysicsManager();
     }
 
     public void Run()
     {
-        _window.Run();
+        window.Run();
     }
 
     private void OnLoad()
     {
-        gl = GL.GetApi(_window);
-        gl.Enable(GLEnum.DepthTest);
+        Gl = GL.GetApi(window);
+        Gl.Enable(GLEnum.DepthTest);
 
         Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
 
@@ -86,12 +86,12 @@ public class Engine
         string fragment = File.ReadAllText("Assets/Shaders/fragment_shader.glsl");
 
         Shader = new Shader(vertex, fragment);
-        InputManager = new InputManager(_window);
-        _editor = new EngineEditor();
-        _imguiController = new ImGuiController(gl, _window, InputManager.InputContext);
+        InputManager = new InputManager(window);
+        editor = new EngineEditor();
+        imguiController = new ImGuiController(Gl, window, InputManager.InputContext);
 
         // Setup orthographic projection matrix
-        _projection = Matrix4x4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
+        projection = Matrix4x4.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 0.1f, 100f);
 
         SceneManager.OnLoad();
 
@@ -106,17 +106,14 @@ public class Engine
             return;
 
         DeltaTime = (float)deltaTime;
-        _accumulator += DeltaTime;
+        accumulator += DeltaTime;
 
         InputManager.Update(); // Update InputManager early
 
-        while (_accumulator >= FixedDeltaTime)
+        while (accumulator >= FixedDeltaTime)
         {
             PhysicsManager.UpdatePhysics();
-            _accumulator -= FixedDeltaTime;
-
-            foreach (var entity in SceneManager.CurrentScene.Entities)
-                entity.Transform.PreviousPosition = entity.Transform.Position;
+            accumulator -= FixedDeltaTime;
         }
 
         foreach (var entity in SceneManager.CurrentScene.Entities)
@@ -126,24 +123,24 @@ public class Engine
         }
 
         SceneManager.OnUpdate(DeltaTime);
-        _imguiController.Update(DeltaTime);
+        imguiController.Update(DeltaTime);
     }
 
     private void OnRenderFrame(double deltaTime)
     {
         if (SceneManager.CurrentScene == null)
         {
-            gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             return;
         }
 
-        gl.Viewport(0, 0, (uint)_width, (uint)_height);
-        gl.ClearColor(0f, 0f, 0f, 1f);
-        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        Gl.Viewport(0, 0, (uint)width, (uint)height);
+        Gl.ClearColor(0f, 0f, 0f, 1f);
+        Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         Shader.Use();
         Shader.SetColor(new Vector4(1f, 1f, 1f, 1f));
-        Shader.SetMatrix4("projection", _projection);
+        Shader.SetMatrix4("projection", projection);
 
         var cameraObject = SceneManager.CurrentScene.Entities.FirstOrDefault(go => go.GetComponent<Camera>() != null);
         var camera = cameraObject?.GetComponent<Camera>();
@@ -160,19 +157,19 @@ public class Engine
         }
 
         // ImGui UI
-        _editor.UpdateUI();
-        _imguiController.Render();
+        editor.UpdateUI();
+        imguiController.Render();
     }
 
     private void OnResize(Vector2D<int> size)
     {
-        _width = size.X;
-        _height = size.Y;
+        width = size.X;
+        height = size.Y;
 
-        gl.Viewport(0, 0, (uint)_width, (uint)_height);
+        Gl.Viewport(0, 0, (uint)width, (uint)height);
 
-        float aspect = _width / (float)_height;
-        _projection = Matrix4x4.CreateOrthographicOffCenter(
+        float aspect = width / (float)height;
+        projection = Matrix4x4.CreateOrthographicOffCenter(
             -aspect, aspect, -1f, 1f, 0.1f, 100f
         );
     }

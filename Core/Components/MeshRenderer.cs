@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Silk.NET.OpenGL;
 using UntitledEngine.Core.Assets;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 using DrawElementsType = Silk.NET.OpenGL.DrawElementsType;
 using PrimitiveType = Silk.NET.OpenGL.PrimitiveType;
 using Texture = UntitledEngine.Core.Assets.Texture;
@@ -28,9 +28,9 @@ internal class MeshRenderer : Component
 
     public MeshRenderer(Texture texture)
     {
-        vao = Engine.Instance.gl.GenVertexArray();
-        vbo = Engine.Instance.gl.GenBuffer();
-        ebo = Engine.Instance.gl.GenBuffer();
+        vao = Engine.Instance.Gl.GenVertexArray();
+        vbo = Engine.Instance.Gl.GenBuffer();
+        ebo = Engine.Instance.Gl.GenBuffer();
 
         Texture = texture;
         DrawQuad(); // Initialize quad mesh
@@ -62,7 +62,7 @@ internal class MeshRenderer : Component
     {
         if (Mesh == null) return;
 
-        var gl = Engine.Instance.gl;
+        var gl = Engine.Instance.Gl;
 
         gl.BindVertexArray(vao);
 
@@ -113,7 +113,7 @@ internal class MeshRenderer : Component
 
         Engine.Instance.Shader.SetColor(Color);
 
-        var gl = Engine.Instance.gl;
+        var gl = Engine.Instance.Gl;
         gl.BindVertexArray(vao);
         gl.DrawElements(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
         gl.BindVertexArray(0);

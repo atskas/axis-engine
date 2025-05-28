@@ -2,7 +2,7 @@ using Box2D.NetStandard.Collision;
 using Box2D.NetStandard.Dynamics.Contacts;
 using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 
 namespace UntitledEngine.Core.Physics;
 

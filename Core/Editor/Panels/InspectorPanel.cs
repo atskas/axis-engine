@@ -2,7 +2,6 @@ using Box2D.NetStandard.Dynamics.Bodies;
 using ImGuiNET;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 
 namespace UntitledEngine.Core.UI;
 
@@ -24,6 +23,7 @@ public class InspectorPanel
 
         DrawTransformSection(selected);
         DrawPhysicsBodySection(selected.GetComponent<PhysicsBody>());
+        DrawPlayerControllerSection(selected.GetComponent<PlayerController>(), selected.GetComponent<PhysicsBody>());
 
         ImGui.End();
     }
@@ -42,14 +42,11 @@ public class InspectorPanel
 
         // Move the cursor to the right aligned position
         ImGui.SetCursorPosX(posX);
-
-        if (!selected.HasTag("Camera"))
+        
+        if (ImGui.Button("DEL"))
         {
-            if (ImGui.Button("DEL"))
-            {
-                selected.Destroy();
-                EngineEditor.SelectedEntity = null;
-            }
+            selected.Destroy();
+            EngineEditor.SelectedEntity = null;
         }
     }
 
@@ -105,7 +102,7 @@ public class InspectorPanel
         ImGui.Text("Physics");
         
         var shapeScale = pb.ShapeScale;
-        if (ImGui.DragFloat2("Shape (Collider) Scale", ref shapeScale))
+        if (ImGui.DragFloat2("Shape Scale", ref shapeScale))
             pb.ShapeScale = shapeScale;
 
         float density = pb.Density;
@@ -123,5 +120,29 @@ public class InspectorPanel
         bool rotFixed = pb.FixedRotation;
         if (ImGui.Checkbox("Fixed Rotation", ref rotFixed))
             pb.FixedRotation = rotFixed;
+    }
+
+    private void DrawPlayerControllerSection(PlayerController controller, PhysicsBody pb)
+    {
+        if (controller == null)
+            return;
+        
+        if (pb == null)
+        {
+            ImGui.Separator();
+            ImGui.Text("PlayerController requires a PhysicsBody");
+            return;
+        }
+        
+        ImGui.Separator();
+        ImGui.Text("Player Controller");
+
+        var moveSpeed = controller.moveSpeed;
+        if (ImGui.DragFloat("MoveSpeed", ref moveSpeed))
+            controller.moveSpeed = moveSpeed;
+        
+        var jumpPower = controller.jumpPower;
+        if (ImGui.DragFloat("JumpPower", ref jumpPower))
+            controller.jumpPower = jumpPower;
     }
 }

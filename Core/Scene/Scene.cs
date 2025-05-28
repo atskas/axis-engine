@@ -1,4 +1,4 @@
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 
 namespace UntitledEngine.Core.Scenes;
 

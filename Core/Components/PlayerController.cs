@@ -2,19 +2,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using UntitledEngine.Core.Entities;
+using UntitledEngine.Core.ECS;
 using UntitledEngine.Core.Physics;
 
 namespace UntitledEngine.Core.Components;
 
 internal class PlayerController : Component
 {
+    public float moveSpeed = 1f;
+    public float jumpPower = 2f;
+    
     public override void Update()
     {
+        var pb = Entity.GetComponent<PhysicsBody>();
+        if (pb == null)
+            return;
+        
         // Get current linear velocity
-        var velocity = debugBody.Body.GetLinearVelocity();
+        var velocity = pb.Body.GetLinearVelocity();
 
         if (Engine.Instance.InputManager.KeyDown(Key.A))
         {
@@ -31,11 +39,11 @@ internal class PlayerController : Component
 
         if (Engine.Instance.InputManager.KeyDown(Key.W))
         {
-            if (IsGrounded(debugObject1))
-                velocity.Y = jumpVelocity;
+            if (IsGrounded(Entity))
+                velocity.Y = jumpPower;
         }
 
-        debugBody.Body.SetLinearVelocity(velocity);
+        pb.Body.SetLinearVelocity(velocity);
     }
 
     // Grounded check
@@ -46,7 +54,7 @@ internal class PlayerController : Component
 
         bool isGrounded = false;
         float offset = 0.15f;
-        float rayLength = debugObject1.Transform.Scale.Y / 1.18f;
+        float rayLength = Entity.Transform.Scale.Y / 1.18f;
 
         void CastRay(System.Numerics.Vector2 origin)
         {

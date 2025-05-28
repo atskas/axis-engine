@@ -7,21 +7,21 @@ namespace UntitledEngine.Core.Input;
 public class InputManager
 {
     // Globals
-    public bool KeyDown(Key key) => _keysDown.Contains(key);
-    public bool KeyPressed(Key key) => _keysPressed.Contains(key);
+    public bool KeyDown(Key key) => keysDown.Contains(key);
+    public bool KeyPressed(Key key) => keysPressed.Contains(key);
     public IInputContext InputContext;
     
     // Private fields
-    private IWindow _window;
-    private IKeyboard _keyboard;
-    private IMouse _mouse;
+    private IWindow window;
+    private IKeyboard keyboard;
+    private IMouse mouse;
 
-    private HashSet<Key> _keysPressed = new();
-    private HashSet<Key> _keysDown = new();
+    private HashSet<Key> keysPressed = new();
+    private HashSet<Key> keysDown = new();
 
     public InputManager(IWindow window)
     {
-        _window = window;
+        this.window = window;
         InputContext = window.CreateInput();
         
         // Check if any keyboards exist before subscribing to events
@@ -32,23 +32,23 @@ public class InputManager
         }
         else
         {
-            _keyboard = null;
+            keyboard = null;
         }
     }
 
     private void OnKeyDown(IKeyboard keyboard, Key key, int _)
     {
-        _keysDown.Add(key);
-        _keysPressed.Add(key);
+        keysDown.Add(key);
+        keysPressed.Add(key);
     }
     
     private void OnKeyUp(IKeyboard keyboard, Key key, int _)
     {
-        _keysDown.Remove(key);
+        keysDown.Remove(key);
     }
     
     public void Update()
     {
-        _keysPressed.Clear();
+        keysPressed.Clear();
     }
 }

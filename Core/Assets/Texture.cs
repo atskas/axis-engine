@@ -29,14 +29,14 @@ namespace UntitledEngine.Core.Assets
             var pixels = new byte[image.Width * image.Height * 4];
             image.CopyPixelDataTo(pixels);
 
-            handle = Engine.Instance.gl.GenTexture();
-            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, handle);
+            handle = Engine.Instance.Gl.GenTexture();
+            Engine.Instance.Gl.BindTexture(TextureTarget.Texture2D, handle);
 
             unsafe
             {
                 fixed (byte* pixelPtr = pixels)
                 {
-                    Engine.Instance.gl.TexImage2D(TextureTarget.Texture2D,
+                    Engine.Instance.Gl.TexImage2D(TextureTarget.Texture2D,
                         0,
                         InternalFormat.Rgba,
                         (uint)image.Width,
@@ -48,23 +48,23 @@ namespace UntitledEngine.Core.Assets
                 }
             }
 
-            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            Engine.Instance.gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            Engine.Instance.gl.GenerateMipmap(GLEnum.Texture2D);
+            Engine.Instance.Gl.GenerateMipmap(GLEnum.Texture2D);
         }
 
         public void Bind(TextureUnit unit = TextureUnit.Texture0)
         {
-            Engine.Instance.gl.ActiveTexture(unit);
-            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, handle);
+            Engine.Instance.Gl.ActiveTexture(unit);
+            Engine.Instance.Gl.BindTexture(TextureTarget.Texture2D, handle);
         }
 
         public void Dispose()
         {
-            Engine.Instance.gl.DeleteTexture(handle);
+            Engine.Instance.Gl.DeleteTexture(handle);
         }
     }
 

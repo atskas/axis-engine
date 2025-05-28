@@ -2,7 +2,7 @@
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core;
 
-namespace UntitledEngine.Core.Entities;
+namespace UntitledEngine.Core.ECS;
 
 public class Entity
 {

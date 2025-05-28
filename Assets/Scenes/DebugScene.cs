@@ -4,7 +4,6 @@ using Silk.NET.Input;
 using UntitledEngine.Core.Assets;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core.ECS;
-using UntitledEngine.Core.Entities;
 using UntitledEngine.Core.Physics;
 using UntitledEngine.Core.Scenes;
 
@@ -13,11 +12,13 @@ namespace UntitledEngine.Assets.Scenes;
 internal class DebugScene : Scene
 {
     // camera
-    private Entity camera;
+    private Entity cameraEntity;
+    private Camera camera;
     
     // object 1
     private Entity debugObject1 = new Entity();
     private MeshRenderer meshRenderer;
+    private PlayerController playerController;
 
     private PhysicsBody debugBody;
     
@@ -46,11 +47,17 @@ internal class DebugScene : Scene
     public DebugScene()
     {
         // Camera
-        camera = new CameraEntity();
+        camera = new Camera();
+        cameraEntity =  new Entity();
+        cameraEntity.Name = "Camera";
+        cameraEntity.AddTag("Camera");
+        cameraEntity.AddComponent(camera);
         
         // Create components and add them
         meshRenderer = new MeshRenderer(new Texture("Assets/Textures/red.png"));
+        playerController = new PlayerController();
         debugObject1.AddComponent(meshRenderer);
+        debugObject1.AddComponent(playerController);
         
         debugFloorMeshRenderer = new MeshRenderer(new Texture("Assets/Textures/blue.png"));
         debugFloor.AddComponent(debugFloorMeshRenderer);
@@ -77,7 +84,7 @@ internal class DebugScene : Scene
         // --- Set properties ---
         
         // object 1
-        debugObject1.Name = "Test";
+        debugObject1.Name = "Player";
         debugObject1.Transform.Scale = new Vector2(0.25f, 0.25f);
         debugObject1.Transform.Position = new Vector2(0.8f, 1f);
         debugBody.Density = 5f;
@@ -101,7 +108,7 @@ internal class DebugScene : Scene
         debugSphereBody.ShapeType = PhysicsShape.Circle;
         
         // Add entities to the scene
-        Entities.Add(camera);
+        Entities.Add(cameraEntity);
         Entities.Add(debugObject1);
         Entities.Add(debugFloor);
         Entities.Add(debugObject2);
