@@ -34,5 +34,7 @@ public class SceneManager
         DebugScene debugScene = new();
     }
 
+    public void LoadScene(Scene scene) => CurrentScene = scene;
+
     public void OnUpdate(float deltaTime) => CurrentScene?.UpdateScene();
 }

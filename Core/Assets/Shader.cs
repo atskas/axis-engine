@@ -69,6 +69,8 @@ public class Shader
         Engine.Instance.gl.Uniform1(location, unit);
     }
 
+    // public void SetUniform<T>(string name, T value) => Engine.Instance.gl.Uniform1(Engine.Instance.gl.GetUniformLocation(shaderProgram, name));
+
     public unsafe void SetMatrix4(string name, Matrix4x4 matrix)
     {
         int location = Engine.Instance.gl.GetUniformLocation(shaderProgram, name);

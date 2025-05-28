@@ -118,5 +118,4 @@ internal class MeshRenderer : Component
         gl.DrawElements(PrimitiveType.Triangles, (uint)Mesh.Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
         gl.BindVertexArray(0);
     }
-
 }

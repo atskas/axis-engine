@@ -16,7 +16,7 @@ namespace UntitledEngine.Core.Assets
 {
     public class Texture : IDisposable
     {
-        public uint Handle { get; private set; }
+        private uint handle;
 
         public Texture(string path)
         {
@@ -29,8 +29,8 @@ namespace UntitledEngine.Core.Assets
             var pixels = new byte[image.Width * image.Height * 4];
             image.CopyPixelDataTo(pixels);
 
-            Handle = Engine.Instance.gl.GenTexture();
-            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, Handle);
+            handle = Engine.Instance.gl.GenTexture();
+            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, handle);
 
             unsafe
             {
@@ -59,12 +59,12 @@ namespace UntitledEngine.Core.Assets
         public void Bind(TextureUnit unit = TextureUnit.Texture0)
         {
             Engine.Instance.gl.ActiveTexture(unit);
-            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, Handle);
+            Engine.Instance.gl.BindTexture(TextureTarget.Texture2D, handle);
         }
 
         public void Dispose()
         {
-            Engine.Instance.gl.DeleteTexture(Handle);
+            Engine.Instance.gl.DeleteTexture(handle);
         }
     }
 

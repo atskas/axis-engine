@@ -14,11 +14,12 @@ using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using UntitledEngine.Core.UI;
+using UntitledEngine.Core.Renderer;
 
 public class Engine
 {
     // Singleton Instance
-    public static Engine Instance { get; private set; }
+    public static Engine? Instance { get; private set; }
 
     // Private Fields
     private IWindow _window;
@@ -47,9 +48,6 @@ public class Engine
         _width = width;
         _height = height;
 
-        // Singleton enforcement
-        if (Instance != null)
-            throw new InvalidOperationException("Only one Engine instance is allowed.");
         Instance = this;
 
         // Create a window
@@ -65,6 +63,9 @@ public class Engine
         _window.Update += OnUpdateFrame;
         _window.Render += OnRenderFrame;
         _window.Resize += OnResize;
+
+        _window.Load += Renderer.OnLoad;
+        _window.Render += Renderer.OnRender;
 
         PhysicsManager = new PhysicsManager();
     }
@@ -115,9 +116,7 @@ public class Engine
             _accumulator -= FixedDeltaTime;
 
             foreach (var entity in SceneManager.CurrentScene.Entities)
-            {
                 entity.Transform.PreviousPosition = entity.Transform.Position;
-            }
         }
 
         foreach (var entity in SceneManager.CurrentScene.Entities)
