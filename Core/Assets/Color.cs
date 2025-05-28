@@ -1,15 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace UntitledEngine.Core.Assets;
 
-namespace UntitledEngine.Core.Assets;
-
-internal struct Color
+public struct Color
 {
-    public float R { get; set; }
-    public float G { get; set; }
-    public float B { get; set; }
-    public float A { get; set; }
+    private float r, g, b, a;
+
+    public float R
+    {
+        get => r;
+        set => r = Math.Clamp(value, 0f, 1f);
+    }
+    public float G
+    {
+        get => g;
+        set => g = Math.Clamp(value, 0f, 1f);
+    }
+    public float B
+    {
+        get => b;
+        set => b = Math.Clamp(value, 0f, 1f);
+    }
+    public float A
+    {
+        get => a;
+        set => a = Math.Clamp(value, 0f, 1f);
+    }
+
+    public Color(float r, float g, float b, float a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
 }
+

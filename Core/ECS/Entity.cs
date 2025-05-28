@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using UntitledEngine.Core.Components;
 using UntitledEngine.Core;
+using UntitledEngine.Core.Rendering;
 
 namespace UntitledEngine.Core.ECS;
 
@@ -23,9 +24,12 @@ public class Entity
         // If PhysicsBody found, erase its body before deleting component
         var pb = GetComponent<PhysicsBody>();
         if (pb != null)
-        {
             Engine.Instance.PhysicsManager.Box2DWorld.DestroyBody(pb.Body);
-        }
+        
+        var mr = GetComponent<MeshRenderer>();
+        if (mr != null)
+            Renderer.DestroyMeshRenderer(mr);
+            
         
         // Remove all components and tags safely
         // (uses a copy of the lists when removing items)

@@ -14,7 +14,7 @@ using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using UntitledEngine.Core.UI;
-using UntitledEngine.Core.Renderer;
+using UntitledEngine.Core.Rendering;
 
 internal class Engine
 {
@@ -25,14 +25,13 @@ internal class Engine
     private float accumulator = 0f;
 
     // Publics
-    public GL Gl { get; private set; }
     public float DeltaTime { get; private set; } = 0f;
     public float FixedDeltaTime { get; private set; } = 1f / 60f;
     public int Width;
     public int Height;
     public IWindow window;
 
-    public readonly SceneManager SceneManager = new SceneManager();
+    public readonly SceneManager SceneManager = new();
     public readonly PhysicsManager PhysicsManager;
     public InputManager InputManager;
 
@@ -40,11 +39,11 @@ internal class Engine
 
     public Engine(int width, int height, string title)
     {
-        this.Width = width;
-        this.Height = height;
-
         Instance = this;
 
+        this.Width = width;
+        this.Height = height;
+        
         // Create a window
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(width, height);
@@ -55,12 +54,11 @@ internal class Engine
 
         // Hook into lifecycle events
         window.Load += OnLoad;
-        window.Update += OnUpdateFrame;
-        window.Resize += OnResize;
-
-        window.Load += Renderer.OnLoad;
         window.Render += Renderer.OnRender;
         window.Resize += Renderer.OnResize;
+        
+        window.Update += OnUpdateFrame;
+        window.Resize += OnResize;
 
         PhysicsManager = new PhysicsManager();
     }
@@ -72,13 +70,11 @@ internal class Engine
 
     private void OnLoad()
     {
-        Gl = GL.GetApi(window);
-        Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
-
         InputManager = new InputManager(window);
-
-        SceneManager.OnLoad();
-
+        
+        Renderer.OnLoad();
+        Console.WriteLine("Working Directory: " + System.IO.Directory.GetCurrentDirectory());
+        
         foreach (var entity in SceneManager.CurrentScene.Entities)
             foreach (var component in entity.Components)
                 component.Start();
@@ -105,7 +101,7 @@ internal class Engine
             foreach (var component in entity.Components)
                 component.Update();
         }
-
+        
         SceneManager.OnUpdate(DeltaTime);
     }
 

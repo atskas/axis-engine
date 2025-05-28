@@ -3,6 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Processing;
+using UntitledEngine.Core.Rendering;
 using PixelFormat = Silk.NET.OpenGL.PixelFormat;
 using PixelType = Silk.NET.OpenGL.PixelType;
 using TextureMagFilter = Silk.NET.OpenGL.TextureMagFilter;
@@ -28,15 +29,18 @@ namespace UntitledEngine.Core.Assets
 
             var pixels = new byte[image.Width * image.Height * 4];
             image.CopyPixelDataTo(pixels);
+            
+            if (Renderer.Gl == null)
+                throw new InvalidOperationException("OpenGL context not initialized. Ensure Renderer.OnLoad() has been called.");
 
-            handle = Engine.Instance.Gl.GenTexture();
-            Engine.Instance.Gl.BindTexture(TextureTarget.Texture2D, handle);
+            handle = Renderer.Gl.GenTexture();
+            Renderer.Gl.BindTexture(TextureTarget.Texture2D, handle);
 
             unsafe
             {
                 fixed (byte* pixelPtr = pixels)
                 {
-                    Engine.Instance.Gl.TexImage2D(TextureTarget.Texture2D,
+                    Renderer.Gl.TexImage2D(TextureTarget.Texture2D,
                         0,
                         InternalFormat.Rgba,
                         (uint)image.Width,
@@ -48,23 +52,23 @@ namespace UntitledEngine.Core.Assets
                 }
             }
 
-            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            Engine.Instance.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            Renderer.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            Renderer.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            Renderer.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            Renderer.Gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            Engine.Instance.Gl.GenerateMipmap(GLEnum.Texture2D);
+            Renderer.Gl.GenerateMipmap(GLEnum.Texture2D);
         }
 
         public void Bind(TextureUnit unit = TextureUnit.Texture0)
         {
-            Engine.Instance.Gl.ActiveTexture(unit);
-            Engine.Instance.Gl.BindTexture(TextureTarget.Texture2D, handle);
+            Renderer.Gl.ActiveTexture(unit);
+            Renderer.Gl.BindTexture(TextureTarget.Texture2D, handle);
         }
 
         public void Dispose()
         {
-            Engine.Instance.Gl.DeleteTexture(handle);
+            Renderer.Gl.DeleteTexture(handle);
         }
     }
 
