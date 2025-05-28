@@ -81,15 +81,12 @@ public class InspectorPanel
             DrawWithReset("Rotation", ref rot, 0f);
             entity.Transform.Rotation = rot;
         }
-
-        if (entity.Transform != null)
-        {
-            var scale = entity.Transform.Scale;
-            DrawWithReset("Scale", ref scale, Vector2.Zero);
-            entity.Transform.Scale = scale;
-        }
+        
+        var scale = entity.Transform.Scale;
+        DrawWithReset("Scale", ref scale, new Vector2(0.1f, 0.1f));
+        entity.Transform.Scale = scale;
+        
     }
-
 
     private void DrawPhysicsBodySection(PhysicsBody pb)
     {
@@ -98,18 +95,18 @@ public class InspectorPanel
 
         ImGui.Separator();
         ImGui.Text("Physics");
-        
+    
         var shapeScale = pb.ShapeScale;
-        if (ImGui.DragFloat2("Shape Scale", ref shapeScale))
-            pb.ShapeScale = shapeScale;
+        DrawWithReset("Shape Scale", ref shapeScale, new Vector2(0.1f, 0.1f));
+        pb.ShapeScale = shapeScale;
 
         float density = pb.Density;
-        if (ImGui.DragFloat("Density", ref density))
-            pb.Density = density;
+        DrawWithReset("Density", ref density, 1f);
+        pb.Density = density;
 
         float friction = pb.Friction;
-        if (ImGui.DragFloat("Friction", ref friction))
-            pb.Friction = friction;
+        DrawWithReset("Friction", ref friction, 0.4f);
+        pb.Friction = friction;
 
         bool isStatic = pb.BodyType == BodyType.Static;
         if (ImGui.Checkbox("Static Body", ref isStatic))
@@ -124,24 +121,24 @@ public class InspectorPanel
     {
         if (controller == null)
             return;
-        
+    
         if (pb == null)
         {
             ImGui.Separator();
             ImGui.Text("PlayerController requires a PhysicsBody");
             return;
         }
-        
+    
         ImGui.Separator();
         ImGui.Text("Player Controller");
 
         var moveSpeed = controller.moveSpeed;
-        if (ImGui.DragFloat("MoveSpeed", ref moveSpeed))
-            controller.moveSpeed = moveSpeed;
-        
+        DrawWithReset("MoveSpeed", ref moveSpeed, 0f);
+        controller.moveSpeed = moveSpeed;
+    
         var jumpPower = controller.jumpPower;
-        if (ImGui.DragFloat("JumpPower", ref jumpPower))
-            controller.jumpPower = jumpPower;
+        DrawWithReset("JumpPower", ref jumpPower, 0f);
+        controller.jumpPower = jumpPower;
     }
     
     // Draw a Vector2 or a float with a reset button next to it

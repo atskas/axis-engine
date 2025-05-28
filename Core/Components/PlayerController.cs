@@ -12,8 +12,8 @@ namespace UntitledEngine.Core.Components;
 
 internal class PlayerController : Component
 {
-    public float moveSpeed = 1f;
-    public float jumpPower = 2f;
+    public float moveSpeed = 2f;
+    public float jumpPower = 2.5f;
     
     public override void Update()
     {
